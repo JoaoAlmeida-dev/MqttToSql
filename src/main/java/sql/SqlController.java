@@ -45,15 +45,10 @@ public class SqlController{
                 + columnsString
                 + ");";
 
-        System.out.println(sql);
-        Statement statement= connection.createStatement();
-        statement.execute(sql);
+        executeSQL(connection , sql);
     }
 
-    public static void executeSqlDb(Connection connection, String sql) throws SQLException {
-        Statement statement = connection.createStatement();
-        statement.execute(sql);
-    }
+
 
     public static void insertInDbTable(Connection connection, String tableName, ArrayList<Pair> values) throws SQLException {
         String columnsString ="";
@@ -70,16 +65,15 @@ public class SqlController{
 
         System.out.println(sql);
 
-        Statement statement= connection.createStatement();
-        statement.execute(sql);
+        executeSQL(connection , sql);
+
 
     }
 
     public static void selectAllFromDbTable(Connection connection, String tableName, ArrayList<String> columns) throws SQLException {
         String sql = "SELECT * FROM "+tableName;
 
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(sql);
+        ResultSet rs = executeQuerry(connection, sql);
 
         // loop through the result set
         while (rs.next()) {
@@ -90,11 +84,15 @@ public class SqlController{
 
     }
 
+    private static ResultSet executeQuerry(Connection connection, String sql) throws SQLException {
+        Statement statement = connection.createStatement();
+        return statement.executeQuery(sql);
+    }
+
     public static void selectElementFromDbTable(Connection connection, String tableName, ArrayList<String> columns, String param, String paramValue) throws SQLException {
         String sql = "SELECT * FROM "+tableName+ " WHERE "+param +" = " +"\""+paramValue+"\"";
 
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(sql);
+        ResultSet rs = executeQuerry(connection, sql);
 
         while (rs.next()) {
             for(String column: columns){
@@ -106,8 +104,7 @@ public class SqlController{
     public static ArrayList<String> getElementFromDbTable(Connection connection, String tableName, ArrayList<String> columns, String param, String paramValue) throws SQLException {
         String sql = "SELECT * FROM "+tableName+ " WHERE "+param +" = " +"\""+paramValue+"\"";
 
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(sql);
+        ResultSet rs = executeQuerry(connection, sql);
 
         ArrayList<String> element = new ArrayList<>();
         while (rs.next()) {
@@ -121,8 +118,7 @@ public class SqlController{
 
     public static void deleteFromDbTable(Connection connection,String table ,String param, String paramValue) throws SQLException {
         String sql = "DELETE FROM " + table+ " WHERE "+param +" = " +"\""+paramValue+"\"";
-        Statement statement= connection.createStatement();
-        statement.execute(sql);
+        executeSQL(connection , sql);
     }
 
     public static void updateFromDbTable(Connection connection, String table, ArrayList<Pair> valuesToChange, String param, String paramValue) throws SQLException {
@@ -134,10 +130,20 @@ public class SqlController{
         sql = sql.substring(0, sql.length()-1);
         sql +="WHERE "+param+" = \""+paramValue+"\"";
 
-        System.out.println(sql);
-        Statement statement = connection.createStatement();
-        statement.execute(sql);
+        executeSQL(connection , sql);
     }
+
+    public static void executeSQL(Connection connection, String stattement) throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.execute(stattement);
+
+        System.out.println("Executed "+ stattement);
+    }
+/*
+    public static void SP1(){
+        executeSQL("storedprocedure bababoy");
+    }
+*/
 
     /**
      For testing purposes only
