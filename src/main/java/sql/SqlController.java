@@ -82,10 +82,12 @@ public class SqlController {
         statement.execute(sql);
     }
 
-    public static void insertInDbTable(Connection connection, String tableName, ArrayList<Pair> values) throws SQLException {
-        String columnsString = "IdAlerta,";
-        String valuesString = "INT";
-        for (Pair value : values) {
+    public static void insertInDbTable(Connection connection, String tableName, ArrayList<Pair<String,String>> values) throws SQLException {
+        //String columnsString = "IdAlerta,";
+        //String valuesString = "INT";
+        String columnsString = "";
+        String valuesString = "";
+        for (Pair<String,String> value : values) {
             columnsString += value.getA() + ",";
             valuesString += "\"" + value.getB() + "\",";
         }

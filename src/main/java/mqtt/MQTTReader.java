@@ -1,6 +1,7 @@
 package mqtt;
 
 import org.eclipse.paho.client.mqttv3.*;
+import sql.CulturaDB;
 import sql.SqlController;
 import sql.SqlVariables;
 
@@ -81,34 +82,7 @@ public class MQTTReader implements MqttCallback{
         ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
         String receivedData = (String) objectInputStream.readObject();
         System.out.println("Received:"+ receivedData);
-
-
-        Connection connection =SqlController.connectDb(SqlVariables.PATH_DB_USER);
-        String[] splitData =receivedData.split(",");
-        for (String data : splitData) {
-            String[] datavalues = data.trim().split("=");
-            switch (datavalues[0]) {
-                case "Zona": {
-                    //SqlController.selectElementFromDbTable(connection,SqlVariables.TABLE_ZONA_NAME,);
-                    break;
-                }case "Sensor": {
-
-                    break;
-                }case "Data": {
-
-                    break;
-                }case "Medicao": {
-
-                    break;
-                }
-                default:{
-
-                }
-            }
-            //SqlController.insertInDbTable(connection,);
-
-        }
-
+        CulturaDB.insertMedicao(receivedData);
         //System.out.println("Received:"+mqttMessage);
     }
 

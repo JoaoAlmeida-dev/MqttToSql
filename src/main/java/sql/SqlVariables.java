@@ -3,10 +3,9 @@ package sql;
 public class SqlVariables {
     public static final String PATH_DB_USER = "database/culturamysql.db";
 
-
-    public static final String TABLE_MEDICAO_NAME = "medicao";
-    public static final String[] TABLE_MEDICAO_COLLUMS = {"IdMedicao", "IdZona", "IdSensor", "Hora", "Leitura"};
-    public static final String[] TABLE_MEDICAO = {
+    public static final String TABLE_MEDICAO_NAME       = "medicao";
+    public static final String[] TABLE_MEDICAO_COLLUMS  = {"IdMedicao", "IdZona", "IdSensor", "Hora", "Leitura"};
+    public static final String[] TABLE_MEDICAO          = {
             "\"" + TABLE_MEDICAO_COLLUMS[0] + "\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE", //IdMedicao
             "\"" + TABLE_MEDICAO_COLLUMS[1] + "\" INTEGER NOT NULL", //IdZona
             "\"" + TABLE_MEDICAO_COLLUMS[2] + "\" INTEGER NOT NULL", //IdSensor
@@ -70,11 +69,11 @@ public class SqlVariables {
     public static final String TABLE_ALERTA_NAME = "alerta";
     private static final String[] TABLE_CULTURA_COLLUMS = {"IdCultura", "NomeCultura", "IdUtilizador", "Estado"};
     public static final String[] TABLE_CULTURA = {
-            "\"" + TABLE_CULTURA_COLLUMS[0] + "\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE",
-            "\"" + TABLE_CULTURA_COLLUMS[1] + "\" TEXT NOT NULL UNIQUE",
-            "\"" + TABLE_CULTURA_COLLUMS[2] + "\" INTEGER NOT NULL",
-            "\"" + TABLE_CULTURA_COLLUMS[3] + "\" INTEGER NOT NULL",
-            "CONSTRAINT FK_IdUtilizador FOREIGN KEY (IdUtilizador) REFERENCES utilizador(IdUtilizador)"
+            "\"" + TABLE_CULTURA_COLLUMS[0] + "\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE",      //IdCultura
+            "\"" + TABLE_CULTURA_COLLUMS[1] + "\" TEXT NOT NULL UNIQUE",                                   //NomeCultura
+            "\"" + TABLE_CULTURA_COLLUMS[2] + "\" INTEGER NOT NULL",                                       //IdUtilizador
+            "\"" + TABLE_CULTURA_COLLUMS[3] + "\" INTEGER NOT NULL",                                       //Estado
+            "CONSTRAINT FK_IdUtilizador FOREIGN KEY (" + TABLE_CULTURA_COLLUMS[2] + ") REFERENCES utilizador(" + TABLE_CULTURA_COLLUMS[2] + ")"
     };
     private static final String[] TABLE_ALERTA_COLLUMS = {"IdAlerta", "IdZona", "IdSensor", "Hora", "Leitura", "TipoAlerta", "Cultura", "Mensagem", "IdUtilizador", "HoraEscrita", "NivelAlerta", "IdParametroCultura"};
     public static final String[] TABLE_ALERTA = {
