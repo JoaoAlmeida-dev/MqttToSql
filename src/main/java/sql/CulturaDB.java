@@ -25,18 +25,18 @@ public class CulturaDB {
     }
 
     public static void createAllTablesDbCultura() throws SQLException {
+        createTableDb(connection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
         createTableDb(connection, TABLE_CULTURA_NAME, TABLE_CULTURA);
+        createTableDb(connection, TABLE_PARAMETROCULTURA_NAME, TABLE_PARAMETROCULTURA);
+        createTableDb(connection, TABLE_ZONA_NAME, TABLE_ZONA);
+        createTableDb(connection, TABLE_SENSOR_NAME, TABLE_SENSOR);
         createTableDb(connection, TABLE_ALERTA_NAME, TABLE_ALERTA);
         createTableDb(connection, TABLE_MEDICAO_NAME, TABLE_MEDICAO);
-        createTableDb(connection, TABLE_PARAMETROCULTURA_NAME, TABLE_PARAMETROCULTURA);
-        createTableDb(connection, TABLE_SENSOR_NAME, TABLE_SENSOR);
-        createTableDb(connection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
-        createTableDb(connection, TABLE_ZONA_NAME, TABLE_ZONA);
     }
 
     public static void insertMedicao(String medicao) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
-        String[] splitData =medicao.split(",");
+        String[] splitData = medicao.split(",");
         for (String data : splitData) {
             String[] datavalues = data.trim().split("=");
             switch (datavalues[0]) {
@@ -366,9 +366,9 @@ public class CulturaDB {
         //selectElementFromDbTable(connection,"user",columns,"nickname","teste");
         //getElementFromDbTable(connection,"user",columns,"nickname","teste");
 
-        //createAllTablesDbCultura();
-        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-        insertMedicao(document);
+        createAllTablesDbCultura();
+       // String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+       // insertMedicao(document);
 
         //SPCriar_Zona(connection,values,1);
         //SPAlterar_Zona(connection,columns,values,"IdZona","1");

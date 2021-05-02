@@ -16,8 +16,10 @@ public class SqlController{
      * */
     public static Connection connectDb(String pathToDb) throws SQLException {
         // SQLite connection string
-        String url = "jdbc:sqlite:"+ pathToDb;
-        Connection connection = DriverManager.getConnection(url);
+        String url = "jdbc:mysql://localhost:3306/javabase";
+        String username = "sammy";
+        String password = "password";
+        Connection connection = DriverManager.getConnection(url, username, password);
         return connection;
     }
 
@@ -68,10 +70,11 @@ public class SqlController{
         }
 
         columnsString = columnsString.substring(0,columnsString.length()-1);
-        String sql = "CREATE TABLE IF NOT EXISTS "+ "\"" + tableName + "\"" + " ( \n "
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " ( \n "
                 + columnsString
                 + ");";
 
+        System.out.println(sql);
         executeSQL(connection , sql);
     }
 
