@@ -53,7 +53,8 @@ public class SqlVariables {
             "\"" + TABLE_UTILIZADOR_COLLUMS[0] + "\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE",  //IdUtilizador
             "\"" + TABLE_UTILIZADOR_COLLUMS[1] + "\" TEXT NOT NULL",                                  //NomeInvestigador
             "\"" + TABLE_UTILIZADOR_COLLUMS[2] + "\" TEXT NOT NULL",                                   //EmailUtilizador
-            "\"" + TABLE_UTILIZADOR_COLLUMS[3] + "\" TEXT NOT NULL"                                     //TipoUtilizador
+            "\"" + TABLE_UTILIZADOR_COLLUMS[3] + "\" TEXT NOT NULL",                                    //TipoUtilizador
+            "\"" + TABLE_UTILIZADOR_COLLUMS[4] + "\" TEXT NOT NULL"                                    //Password
     };
 
     public static final String TABLE_ZONA_NAME = "zona";
@@ -91,6 +92,10 @@ public class SqlVariables {
             "\"" + TABLE_ALERTA_COLLUMS[11] + "\" INTEGER NOT NULL"                                      //IdParametroCultura
             , "CONSTRAINT FK_IdZona FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES zona(" + TABLE_ALERTA_COLLUMS[1] + ")"
             , "CONSTRAINT FK_IdSensor FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES sensor(" + TABLE_ALERTA_COLLUMS[2] + ")"};
+
+    public static final String USER_ADMIN = "Adm";
+    public static final String USER_INVESTIGATOR = "Invest";
+    public static final String USER_TECHNIC = "Tec";
 
 
 }
