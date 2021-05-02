@@ -16,10 +16,8 @@ public class SqlController{
      * */
     public static Connection connectDb(String pathToDb) throws SQLException {
         // SQLite connection string
-        String url = "jdbc:mysql://localhost:3306/javabase";
-        String username = "sammy";
-        String password = "password";
-        Connection connection = DriverManager.getConnection(url, username, password);
+        String url = "jdbc:mysql://localhost:3306/" + pathToDb;
+        Connection connection = DriverManager.getConnection(url, SqlVariables.USERNAME, SqlVariables.PASSWORD);
         return connection;
     }
 

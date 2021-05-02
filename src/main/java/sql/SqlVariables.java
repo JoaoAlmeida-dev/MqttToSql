@@ -1,7 +1,9 @@
 package sql;
 
 public class SqlVariables {
-    public static final String PATH_DB_USER = "database/culturamysql.db";
+    public static final String PATH_DB_USER = "javabase";
+    public static final String USERNAME = "sammy";
+    public static final String PASSWORD = "password";
 
     public static final String TABLE_MEDICAO_NAME       = "medicao";
     public static final String[] TABLE_MEDICAO_COLLUMS  = {"IdMedicao", "IdZona", "IdSensor", "Hora", "Leitura"};
