@@ -24,6 +24,55 @@ public class CulturaDB {
         }
     }
 
+    private static void insertZona(int zona) throws SQLException {
+        ArrayList<Pair> values = new ArrayList<>();
+        values.add(new Pair<>(TABLE_ZONA_COLLUMS[0],zona));
+        values.add(new Pair<>(TABLE_ZONA_COLLUMS[1],20));
+        values.add(new Pair<>(TABLE_ZONA_COLLUMS[2],"Z"+zona));
+        values.add(new Pair<>(TABLE_ZONA_COLLUMS[3],20));
+        values.add(new Pair<>(TABLE_ZONA_COLLUMS[4],20));
+        insertInDbTable(connection,TABLE_ZONA_NAME,values);
+    }
+
+    private static void insertSensores(String sensor) throws SQLException {
+        int id = 0;
+        int zona = 0;
+        switch (sensor) {
+            case "H1":
+                id=1;
+                zona=1;
+                break;
+            case "H2":
+                id=2;
+                zona=2;
+                break;
+            case "T1":
+                id=3;
+                zona=1;
+                break;
+            case "T2":
+                id=4;
+                zona=2;
+                break;
+            case "L1":
+                id=5;
+                zona=1;
+                break;
+            case "L2":
+                id=6;
+                zona=2;
+                break;
+        }
+        ArrayList<Pair> values = new ArrayList<>();
+        values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[0],id));
+        values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],sensor));
+        values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],"sensorType"));
+        values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[3],20));
+        values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[4],200));
+        values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[5],zona));
+        insertInDbTable(connection,TABLE_SENSOR_NAME,values);
+    }
+
     public static void createAllTablesDbCultura() throws SQLException {
         createTableDb(connection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
         createTableDb(connection, TABLE_CULTURA_NAME, TABLE_CULTURA);
@@ -32,6 +81,18 @@ public class CulturaDB {
         createTableDb(connection, TABLE_SENSOR_NAME, TABLE_SENSOR);
         createTableDb(connection, TABLE_ALERTA_NAME, TABLE_ALERTA);
         createTableDb(connection, TABLE_MEDICAO_NAME, TABLE_MEDICAO);
+
+        //Add Sensores and Zonas
+        insertZona(1);
+        insertZona(2);
+
+        insertSensores("H1");
+        insertSensores("H2");
+        insertSensores("T1");
+        insertSensores("T2");
+        insertSensores("L1");
+        insertSensores("L2");
+
     }
 
     public static void insertMedicao(String medicao) throws SQLException {
@@ -64,7 +125,6 @@ public class CulturaDB {
 
         }
             SqlController.insertInDbTable(connection,TABLE_MEDICAO_NAME,values);
-
     }
 
     public static String typeOfUser(Connection connection, int userID) throws SQLException {
@@ -369,10 +429,10 @@ public class CulturaDB {
         //selectElementFromDbTable(connection,"user",columns,"nickname","teste");
         //getElementFromDbTable(connection,"user",columns,"nickname","teste");
 
-       // createAllTablesDbCultura();
+        createAllTablesDbCultura();
 
-        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-        insertMedicao(document);
+      //  String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+       // insertMedicao(document);
 
         //SPCriar_Zona(connection,values,1);
         //SPAlterar_Zona(connection,columns,values,"IdZona","1");
