@@ -152,6 +152,20 @@ public class SqlController{
         return element;
     }
 
+    public static Object getElementFromDbTable(Connection connection, String tableName, String column, String param, String paramValue) throws SQLException {
+        String sql = "SELECT * FROM "+tableName+ " WHERE "+param +" = " +"\""+paramValue+"\"";
+
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+
+        String element = "";
+        while (rs.next()) {
+            element=rs.getString(column);
+        }
+
+        return element;
+    }
+
     public static void deleteFromDbTable(Connection connection,String table ,String param, String paramValue) throws SQLException {
         String sql = "DELETE FROM " + table+ " WHERE "+param +" = " +"\""+paramValue+"\"";
         executeSQL(connection , sql);

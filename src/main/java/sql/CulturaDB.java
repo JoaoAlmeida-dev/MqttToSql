@@ -41,11 +41,14 @@ public class CulturaDB {
             String[] datavalues = data.trim().split("=");
             switch (datavalues[0]) {
                 case ZONA: {
-                    //SqlController.selectElementFromDbTable(connection,SqlVariables.TABLE_ZONA_NAME,);
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1],datavalues[1]));
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1],
+                            (String)SqlController.getElementFromDbTable(connection,TABLE_ZONA_NAME,TABLE_ZONA_COLLUMS[0],
+                                    "Name",datavalues[1])));
                     break;
                 }case SENSOR: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2],datavalues[1]));
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2],
+                            (String)SqlController.getElementFromDbTable(connection,TABLE_SENSOR_NAME,TABLE_SENSOR_NAME_COLLUMS[0],
+                                    "Name",datavalues[1])));
                     break;
                 }case DATA: {
                     values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3],datavalues[1]));
@@ -366,9 +369,10 @@ public class CulturaDB {
         //selectElementFromDbTable(connection,"user",columns,"nickname","teste");
         //getElementFromDbTable(connection,"user",columns,"nickname","teste");
 
-        createAllTablesDbCultura();
-       // String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-       // insertMedicao(document);
+       // createAllTablesDbCultura();
+
+        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+        insertMedicao(document);
 
         //SPCriar_Zona(connection,values,1);
         //SPAlterar_Zona(connection,columns,values,"IdZona","1");
