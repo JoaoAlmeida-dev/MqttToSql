@@ -16,20 +16,10 @@ public class CulturaDB {
      */
     public static void main(String[] args) throws SQLException {
 
-        //Connection connection = connectDb(PATH_DB_USER);
-        //ArrayList<Pair> values = new ArrayList<>();
-        //values.add(new Pair<>("IdUtilizador", "INT"));
-        //values.add(new Pair<>("email", "teste@hotmail.com"));
-        //values.add(new Pair<>("password", "1234"));
-        // insertInDbTable(connection,"user",values);
-        //ArrayList<String> columns = new ArrayList<>();
-
-        // Utilizador
-        //values.add(new Pair<>("NomeInvestigador","Joaquim")); values.add(new Pair<>("EmailUtilizador","j@hotmail.com")); values.add(new Pair<>("TipoUtilizador","Adm")); values.add(new Pair<>("Password","aapl"));
-
-        //createAllTablesDbCultura();
-        // String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-        // insertMedicao(document);
+        dropAllTablesDbCultura();
+        createAllTablesDbCultura();
+         String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+         insertMedicao(document);
         /*
         String Sp = "CREATE PROCEDURE GetAllMedicoes()\n" +
                 "BEGIN\n" +
@@ -38,7 +28,7 @@ public class CulturaDB {
         executeSQL(connection,Sp);
         */
 
-        createSPCriar_Zona(connection);
+      //  createSPCriar_Zona(connection);
 
     }
 
@@ -61,54 +51,35 @@ public class CulturaDB {
             ArrayList<Pair> values = new ArrayList<>();
             values.add(new Pair<>(TABLE_ZONA_COLLUMS[0],zonaNumber));
             values.add(new Pair<>(TABLE_ZONA_COLLUMS[1],20));
-            values.add(new Pair<>(TABLE_ZONA_COLLUMS[2],"Z"+zonaNumber));
+            values.add(new Pair<>(TABLE_ZONA_COLLUMS[2],20));
             values.add(new Pair<>(TABLE_ZONA_COLLUMS[3],20));
-            values.add(new Pair<>(TABLE_ZONA_COLLUMS[4],20));
             insertInDbTable(connection,TABLE_ZONA_NAME,values);
         }
     }
 
     private static void insertSensores(String[] sensor) throws SQLException {
+        int id=1;
         for(String sensorName: sensor) {
-            int id = 0;
-            int zona = 0;
-            switch (sensorName) {
-                case "H1":
-                    id=1;
-                    zona=1;
-                    break;
-                case "H2":
-                    id=2;
-                    zona=2;
-                    break;
-                case "T1":
-                    id=3;
-                    zona=1;
-                    break;
-                case "T2":
-                    id=4;
-                    zona=2;
-                    break;
-                case "L1":
-                    id=5;
-                    zona=1;
-                    break;
-                case "L2":
-                    id=6;
-                    zona=2;
-                    break;
-                default:
-                    break;
-            }
             ArrayList<Pair> values = new ArrayList<>();
             values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[0],id));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],sensorName));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],"sensorType"));
+            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],sensorName.charAt(0)));
+            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],sensorName.charAt(1)));
             values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[3],20));
             values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[4],200));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[5],zona));
+            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[5],sensorName.charAt(1)));
             insertInDbTable(connection,TABLE_SENSOR_NAME,values);
+            id++;
         }
+    }
+
+    public static void dropAllTablesDbCultura() throws SQLException {
+        dropTableDb(connection,TABLE_MEDICAO_NAME);
+        dropTableDb(connection,TABLE_ALERTA_NAME);
+        dropTableDb(connection,TABLE_SENSOR_NAME);
+        dropTableDb(connection,TABLE_ZONA_NAME);
+        dropTableDb(connection,TABLE_PARAMETROCULTURA_NAME);
+        dropTableDb(connection,TABLE_CULTURA_NAME);
+        dropTableDb(connection,TABLE_UTILIZADOR_NAME);
     }
 
     public static void createAllTablesDbCultura() throws SQLException {
@@ -128,9 +99,9 @@ public class CulturaDB {
         insertSensores(sensores);
     }
 /*TODO verificar que medicao esta entre os valores do sensor
-    sacar os valores dos sensores da cloud
+    sacar os valores dos sensores da cloud(RAFAEL)
     roles de users pa cena dos privilegios
-    SP temos de muda pa mysql
+    SP temos de muda pa mysql(JOAO)
     */
     public static void insertMedicao(String medicao) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
@@ -139,14 +110,15 @@ public class CulturaDB {
             String[] datavalues = data.trim().split("=");
             switch (datavalues[0]) {
                 case ZONA: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1],
-                            (String)SqlController.getElementFromDbTable(connection,TABLE_ZONA_NAME,TABLE_ZONA_COLLUMS[0],
-                                    "Name",datavalues[1])));
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1],datavalues[1].charAt(1)));
                     break;
                 }case SENSOR: {
+                    ArrayList<Pair> paramValues = new ArrayList<>();
+                    paramValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],datavalues[1].charAt(0)));
+                    paramValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],datavalues[1].charAt(1)));
                     values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2],
-                            (String)SqlController.getElementFromDbTable(connection,TABLE_SENSOR_NAME,TABLE_SENSOR_NAME_COLLUMS[0],
-                                    "Name",datavalues[1])));
+                            (String)SqlController.getElementsFromDbTable(connection,TABLE_SENSOR_NAME,TABLE_SENSOR_NAME_COLLUMS[0],
+                                    paramValues)));
                     break;
                 }case DATA: {
                     values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3],datavalues[1]));

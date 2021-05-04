@@ -37,14 +37,14 @@ public class SqlVariables {
                     ""};
 
     public static final String TABLE_SENSOR_NAME = "sensor";
-    public static final String[] TABLE_SENSOR_NAME_COLLUMS = {"IdSensor", "Name", "Tipo", "LimiteInferior", "LimiteSuperior", "IdZona",};
+    public static final String[] TABLE_SENSOR_NAME_COLLUMS = {"IdSensor", "Tipo", "NumeroTipo" ,"LimiteInferior", "LimiteSuperior", "IdZona",};
 
     public static final String[] TABLE_SENSOR = {
             TABLE_SENSOR_NAME_COLLUMS[0] + " INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE", //IdSensor
-            TABLE_SENSOR_NAME_COLLUMS[1] + " VARCHAR(100) NOT NULL",       //Name
-            TABLE_SENSOR_NAME_COLLUMS[2] + " VARCHAR(50) NOT NULL",       //Tipo
-            TABLE_SENSOR_NAME_COLLUMS[3] + " INTEGER NOT NULL",    //LimiteInferior
-            TABLE_SENSOR_NAME_COLLUMS[4] + " INTEGER NOT NULL",    //LimiteSuperior
+            TABLE_SENSOR_NAME_COLLUMS[1] + " VARCHAR(1) NOT NULL",       //Tipo
+            TABLE_SENSOR_NAME_COLLUMS[2] + " INTEGER NOT NULL",       //NumeroTipo
+            TABLE_SENSOR_NAME_COLLUMS[3] + " DECIMAL(5,2) NOT NULL",    //LimiteInferior
+            TABLE_SENSOR_NAME_COLLUMS[4] + " DECIMAL(5,2) NOT NULL",    //LimiteSuperior
             TABLE_SENSOR_NAME_COLLUMS[5] + " INTEGER NOT NULL",    //IdZona
             "CONSTRAINT FK_IdZona FOREIGN KEY (" + TABLE_SENSOR_NAME_COLLUMS[5] + ") REFERENCES zona(" + TABLE_SENSOR_NAME_COLLUMS[5] + ")" //IdZona
     };
@@ -67,13 +67,12 @@ public class SqlVariables {
      * [3]Humidade
      * [4]Luz
      */
-    public static final String[] TABLE_ZONA_COLLUMS = {"IdZona", "Temperatura", "Name", "Humidade", "Luz"};
+    public static final String[] TABLE_ZONA_COLLUMS = {"IdZona", "Temperatura", "Humidade", "Luz"};
     public static final String[] TABLE_ZONA = {
             TABLE_ZONA_COLLUMS[0] + " INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE",
-            TABLE_ZONA_COLLUMS[1] + " NUMERIC NOT NULL",
-            TABLE_ZONA_COLLUMS[2] + " VARCHAR(100) NOT NULL",
-            TABLE_ZONA_COLLUMS[3] + " NUMERIC NOT NULL",
-            TABLE_ZONA_COLLUMS[4] + " NUMERIC NOT NULL"
+            TABLE_ZONA_COLLUMS[1] + " DECIMAL(5,2) NOT NULL",
+            TABLE_ZONA_COLLUMS[2] + " DECIMAL(5,2) NOT NULL",
+            TABLE_ZONA_COLLUMS[3] + " DECIMAL(5,2) NOT NULL"
     };
     public static final String TABLE_CULTURA_NAME = "cultura";
     public static final String TABLE_ALERTA_NAME = "alerta";

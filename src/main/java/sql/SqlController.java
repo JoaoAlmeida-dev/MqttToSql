@@ -76,6 +76,11 @@ public class SqlController{
         executeSQL(connection , sql);
     }
 
+    public static void dropTableDb(Connection connection, String tableName) throws SQLException {
+        String sqlDrop = "DROP TABLE IF EXISTS " +  tableName;
+        executeSQL(connection,sqlDrop);
+    }
+
 
 
     public static void executeSqlDb(Connection connection, String sql) throws SQLException {
@@ -154,6 +159,26 @@ public class SqlController{
 
     public static Object getElementFromDbTable(Connection connection, String tableName, String column, String param, String paramValue) throws SQLException {
         String sql = "SELECT * FROM "+tableName+ " WHERE "+param +" = " +"\""+paramValue+"\"";
+
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+
+        String element = "";
+        while (rs.next()) {
+            element=rs.getString(column);
+        }
+
+        return element;
+    }
+
+    public static Object getElementsFromDbTable(Connection connection, String tableName, String column, ArrayList<Pair> paramsValues) throws SQLException {
+        String sql = "SELECT * FROM "+tableName+ " WHERE ";
+
+        for(Pair paramValue : paramsValues){
+            sql+=paramValue.getA() +" = "+"\""+paramValue.getB()+"\"" +" AND ";
+        }
+
+        sql = sql.substring(0, sql.length()-5);
 
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(sql);
