@@ -60,6 +60,13 @@ public class SqlVariables {
     };
 
     public static final String TABLE_ZONA_NAME = "zona";
+    /**
+     * [0]IdZona
+     * [1]Temperatura
+     * [2]Name
+     * [3]Humidade
+     * [4]Luz
+     */
     public static final String[] TABLE_ZONA_COLLUMS = {"IdZona", "Temperatura", "Name", "Humidade", "Luz"};
     public static final String[] TABLE_ZONA = {
             TABLE_ZONA_COLLUMS[0] + " INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE",
