@@ -54,9 +54,9 @@ public class SqlVariables {
     public static final String[] TABLE_UTILIZADOR = {
             TABLE_UTILIZADOR_COLLUMS[0] + " INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE",  //IdUtilizador
             TABLE_UTILIZADOR_COLLUMS[1] + " VARCHAR(100) NOT NULL",                                  //NomeInvestigador
-            TABLE_UTILIZADOR_COLLUMS[2] + " VARCHAR(100) NOT NULL",                                   //EmailUtilizador
+            TABLE_UTILIZADOR_COLLUMS[2] + " VARCHAR(100) NOT NULL",                                  //EmailUtilizador
             TABLE_UTILIZADOR_COLLUMS[3] + " VARCHAR(100) NOT NULL"                                   //TipoUtilizador
-        //    "\"" + TABLE_UTILIZADOR_COLLUMS[4] + "\" TEXT NOT NULL"                                    //Password
+        //    "\"" + TABLE_UTILIZADOR_COLLUMS[4] + "\" TEXT NOT NULL"                                //Password
     };
 
     public static final String TABLE_ZONA_NAME = "zona";

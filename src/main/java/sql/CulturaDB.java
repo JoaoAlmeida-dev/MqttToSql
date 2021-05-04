@@ -11,6 +11,136 @@ import static sql.SqlVariables.*;
 
 public class CulturaDB {
 
+    /**
+     * For testing purposes only
+     */
+    public static void main(String[] args) throws SQLException {
+
+        //Connection connection = connectDb(PATH_DB_USER);
+        ArrayList<Pair> values = new ArrayList<>();
+        values.add(new Pair<>("IdUtilizador", "INT"));
+        values.add(new Pair<>("email", "teste@hotmail.com"));
+        values.add(new Pair<>("password", "1234"));
+        // insertInDbTable(connection,"user",values);
+        ArrayList<String> columns = new ArrayList<>();
+
+        //columns.add("id"); columns.add("nickname"); columns.add("email"); columns.add("password");
+
+        // Zona
+        // values.add(new Pair<>("Temperatura","12")); values.add(new Pair<>("Humidade","60")); values.add(new Pair<>("Luz","67"));
+        // Medicao
+        // values.add(new Pair<>("IdZona","12")); values.add(new Pair<>("IdSensor","60")); values.add(new Pair<>("Hora","current_time")); values.add(new Pair<>("Leitura","67.5"));
+
+        // Utilizador
+        values.add(new Pair<>("NomeInvestigador","Joaquim")); values.add(new Pair<>("EmailUtilizador","j@hotmail.com")); values.add(new Pair<>("TipoUtilizador","Adm")); values.add(new Pair<>("Password","aapl"));
+
+        // Sensor
+       // values.add(new Pair<>("Tipo","T")); values.add(new Pair<>("LimiteInferior","27.5")); values.add(new Pair<>("LimiteSuperior","73.5")); values.add(new Pair<>("IdZona","1"));
+
+        // Cultura
+        //values.add(new Pair<>("NomeCultura","C1")); values.add(new Pair<>("IdUtilizador","1")); values.add(new Pair<>("Estado","0"));
+
+
+        // ParametroCultura
+       /* values.add(new Pair<>("IdCultura","1"));
+        values.add(new Pair<>("MinHumidade","27.5"));
+        values.add(new Pair<>("MaxHumidade","73.5"));
+        values.add(new Pair<>("MinTemperatura","27.5"));
+        values.add(new Pair<>("MaxTemperatura","73.5"));
+        values.add(new Pair<>("MinLuz","27.5"));
+        values.add(new Pair<>("MaxLuz","73.5"));
+        values.add(new Pair<>("DangerZoneMinHumidade","27.5"));
+        values.add(new Pair<>("DangerZoneMaxHumidade","73.5"));
+        values.add(new Pair<>("DangerZoneMinTemeperatura","27.5"));
+        values.add(new Pair<>("DangerZoneMaxTemperatura","73.5"));
+        values.add(new Pair<>("DangerZoneMinLuz","27.5"));
+        values.add(new Pair<>("DangerZoneMaxLuz","73.5"));
+*/
+        // Alerta
+       /* values.add(new Pair<>("IdZona","1"));
+        values.add(new Pair<>("IdSensor","1"));
+        values.add(new Pair<>("Hora","current_time"));
+        values.add(new Pair<>("Leitura","27.5"));
+        values.add(new Pair<>("TipoAlerta","T"));
+        values.add(new Pair<>("Cultura","C1"));
+        values.add(new Pair<>("Mensagem","Cultura Ok"));
+        values.add(new Pair<>("IdUtilizador","1"));
+        values.add(new Pair<>("HoraEscrita","current_time"));
+        values.add(new Pair<>("NivelAlerta","BOM"));
+        values.add(new Pair<>("IdParametroCultura","1"));
+*/
+
+        // Zona
+        //columns.add("Temperatura"); columns.add("Humidade"); columns.add("Luz");
+        // Medicao
+        //columns.add("IdZona"); columns.add("IdSensor"); columns.add("Hora"); columns.add("Leitura");
+
+        // Utilizador
+        //columns.add("NomeInvestigador"); columns.add("EmailUtilizador"); columns.add("TipoUtilizador"); columns.add("Password");
+
+        // Sensor
+        //columns.add("Tipo"); columns.add("LimiteInferior"); columns.add("LimiteSuperior"); columns.add("IdZona");
+
+        // Cultura
+        //columns.add("NomeCultura");  columns.add("IdUtilizador");  columns.add("Estado");
+
+        // ParametroCultura
+       /* columns.add("IdCultura");
+        columns.add("MinHumidade");
+        columns.add("MaxHumidade");
+        columns.add("MinTemperatura");
+        columns.add("MaxTemperatura");
+        columns.add("MinLuz");
+        columns.add("MaxLuz");
+        columns.add("DangerZoneMinHumidade");
+        columns.add("DangerZoneMaxHumidade");
+        columns.add("DangerZoneMinTemeperatura");
+        columns.add("DangerZoneMaxTemperatura");
+        columns.add("DangerZoneMinLuz");
+        columns.add("DangerZoneMaxLuz");
+*/
+        // Alerta
+       /* columns.add("IdZona");
+        columns.add("IdSensor");
+        columns.add("Hora");
+        columns.add("Leitura");
+        columns.add("TipoAlerta");
+        columns.add("Cultura");
+        columns.add("Mensagem");
+        columns.add("IdUtilizador");
+        columns.add("HoraEscrita");
+        columns.add("NivelAlerta");
+        columns.add("IdParametroCultura");
+*/
+
+        //selectAllFromDbTable(connection,"user", columns);
+        //selectElementFromDbTable(connection,"user",columns,"nickname","teste");
+        //getElementFromDbTable(connection,"user",columns,"nickname","teste");
+
+        //createAllTablesDbCultura();
+        // String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+        // insertMedicao(document);
+        String Sp = "CREATE PROCEDURE GetAllMedicoes()\n" +
+                "BEGIN\n" +
+                "SELECT * FROM medicao;\n" +
+                "END";
+        executeSQL(connection,Sp);
+
+        //SPCriar_Zona(connection,values,1);
+        //SPAlterar_Zona(connection,columns,values,"IdZona","1");
+        //SPEliminar_Zona(connection,"IdZona","4");
+        //SPCriar_User(connection,values,1);
+        //SPEliminar_User(connection,1);
+
+        //System.out.println(typeOfUser(connection,1));
+        // System.out.println("values");
+        //System.out.println("columns");
+        //deleteFromDbTable(connection,"user","nickname","teste");
+        //updateFromDbTable(connection,"user",values,"email","teste");
+        //connection.close();
+    }
+
+
     private static final String ZONA = "Zona";
     private static final String SENSOR = "Sensor";
     private static final String DATA = "Data";
@@ -95,7 +225,11 @@ public class CulturaDB {
         String[] sensores = {"H1","H2","T1","T2","L1","L2"};
         insertSensores(sensores);
     }
-
+/*TODO verificar que medicao esta entre os valores do sensor
+    sacar os valores dos sensores da cloud
+    roles de users pa cena dos privilegios
+    SP temos de muda pa mysql
+    */
     public static void insertMedicao(String medicao) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
         String[] splitData = medicao.split(",");
@@ -126,6 +260,7 @@ public class CulturaDB {
 
         }
             SqlController.insertInDbTable(connection,TABLE_MEDICAO_NAME,values);
+
     }
 
     public static String typeOfUser(Connection connection, int userID) throws SQLException {
@@ -141,7 +276,26 @@ public class CulturaDB {
     public static void SPCriar_Zona(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
         if(typeOfUser(connection,userID).equals(USER_ADMIN)){
             insertInDbTable(connection, TABLE_ZONA_NAME, values);
+
         }
+        /*
+        String procedureName = "Criar_Zona";
+
+        String columnsString ="";
+        String valuesString ="";
+        for(Pair value: values){
+            columnsString+=value.getA()+",";
+            valuesString+="\""+ value.getB()+"\",";
+        }
+
+        columnsString = columnsString.substring(0, columnsString.length()-1);
+        valuesString = valuesString.substring(0, valuesString.length()-1);
+
+        String statements  ="INSERT INTO "+ TABLE_ZONA_NAME+" ("+columnsString+") VALUES ("+valuesString+")";
+
+        String[] args = {} ;
+        createStoredProcedure(connection, , );*/
+
     }
 
     public static void SPAlterar_Zona(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
@@ -293,159 +447,4 @@ public class CulturaDB {
 
 
 
-    /**
-     * For testing purposes only
-     */
-    public static void main(String[] args) throws SQLException {
-
-        //Connection connection = connectDb(PATH_DB_USER);
-        ArrayList<Pair> values = new ArrayList<>();
-        values.add(new Pair<>("IdUtilizador", "INT"));
-        values.add(new Pair<>("email", "teste@hotmail.com"));
-        values.add(new Pair<>("password", "1234"));
-        // insertInDbTable(connection,"user",values);
-        ArrayList<String> columns = new ArrayList<>();
-
-        //columns.add("id");
-        //columns.add("nickname");
-        //columns.add("email");
-        //columns.add("password");
-
-        // Zona
-        /*values.add(new Pair<>("Temperatura","12"));
-        values.add(new Pair<>("Humidade","60"));
-        values.add(new Pair<>("Luz","67"));
-*/
-        // Medicao
-       /* values.add(new Pair<>("IdZona","12"));
-        values.add(new Pair<>("IdSensor","60"));
-        values.add(new Pair<>("Hora","current_time"));
-        values.add(new Pair<>("Leitura","67.5"));
-*/
-        // Utilizador
-        values.add(new Pair<>("NomeInvestigador","Joaquim"));
-        values.add(new Pair<>("EmailUtilizador","j@hotmail.com"));
-        values.add(new Pair<>("TipoUtilizador","Adm"));
-        values.add(new Pair<>("Password","aapl"));
-
-        // Sensor
-       /* values.add(new Pair<>("Tipo","T"));
-        values.add(new Pair<>("LimiteInferior","27.5"));
-        values.add(new Pair<>("LimiteSuperior","73.5"));
-        values.add(new Pair<>("IdZona","1"));
-*/
-        // Cultura
-        /*values.add(new Pair<>("NomeCultura","C1"));
-        values.add(new Pair<>("IdUtilizador","1"));
-        values.add(new Pair<>("Estado","0"));
-         */
-
-        // ParametroCultura
-       /* values.add(new Pair<>("IdCultura","1"));
-        values.add(new Pair<>("MinHumidade","27.5"));
-        values.add(new Pair<>("MaxHumidade","73.5"));
-        values.add(new Pair<>("MinTemperatura","27.5"));
-        values.add(new Pair<>("MaxTemperatura","73.5"));
-        values.add(new Pair<>("MinLuz","27.5"));
-        values.add(new Pair<>("MaxLuz","73.5"));
-        values.add(new Pair<>("DangerZoneMinHumidade","27.5"));
-        values.add(new Pair<>("DangerZoneMaxHumidade","73.5"));
-        values.add(new Pair<>("DangerZoneMinTemeperatura","27.5"));
-        values.add(new Pair<>("DangerZoneMaxTemperatura","73.5"));
-        values.add(new Pair<>("DangerZoneMinLuz","27.5"));
-        values.add(new Pair<>("DangerZoneMaxLuz","73.5"));
-*/
-        // Alerta
-       /* values.add(new Pair<>("IdZona","1"));
-        values.add(new Pair<>("IdSensor","1"));
-        values.add(new Pair<>("Hora","current_time"));
-        values.add(new Pair<>("Leitura","27.5"));
-        values.add(new Pair<>("TipoAlerta","T"));
-        values.add(new Pair<>("Cultura","C1"));
-        values.add(new Pair<>("Mensagem","Cultura Ok"));
-        values.add(new Pair<>("IdUtilizador","1"));
-        values.add(new Pair<>("HoraEscrita","current_time"));
-        values.add(new Pair<>("NivelAlerta","BOM"));
-        values.add(new Pair<>("IdParametroCultura","1"));
-*/
-
-        // Zona
-        /*columns.add("Temperatura");
-        columns.add("Humidade");
-        columns.add("Luz");
-*/
-        // Medicao
-        /*columns.add("IdZona");
-        columns.add("IdSensor");
-        columns.add("Hora");
-        columns.add("Leitura");
-      */
-        // Utilizador
-        /*columns.add("NomeInvestigador");
-        columns.add("EmailUtilizador");
-        columns.add("TipoUtilizador");
-        columns.add("Password");
-*/
-        // Sensor
-        /*columns.add("Tipo");
-        columns.add("LimiteInferior");
-        columns.add("LimiteSuperior");
-        columns.add("IdZona");
-*/
-        // Cultura
-        /*columns.add("NomeCultura");
-        columns.add("IdUtilizador");
-        columns.add("Estado");
-*/
-        // ParametroCultura
-       /* columns.add("IdCultura");
-        columns.add("MinHumidade");
-        columns.add("MaxHumidade");
-        columns.add("MinTemperatura");
-        columns.add("MaxTemperatura");
-        columns.add("MinLuz");
-        columns.add("MaxLuz");
-        columns.add("DangerZoneMinHumidade");
-        columns.add("DangerZoneMaxHumidade");
-        columns.add("DangerZoneMinTemeperatura");
-        columns.add("DangerZoneMaxTemperatura");
-        columns.add("DangerZoneMinLuz");
-        columns.add("DangerZoneMaxLuz");
-*/
-        // Alerta
-       /* columns.add("IdZona");
-        columns.add("IdSensor");
-        columns.add("Hora");
-        columns.add("Leitura");
-        columns.add("TipoAlerta");
-        columns.add("Cultura");
-        columns.add("Mensagem");
-        columns.add("IdUtilizador");
-        columns.add("HoraEscrita");
-        columns.add("NivelAlerta");
-        columns.add("IdParametroCultura");
-*/
-
-        //selectAllFromDbTable(connection,"user", columns);
-        //selectElementFromDbTable(connection,"user",columns,"nickname","teste");
-        //getElementFromDbTable(connection,"user",columns,"nickname","teste");
-
-        createAllTablesDbCultura();
-
-      //  String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-       // insertMedicao(document);
-
-        //SPCriar_Zona(connection,values,1);
-        //SPAlterar_Zona(connection,columns,values,"IdZona","1");
-        //SPEliminar_Zona(connection,"IdZona","4");
-        //SPCriar_User(connection,values,1);
-        //SPEliminar_User(connection,1);
-
-        //System.out.println(typeOfUser(connection,1));
-        // System.out.println("values");
-        //System.out.println("columns");
-        //deleteFromDbTable(connection,"user","nickname","teste");
-        //updateFromDbTable(connection,"user",values,"email","teste");
-        //connection.close();
-    }
 }

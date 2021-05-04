@@ -182,6 +182,32 @@ public class SqlController{
 
         executeSQL(connection , sql);
     }
+    /**
+     *  IN input parameter
+     *  OUT parameter that is gonna be used after this is done
+     *  INOUT parameter that can be changed inside the procedure
+     *
+     * @param Args List of args example:         IN title VARCHAR(45), OUT totalValue DOUBLE, INOUT highPrice DOUBLE
+     *
+     * */
+    public static void createStoredProcedure(Connection connection,String procedureName, String statements, String[] Args) throws SQLException {
+        String sqlDrop = "DROP PROCEDURE IF EXISTS " +  procedureName;
+
+        String sql = "DELIMITER //" +
+                "CREATE PROCEDURE " + procedureName + "(";
+        for (String arg : Args) {
+            sql += arg + ",";
+        }
+        sql.substring(0,sql.length()-1);
+        sql +=")\n" +
+                "BEGIN\n" +
+                statements+";\n"+
+                "END //" +
+                "DELIMITER ;";
+
+        executeSQL(connection,sqlDrop);
+        executeSQL(connection,sql);
+    }
 
     public static void executeSQL(Connection connection, String stattement) throws SQLException {
         Statement statement = connection.createStatement();
