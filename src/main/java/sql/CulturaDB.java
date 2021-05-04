@@ -5,6 +5,7 @@ import util.Pair;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static sql.SqlController.*;
 import static sql.SqlVariables.*;
@@ -15,11 +16,13 @@ public class CulturaDB {
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
-
+        /*
         dropAllTablesDbCultura();
         createAllTablesDbCultura();
-         String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-         insertMedicao(document);
+        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+        insertMedicao(document);
+         */
+
         /*
         String Sp = "CREATE PROCEDURE GetAllMedicoes()\n" +
                 "BEGIN\n" +
@@ -27,6 +30,9 @@ public class CulturaDB {
                 "END";
         executeSQL(connection,Sp);
         */
+
+        changeLocalOrCloud(true);
+        selectAllFromDbTable(connection,TABLE_SENSOR_NAME,new ArrayList<String>(Arrays.asList(TABLE_SENSOR_NAME_COLLUMS[1])));
 
       //  createSPCriar_Zona(connection);
 
@@ -40,9 +46,26 @@ public class CulturaDB {
     private static Connection connection;
     static {
         try {
-            connection = connectDb(PATH_DB_USER);
+            connection = connectDb(PATH_DB_USER,false);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }
+    }
+
+    private static void changeLocalOrCloud(boolean isItCloud){
+        if(isItCloud) {
+            try {
+                connection = connectDb(CLOUD_PATH_DB_USER,true);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        else {
+            try {
+                connection = connectDb(PATH_DB_USER,false);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 

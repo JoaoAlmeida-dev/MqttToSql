@@ -1,9 +1,15 @@
 package sql;
 
 public class SqlVariables {
+    //local
     public static final String PATH_DB_USER = "javabase";
     public static final String USERNAME = "sammy";
     public static final String PASSWORD = "password";
+
+    //cloud
+    public static final String CLOUD_PATH_DB_USER = "sid2021";
+    public static final String CLOUD_USERNAME = "aluno";
+    public static final String CLOUD_PASSWORD = "aluno";
 
     public static final String TABLE_MEDICAO_NAME       = "medicao";
     public static final String[] TABLE_MEDICAO_COLLUMS  = {"IdMedicao", "IdZona", "IdSensor", "Hora", "Leitura"};

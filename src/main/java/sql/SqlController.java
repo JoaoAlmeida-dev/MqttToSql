@@ -14,16 +14,22 @@ public class SqlController{
     /**
      * ATTENTION: important to close the connection after using the db
      * */
-    public static Connection connectDb(String pathToDb) throws SQLException {
+    public static Connection connectDb(String pathToDb,boolean isItCloud) throws SQLException {
         // SQLite connection string
         String url = "jdbc:mysql://localhost:3306/" + pathToDb;
-        Connection connection = DriverManager.getConnection(url, SqlVariables.USERNAME, SqlVariables.PASSWORD);
-        return connection;
+        String userName = SqlVariables.USERNAME;
+        String passWord= SqlVariables.PASSWORD;
+        if(isItCloud){
+            url = "jdbc:mysql://194.210.86.10:3306/" + pathToDb;
+            userName = SqlVariables.CLOUD_USERNAME;
+            passWord= SqlVariables.CLOUD_PASSWORD;
+        }
+        return DriverManager.getConnection(url, userName, passWord);
     }
 
     public static void createDb(String fileName) {
 
-        try (Connection conn = connectDb(fileName)) {
+        try (Connection conn = connectDb(fileName,false)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
                 System.out.println("The driver name is " + meta.getDriverName());
