@@ -16,9 +16,10 @@ public class CulturaDB {
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
-        /*
+
         dropAllTablesDbCultura();
         createAllTablesDbCultura();
+        /*
         String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
         insertMedicao(document);
          */
@@ -31,8 +32,20 @@ public class CulturaDB {
         executeSQL(connection,Sp);
         */
 
+        /*
         changeLocalOrCloud(true);
-        selectAllFromDbTable(connection,TABLE_SENSOR_NAME,new ArrayList<String>(Arrays.asList(TABLE_SENSOR_NAME_COLLUMS[1])));
+        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(connection,TABLE_ZONA_NAME,new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
+        for(ArrayList<Pair> values : zonaCloudValues) {
+            for (Pair v: values) {
+                System.out.println("[" + v.getA() + ":" + v.getB() + "]");
+            }
+        }
+
+         */
+
+
+       // System.out.println(zonaCloudValues.get(1).get(0).getA());
+        // selectAllFromDbTable(connection,TABLE_ZONA_NAME,new ArrayList<String>(Arrays.asList(TABLE_ZONA_COLLUMS)));
 
       //  createSPCriar_Zona(connection);
 
@@ -43,6 +56,7 @@ public class CulturaDB {
     private static final String SENSOR = "Sensor";
     private static final String DATA = "Data";
     private static final String MEDICAO = "Medicao";
+    private static final String[] sensorCloudColumns= {"idsensor","tipo","limiteinferior","limitesuperior","idzona"};
     private static Connection connection;
     static {
         try {
@@ -69,29 +83,55 @@ public class CulturaDB {
         }
     }
 
-    private static void insertZona(int[] zona) throws SQLException {
-        for(int zonaNumber: zona) {
-            ArrayList<Pair> values = new ArrayList<>();
-            values.add(new Pair<>(TABLE_ZONA_COLLUMS[0],zonaNumber));
-            values.add(new Pair<>(TABLE_ZONA_COLLUMS[1],20));
-            values.add(new Pair<>(TABLE_ZONA_COLLUMS[2],20));
-            values.add(new Pair<>(TABLE_ZONA_COLLUMS[3],20));
-            insertInDbTable(connection,TABLE_ZONA_NAME,values);
+
+    private static void insertZona() throws SQLException {
+        changeLocalOrCloud(true);
+        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(connection,TABLE_ZONA_NAME,new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
+        changeLocalOrCloud(false);
+
+        ArrayList<Pair> zonaLocalValues = new ArrayList<>();
+        for(ArrayList<Pair> zonaValues: zonaCloudValues) {
+            for(Pair zonaValue : zonaValues) {
+                if(zonaValue.getA().toString().equals("IdZona"))
+                    zonaLocalValues.add(new Pair<>(zonaValue.getA(),Integer.parseInt(zonaValue.getB().toString())));
+                else
+                    zonaLocalValues.add(new Pair<>(zonaValue.getA(),Double.parseDouble(zonaValue.getB().toString())));
+            }
+            insertInDbTable(connection,TABLE_ZONA_NAME,zonaLocalValues);
+            zonaLocalValues = new ArrayList<>();
         }
     }
 
-    private static void insertSensores(String[] sensor) throws SQLException {
-        int id=1;
-        for(String sensorName: sensor) {
-            ArrayList<Pair> values = new ArrayList<>();
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[0],id));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],sensorName.charAt(0)));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],sensorName.charAt(1)));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[3],20));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[4],200));
-            values.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[5],sensorName.charAt(1)));
-            insertInDbTable(connection,TABLE_SENSOR_NAME,values);
-            id++;
+    private static void insertSensores() throws SQLException {
+        changeLocalOrCloud(true);
+        ArrayList<ArrayList<Pair>> sensorCloudValues = getAllFromDbTable(connection,TABLE_SENSOR_NAME,new ArrayList<>(Arrays.asList(sensorCloudColumns)));
+        changeLocalOrCloud(false);
+
+        ArrayList<Pair> sensorLocalValues = new ArrayList<>();
+        for(ArrayList<Pair> sensorValues: sensorCloudValues) {
+            for(Pair sensorValue: sensorValues) {
+                switch (sensorValue.getA().toString()) {
+                    case "idsensor":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],Integer.parseInt(sensorValue.getB().toString())));
+                        break;
+                    case "tipo":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],sensorValue.getB()));
+                        break;
+                    case "limiteinferior":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[3],Double.parseDouble(sensorValue.getB().toString())));
+                        break;
+                    case "limitesuperior":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[4],Double.parseDouble(sensorValue.getB().toString())));
+                        break;
+                    case "idzona":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[5],Integer.parseInt(sensorValue.getB().toString())));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            insertInDbTable(connection,TABLE_SENSOR_NAME,sensorLocalValues);
+            sensorLocalValues = new ArrayList<>();
         }
     }
 
@@ -115,14 +155,10 @@ public class CulturaDB {
         createTableDb(connection, TABLE_MEDICAO_NAME, TABLE_MEDICAO);
 
         //Add Sensores and Zonas
-        int[] zonas = {1,2};
-        insertZona(zonas);
-
-        String[] sensores = {"H1","H2","T1","T2","L1","L2"};
-        insertSensores(sensores);
+        insertZona();
+        insertSensores();
     }
 /*TODO verificar que medicao esta entre os valores do sensor
-    sacar os valores dos sensores da cloud(RAFAEL)
     roles de users pa cena dos privilegios
     SP temos de muda pa mysql(JOAO)
     */

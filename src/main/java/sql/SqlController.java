@@ -128,7 +128,36 @@ public class SqlController{
                 System.out.println(rs.getString(column));
             }
         }
+    }
 
+    public static ArrayList<ArrayList<Pair>> getAllFromDbTable(Connection connection, String tableName, ArrayList<String> columns) throws SQLException {
+        ArrayList<Pair> allEntrylist = new ArrayList<>();
+
+        String sql = "SELECT * FROM "+tableName;
+        ResultSet rs = executeQuerry(connection, sql);
+
+        // loop through the result set
+        while (rs.next()) {
+            for (String column : columns) {
+                allEntrylist.add(new Pair<>(column,rs.getString(column)));
+            }
+        }
+
+        ArrayList<ArrayList<Pair>> entriesList = new ArrayList<>();
+        String firstColumn = "";
+        ArrayList<Pair> entryValues = new ArrayList<>();
+        for (Pair entryValue : allEntrylist) {
+            if(entryValue.getA().toString().equals(firstColumn)) {
+                entriesList.add(entryValues);
+                entryValues = new ArrayList<>();
+            }
+
+            if(entryValue.toString().equals(allEntrylist.get(0).toString())) firstColumn = entryValue.getA().toString();
+
+            entryValues.add(new Pair<>(entryValue.getA(),entryValue.getB()));
+        }
+        entriesList.add(entryValues);
+        return entriesList;
     }
 
     private static ResultSet executeQuerry(Connection connection, String sql) throws SQLException {

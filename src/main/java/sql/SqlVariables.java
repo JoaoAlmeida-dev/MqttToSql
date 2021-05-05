@@ -47,11 +47,11 @@ public class SqlVariables {
 
     public static final String[] TABLE_SENSOR = {
             TABLE_SENSOR_NAME_COLLUMS[0] + " INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE", //IdSensor
-            TABLE_SENSOR_NAME_COLLUMS[1] + " VARCHAR(1) NOT NULL",       //Tipo
+            TABLE_SENSOR_NAME_COLLUMS[1] + " VARCHAR(1) DEFAULT '' NOT NULL",       //Tipo
             TABLE_SENSOR_NAME_COLLUMS[2] + " INTEGER NOT NULL",       //NumeroTipo
-            TABLE_SENSOR_NAME_COLLUMS[3] + " DECIMAL(5,2) NOT NULL",    //LimiteInferior
-            TABLE_SENSOR_NAME_COLLUMS[4] + " DECIMAL(5,2) NOT NULL",    //LimiteSuperior
-            TABLE_SENSOR_NAME_COLLUMS[5] + " INTEGER NOT NULL",    //IdZona
+            TABLE_SENSOR_NAME_COLLUMS[3] + " DECIMAL(5,2) DEFAULT '0' NOT NULL",    //LimiteInferior
+            TABLE_SENSOR_NAME_COLLUMS[4] + " DECIMAL(5,2) DEFAULT '0' NOT NULL",    //LimiteSuperior
+            TABLE_SENSOR_NAME_COLLUMS[5] + " INTEGER DEFAULT '1' NOT NULL",    //IdZona
             "CONSTRAINT FK_IdZona FOREIGN KEY (" + TABLE_SENSOR_NAME_COLLUMS[5] + ") REFERENCES zona(" + TABLE_SENSOR_NAME_COLLUMS[5] + ")" //IdZona
     };
     //tablename:utilizador
