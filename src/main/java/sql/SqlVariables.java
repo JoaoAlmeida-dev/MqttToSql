@@ -2,12 +2,21 @@ package sql;
 
 public class SqlVariables {
     //local
-    public static final String PATH_DB_USER = "culturamysql2";
-    public static final String USERNAME = "aluno@hotmail.com";
-    public static final String PASSWORD = "aluno";
+    /**
+     * Create a user in phpMyAdmin with these credentials in order to use this program on windows
+     *
+     *
+     */
+    public static final String LOCAL_PATH_MYSQL= "jdbc:mysql://localhost:3306/";
+    public static final String DB_NAME = "culturamysql";
+    public static final String LOCAL_PATH_DB= LOCAL_PATH_MYSQL+DB_NAME;
+    public static final String USERNAME = "mqttreader";
+    public static final String PASSWORD = "dHbK5ddPuOLi8f(i";
+
 
     //cloud
-    public static final String CLOUD_PATH_DB_USER = "sid2021";
+    public static final String CLOUD_DB_NAME = "sid2021";
+    public static final String CLOUD_PATH_DB = "jdbc:mysql://194.210.86.10:3306/"+CLOUD_DB_NAME;
     public static final String CLOUD_USERNAME = "aluno";
     public static final String CLOUD_PASSWORD = "aluno";
 

@@ -2,12 +2,11 @@ package mqtt;
 
 import org.eclipse.paho.client.mqttv3.*;
 import sql.CulturaDB;
-import sql.SqlController;
-import sql.SqlVariables;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static mqtt.GeneralMqttVariables.*;
 
@@ -15,18 +14,21 @@ public class MQTTReader implements MqttCallback{
 
     MqttClient sampleClient;
     MqttConnectOptions connOpts;
+    Connection connection;
 
-    public MQTTReader(String broker, String clientID, MqttClientPersistence persistence) throws MqttException {
+    public MQTTReader(String broker, String clientID, MqttClientPersistence persistence,Connection connection) throws MqttException {
         sampleClient = new MqttClient(broker, clientID, persistence);
         connOpts = new MqttConnectOptions();
         connOpts.setAutomaticReconnect(true);
         connOpts.setCleanSession(true);
         connOpts.setConnectionTimeout(10);
+        this.connection = connection;
     }
 
     public static void main(String[] args) {
         try {
-            MQTTReader reader = new MQTTReader(BROKER, CLIENT_ID, PERSISTENCE);
+            Connection connection =CulturaDB.getLocalConnection();
+            MQTTReader reader = new MQTTReader(BROKER, CLIENT_ID, PERSISTENCE,connection);
             reader.connect();
             reader.subscribe();
 
@@ -39,6 +41,8 @@ public class MQTTReader implements MqttCallback{
             System.out.println("cause " + me.getCause());
             System.out.println("excep " + me);
             me.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
 
     }
@@ -82,7 +86,7 @@ public class MQTTReader implements MqttCallback{
         ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
         String receivedData = (String) objectInputStream.readObject();
         System.out.println("Received:"+ receivedData);
-        CulturaDB.insertMedicao(receivedData);
+        CulturaDB.insertMedicao(receivedData, this.connection);
         //System.out.println("Received:"+mqttMessage);
     }
 

@@ -23,24 +23,20 @@ public class CulturaDB {
     private static final String DATA = "Data";
     private static final String MEDICAO = "Medicao";
     private static final String[] sensorCloudColumns = {"idsensor", "tipo", "limiteinferior", "limitesuperior", "idzona"};
-    private static Connection connection;
+    //private static Connection connection;
 
-    static {
-        try {
-            connection = connectDb(PATH_DB_USER, false);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
 
     /**
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
-
-        dropAllTablesDbCultura(connection);
-        createAllTablesDbCultura(connection);
-        createAllSP(connection);
+        createDb(LOCAL_PATH_MYSQL,  USERNAME, PASSWORD,DB_NAME);
+        Connection localConnection = connectDb(LOCAL_PATH_DB,  USERNAME, PASSWORD);
+        Connection cloudConnection = connectDb(CLOUD_PATH_DB,  CLOUD_USERNAME, CLOUD_PASSWORD);
+        dropAllTablesDbCultura(localConnection);
+        createAllTablesDbCultura(localConnection,cloudConnection);
+        createAllSP(localConnection);
+        localConnection.close();
         /*
         String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
         insertMedicao(document);
@@ -61,27 +57,26 @@ public class CulturaDB {
 
     }
 
-    private static void changeLocalOrCloud(boolean isItCloud) {
+    public static Connection getLocalConnection() throws SQLException {
+        return connectDb(DB_NAME,  USERNAME, PASSWORD);
+    }
+
+    public static Connection getCloudConnection() throws SQLException {
+        return connectDb(CLOUD_PATH_DB,  CLOUD_USERNAME, CLOUD_PASSWORD);
+    }
+
+    private static Connection changeLocalOrCloud(boolean isItCloud) throws SQLException {
         if (isItCloud) {
-            try {
-                connection = connectDb(CLOUD_PATH_DB_USER, true);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            return connectDb(CLOUD_PATH_DB,  USERNAME, PASSWORD);
         } else {
-            try {
-                connection = connectDb(PATH_DB_USER, false);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            return connectDb(DB_NAME,  CLOUD_USERNAME, CLOUD_PASSWORD);
+
         }
     }
 
 
-    private static void insertZona() throws SQLException {
-        changeLocalOrCloud(true);
-        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(connection, TABLE_ZONA_NAME, new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
-        changeLocalOrCloud(false);
+    private static void insertZona(Connection localConnection,Connection cloudConnection) throws SQLException {
+        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(cloudConnection, TABLE_ZONA_NAME, new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
 
         ArrayList<Pair> zonaLocalValues = new ArrayList<>();
         for (ArrayList<Pair> zonaValues : zonaCloudValues) {
@@ -91,15 +86,13 @@ public class CulturaDB {
                 else
                     zonaLocalValues.add(new Pair<>(zonaValue.getA(), Double.parseDouble(zonaValue.getB().toString())));
             }
-            insertInDbTable(connection, TABLE_ZONA_NAME, zonaLocalValues);
+            insertInDbTable(localConnection, TABLE_ZONA_NAME, zonaLocalValues);
             zonaLocalValues = new ArrayList<>();
         }
     }
 
-    private static void insertSensores() throws SQLException {
-        changeLocalOrCloud(true);
-        ArrayList<ArrayList<Pair>> sensorCloudValues = getAllFromDbTable(connection, TABLE_SENSOR_NAME, new ArrayList<>(Arrays.asList(sensorCloudColumns)));
-        changeLocalOrCloud(false);
+    private static void insertSensores(Connection localConnection,Connection cloudConnection) throws SQLException {
+        ArrayList<ArrayList<Pair>> sensorCloudValues = getAllFromDbTable(cloudConnection, TABLE_SENSOR_NAME, new ArrayList<>(Arrays.asList(sensorCloudColumns)));
 
         ArrayList<Pair> sensorLocalValues = new ArrayList<>();
         for (ArrayList<Pair> sensorValues : sensorCloudValues) {
@@ -124,7 +117,7 @@ public class CulturaDB {
                         break;
                 }
             }
-            insertInDbTable(connection, TABLE_SENSOR_NAME, sensorLocalValues);
+            insertInDbTable(localConnection, TABLE_SENSOR_NAME, sensorLocalValues);
             sensorLocalValues = new ArrayList<>();
         }
     }
@@ -139,21 +132,21 @@ public class CulturaDB {
         dropTableDb(connection, TABLE_UTILIZADOR_NAME);
     }
 
-    public static void createAllTablesDbCultura(Connection connection) throws SQLException {
-        createTableDb(connection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
-        createTableDb(connection, TABLE_CULTURA_NAME, TABLE_CULTURA);
-        createTableDb(connection, TABLE_PARAMETROCULTURA_NAME, TABLE_PARAMETROCULTURA);
-        createTableDb(connection, TABLE_ZONA_NAME, TABLE_ZONA);
-        createTableDb(connection, TABLE_SENSOR_NAME, TABLE_SENSOR);
-        createTableDb(connection, TABLE_ALERTA_NAME, TABLE_ALERTA);
-        createTableDb(connection, TABLE_MEDICAO_NAME, TABLE_MEDICAO);
+    public static void createAllTablesDbCultura(Connection localConnection,Connection cloudConnection) throws SQLException {
+        createTableDb(localConnection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
+        createTableDb(localConnection, TABLE_CULTURA_NAME, TABLE_CULTURA);
+        createTableDb(localConnection, TABLE_PARAMETROCULTURA_NAME, TABLE_PARAMETROCULTURA);
+        createTableDb(localConnection, TABLE_ZONA_NAME, TABLE_ZONA);
+        createTableDb(localConnection, TABLE_SENSOR_NAME, TABLE_SENSOR);
+        createTableDb(localConnection, TABLE_ALERTA_NAME, TABLE_ALERTA);
+        createTableDb(localConnection, TABLE_MEDICAO_NAME, TABLE_MEDICAO);
 
         //Add Sensores and Zonas
-        insertZona();
-        insertSensores();
+        insertZona(localConnection,cloudConnection);
+        insertSensores(localConnection,cloudConnection);
     }
 
-    public static void insertMedicao(String medicao) throws SQLException {
+    public static void insertMedicao(String medicao, Connection connection) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
         String[] splitData = medicao.split(",");
         for (String data : splitData) {
