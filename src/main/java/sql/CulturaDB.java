@@ -12,13 +12,36 @@ import static sql.SqlVariables.*;
 
 public class CulturaDB {
 
+    /*
+    TODO verificar que medicao esta entre os valores do sensor
+        roles de users pa cena dos privilegios
+        SP temos de muda pa mysql(JOAO)
+    */
+
+
+    private static final String ZONA = "Zona";
+    private static final String SENSOR = "Sensor";
+    private static final String DATA = "Data";
+    private static final String MEDICAO = "Medicao";
+    private static final String[] sensorCloudColumns = {"idsensor", "tipo", "limiteinferior", "limitesuperior", "idzona"};
+    private static Connection connection;
+
+    static {
+        try {
+            connection = connectDb(PATH_DB_USER, false);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     /**
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
 
-        dropAllTablesDbCultura();
-        createAllTablesDbCultura();
+        dropAllTablesDbCultura(connection);
+        createAllTablesDbCultura(connection);
+        createAllSP(connection);
         /*
         String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
         insertMedicao(document);
@@ -31,52 +54,24 @@ public class CulturaDB {
                 "END";
         executeSQL(connection,Sp);
         */
-
-        /*
+/*
         changeLocalOrCloud(true);
-        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(connection,TABLE_ZONA_NAME,new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
-        for(ArrayList<Pair> values : zonaCloudValues) {
-            for (Pair v: values) {
-                System.out.println("[" + v.getA() + ":" + v.getB() + "]");
-            }
-        }
-
-         */
-
-
-       // System.out.println(zonaCloudValues.get(1).get(0).getA());
-        // selectAllFromDbTable(connection,TABLE_ZONA_NAME,new ArrayList<String>(Arrays.asList(TABLE_ZONA_COLLUMS)));
-
-      //  createSPCriar_Zona(connection);
+        selectAllFromDbTable(connection,TABLE_SENSOR_NAME,new ArrayList<String>(Arrays.asList(TABLE_SENSOR_COLLUMS[1])));
+*/
+        //  createSPCriar_Zona(connection);
 
     }
 
-
-    private static final String ZONA = "Zona";
-    private static final String SENSOR = "Sensor";
-    private static final String DATA = "Data";
-    private static final String MEDICAO = "Medicao";
-    private static final String[] sensorCloudColumns= {"idsensor","tipo","limiteinferior","limitesuperior","idzona"};
-    private static Connection connection;
-    static {
-        try {
-            connection = connectDb(PATH_DB_USER,false);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    private static void changeLocalOrCloud(boolean isItCloud){
-        if(isItCloud) {
+    private static void changeLocalOrCloud(boolean isItCloud) {
+        if (isItCloud) {
             try {
-                connection = connectDb(CLOUD_PATH_DB_USER,true);
+                connection = connectDb(CLOUD_PATH_DB_USER, true);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-        }
-        else {
+        } else {
             try {
-                connection = connectDb(PATH_DB_USER,false);
+                connection = connectDb(PATH_DB_USER, false);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -86,66 +81,66 @@ public class CulturaDB {
 
     private static void insertZona() throws SQLException {
         changeLocalOrCloud(true);
-        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(connection,TABLE_ZONA_NAME,new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
+        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(connection, TABLE_ZONA_NAME, new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
         changeLocalOrCloud(false);
 
         ArrayList<Pair> zonaLocalValues = new ArrayList<>();
-        for(ArrayList<Pair> zonaValues: zonaCloudValues) {
-            for(Pair zonaValue : zonaValues) {
-                if(zonaValue.getA().toString().equals("IdZona"))
-                    zonaLocalValues.add(new Pair<>(zonaValue.getA(),Integer.parseInt(zonaValue.getB().toString())));
+        for (ArrayList<Pair> zonaValues : zonaCloudValues) {
+            for (Pair zonaValue : zonaValues) {
+                if (zonaValue.getA().toString().equals("IdZona"))
+                    zonaLocalValues.add(new Pair<>(zonaValue.getA(), Integer.parseInt(zonaValue.getB().toString())));
                 else
-                    zonaLocalValues.add(new Pair<>(zonaValue.getA(),Double.parseDouble(zonaValue.getB().toString())));
+                    zonaLocalValues.add(new Pair<>(zonaValue.getA(), Double.parseDouble(zonaValue.getB().toString())));
             }
-            insertInDbTable(connection,TABLE_ZONA_NAME,zonaLocalValues);
+            insertInDbTable(connection, TABLE_ZONA_NAME, zonaLocalValues);
             zonaLocalValues = new ArrayList<>();
         }
     }
 
     private static void insertSensores() throws SQLException {
         changeLocalOrCloud(true);
-        ArrayList<ArrayList<Pair>> sensorCloudValues = getAllFromDbTable(connection,TABLE_SENSOR_NAME,new ArrayList<>(Arrays.asList(sensorCloudColumns)));
+        ArrayList<ArrayList<Pair>> sensorCloudValues = getAllFromDbTable(connection, TABLE_SENSOR_NAME, new ArrayList<>(Arrays.asList(sensorCloudColumns)));
         changeLocalOrCloud(false);
 
         ArrayList<Pair> sensorLocalValues = new ArrayList<>();
-        for(ArrayList<Pair> sensorValues: sensorCloudValues) {
-            for(Pair sensorValue: sensorValues) {
+        for (ArrayList<Pair> sensorValues : sensorCloudValues) {
+            for (Pair sensorValue : sensorValues) {
                 switch (sensorValue.getA().toString()) {
                     case "idsensor":
-                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],Integer.parseInt(sensorValue.getB().toString())));
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[2], Integer.parseInt(sensorValue.getB().toString())));
                         break;
                     case "tipo":
-                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],sensorValue.getB()));
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[1], sensorValue.getB()));
                         break;
                     case "limiteinferior":
-                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[3],Double.parseDouble(sensorValue.getB().toString())));
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[3], Double.parseDouble(sensorValue.getB().toString())));
                         break;
                     case "limitesuperior":
-                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[4],Double.parseDouble(sensorValue.getB().toString())));
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[4], Double.parseDouble(sensorValue.getB().toString())));
                         break;
                     case "idzona":
-                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[5],Integer.parseInt(sensorValue.getB().toString())));
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[5], Integer.parseInt(sensorValue.getB().toString())));
                         break;
                     default:
                         break;
                 }
             }
-            insertInDbTable(connection,TABLE_SENSOR_NAME,sensorLocalValues);
+            insertInDbTable(connection, TABLE_SENSOR_NAME, sensorLocalValues);
             sensorLocalValues = new ArrayList<>();
         }
     }
 
-    public static void dropAllTablesDbCultura() throws SQLException {
-        dropTableDb(connection,TABLE_MEDICAO_NAME);
-        dropTableDb(connection,TABLE_ALERTA_NAME);
-        dropTableDb(connection,TABLE_SENSOR_NAME);
-        dropTableDb(connection,TABLE_ZONA_NAME);
-        dropTableDb(connection,TABLE_PARAMETROCULTURA_NAME);
-        dropTableDb(connection,TABLE_CULTURA_NAME);
-        dropTableDb(connection,TABLE_UTILIZADOR_NAME);
+    public static void dropAllTablesDbCultura(Connection connection) throws SQLException {
+        dropTableDb(connection, TABLE_MEDICAO_NAME);
+        dropTableDb(connection, TABLE_ALERTA_NAME);
+        dropTableDb(connection, TABLE_SENSOR_NAME);
+        dropTableDb(connection, TABLE_ZONA_NAME);
+        dropTableDb(connection, TABLE_PARAMETROCULTURA_NAME);
+        dropTableDb(connection, TABLE_CULTURA_NAME);
+        dropTableDb(connection, TABLE_UTILIZADOR_NAME);
     }
 
-    public static void createAllTablesDbCultura() throws SQLException {
+    public static void createAllTablesDbCultura(Connection connection) throws SQLException {
         createTableDb(connection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
         createTableDb(connection, TABLE_CULTURA_NAME, TABLE_CULTURA);
         createTableDb(connection, TABLE_PARAMETROCULTURA_NAME, TABLE_PARAMETROCULTURA);
@@ -158,10 +153,7 @@ public class CulturaDB {
         insertZona();
         insertSensores();
     }
-/*TODO verificar que medicao esta entre os valores do sensor
-    roles de users pa cena dos privilegios
-    SP temos de muda pa mysql(JOAO)
-    */
+
     public static void insertMedicao(String medicao) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
         String[] splitData = medicao.split(",");
@@ -169,30 +161,33 @@ public class CulturaDB {
             String[] datavalues = data.trim().split("=");
             switch (datavalues[0]) {
                 case ZONA: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1],datavalues[1].charAt(1)));
-                    break;
-                }case SENSOR: {
-                    ArrayList<Pair> paramValues = new ArrayList<>();
-                    paramValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[1],datavalues[1].charAt(0)));
-                    paramValues.add(new Pair<>(TABLE_SENSOR_NAME_COLLUMS[2],datavalues[1].charAt(1)));
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2],
-                            (String)SqlController.getElementsFromDbTable(connection,TABLE_SENSOR_NAME,TABLE_SENSOR_NAME_COLLUMS[0],
-                                    paramValues)));
-                    break;
-                }case DATA: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3],datavalues[1]));
-                    break;
-                }case MEDICAO: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[4],datavalues[1].replace("}","")));
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1], datavalues[1].charAt(1)));
                     break;
                 }
-                default:{
+                case SENSOR: {
+                    ArrayList<Pair> paramValues = new ArrayList<>();
+                    paramValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[1], datavalues[1].charAt(0)));
+                    paramValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[2], datavalues[1].charAt(1)));
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2],
+                            (String) SqlController.getElementsFromDbTable(connection, TABLE_SENSOR_NAME, TABLE_SENSOR_COLLUMS[0],
+                                    paramValues)));
+                    break;
+                }
+                case DATA: {
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3], datavalues[1]));
+                    break;
+                }
+                case MEDICAO: {
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[4], datavalues[1].replace("}", "")));
+                    break;
+                }
+                default: {
 
                 }
             }
 
         }
-            SqlController.insertInDbTable(connection,TABLE_MEDICAO_NAME,values);
+        SqlController.insertInDbTable(connection, TABLE_MEDICAO_NAME, values);
 
     }
 
@@ -203,47 +198,156 @@ public class CulturaDB {
     }
 
     //---------------------------------- SPs ----------------------------------
-
-    //---------------------------------- Zona ----------------------------------
-
-    public static void createSP(Connection connection) throws SQLException {
-        createSPCriar_Zona(connection);
+    //<editor-fold desc="SP">
+    public static void createAllSP(Connection connection) throws SQLException {
+        createSPInserir_Zona    (connection);
+        createSPAlterar_Zona    (connection);
+        createSPEliminar_Zona   (connection);
+        createSPInserir_Medicao (connection);
+        createSPInserir_Sensor  (connection);
+        createSPInserir_User    (connection);
+        createSPInserir_Cultura (connection);
 
     }
 
+    private static String generateARGUMENTS(String[] tableCollums, String[] tableDatatypes) {
+        String args ="";
+        if(tableCollums.length == tableDatatypes.length){
+            for(int i =0 ; i<tableCollums.length-1 && i<tableDatatypes.length-1 ;i++){
+                args += "IN sp_" + tableCollums[i] + " " + tableDatatypes[i] +",";
+            }
+            args = args.substring(0,args.length()-1);
+            return args;
 
-    public static void createSPCriar_Zona(Connection connection) throws SQLException {
-        /*if(typeOfUser(connection,userID).equals(USER_ADMIN)){
+        }else{
+            System.out.println("Error generating IN String");
+            System.out.println("Tables dont have the same length!!");
+            System.out.println("Check sqlVariables.java to fix");
+            return "";
+        }
+
+    }
+
+    private static String generateINSERT(String tableMedicaoName, String[] tableCollums) {
+        String insertString = "INSERT INTO " + tableMedicaoName + " (";
+        for (String value :
+                tableCollums) {
+            insertString += " " + value + ",";
+        }
+        insertString = insertString.substring(0,insertString.length() - 1);
+        insertString += ") VALUES ( ";
+        for (String value :
+                tableCollums) {
+            insertString += " sp_" + value + ",";
+        }
+        insertString = insertString.substring(0,insertString.length() - 1);
+        insertString += ")";
+
+        return insertString;
+    }
+
+
+
+    //---------------------------------- Zona ----------------------------------
+    //<editor-fold desc="SPZona">
+
+    /**
+     * SP para inserir uma zona na db
+     *
+     * @param connection conecção mysql
+     * @throws SQLException
+     */
+    public static void createSPInserir_Zona(Connection connection) throws SQLException {
+
+        String procedureName = "Inserir_Zona";
+
+        String args = generateARGUMENTS(
+                Arrays.copyOfRange(TABLE_ZONA_COLLUMS,1,TABLE_ZONA_COLLUMS.length       ),
+                Arrays.copyOfRange(TABLE_ZONA_COLLUMS_DATATYPES,1,TABLE_ZONA_COLLUMS_DATATYPES.length   )
+        );
+        String statements = generateINSERT(TABLE_ZONA_NAME, Arrays.copyOfRange(TABLE_ZONA_COLLUMS,1,TABLE_ZONA_COLLUMS.length));
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    /**
+     * SP para alterar uma zona da db
+     *
+     * @param connection conecção mysql
+     * @throws SQLException
+     */
+    public static void createSPAlterar_Zona(Connection connection) throws SQLException {
+
+        String procedureName = "Alterar_Zona";
+        String args =
+                "IN sp_" + TABLE_ZONA_COLLUMS[0] + " " + TABLE_ZONA_COLLUMS_DATATYPES[0]
+                        + ", IN sp_" + TABLE_ZONA_COLLUMS[1] + " " + TABLE_ZONA_COLLUMS_DATATYPES[1]
+                        + ", IN sp_" + TABLE_ZONA_COLLUMS[2] + " " + TABLE_ZONA_COLLUMS_DATATYPES[2]
+                        + ", IN sp_" + TABLE_ZONA_COLLUMS[3] + " " + TABLE_ZONA_COLLUMS_DATATYPES[3];
+
+
+
+        String statements = "UPDATE " + TABLE_ZONA_NAME + " SET " + TABLE_ZONA_COLLUMS[1] + " = sp_" + TABLE_ZONA_COLLUMS[1] +
+                " ," + TABLE_ZONA_COLLUMS[2] + " = sp_" + TABLE_ZONA_COLLUMS[2] +
+                " ," + TABLE_ZONA_COLLUMS[3] + " = sp_" + TABLE_ZONA_COLLUMS[3] +
+                " WHERE " + TABLE_ZONA_COLLUMS[0] + " = sp_" + TABLE_ZONA_COLLUMS[0];
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    public static void createSPEliminar_Zona(Connection connection) throws SQLException {
+
+        String procedureName = "Eleminar_Zona";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_ZONA_COLLUMS_DATATYPES[1];
+        String statements = "DELETE FROM " + TABLE_ZONA_NAME + " WHERE 'sp_Param' = sp_ParamValue";
+
+        createStoredProcedure(connection, procedureName, statements, args);
+    }
+/*
+    public static void SPCriar_Zona(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
+        if(typeOfUser(connection,userID).equals(USER_ADMIN)){
             insertInDbTable(connection, TABLE_ZONA_NAME, values);
 
         }
-        */
-
-        String procedureName = "Criar_Zona";
-
-        String[] args = {"IN sp_Name varchar(100)","IN sp_Temperatura decimal(10,0)","IN sp_Humidade decimal(10,0)","IN sp_Luz decimal(10,0)"} ;
-        String statements  ="INSERT INTO " + TABLE_ZONA_NAME + " (Name, Temperatura, Humidade ,Luz) VALUES ( sp_Name, sp_Temperatura, sp_Humidade, sp_Luz)";
-
-        createStoredProcedure(connection, procedureName, statements,args);
-
     }
-
-    public static void SPAlterar_Zona(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
+    public static void SPAlterar_Zona(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue , int userID) throws SQLException {
         if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
             //selectElementFromDbTable(connection, TABLE_ZONA_NAME, columns, param, paramValue);
             result = getElementFromDbTable(connection,TABLE_ZONA_NAME,columns,param,paramValue);
             updateFromDbTable(connection, TABLE_ZONA_NAME, values, param, paramValue);
         }
-    }
 
+
+    }
     public static void SPEliminar_Zona(Connection connection, String param, String paramValue, int userID) throws SQLException {
         if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
             deleteFromDbTable(connection, TABLE_ZONA_NAME, param, paramValue);
         }
     }
+*/
+    //</editor-fold>
 
     //---------------------------------- Medição ----------------------------------
+    //<editor-fold desc="SPMedicao">
 
+    public static void createSPInserir_Medicao(Connection connection) throws SQLException {
+
+        String procedureName = "Inserir_Medicao";
+        String args = generateARGUMENTS(
+                Arrays.copyOfRange(TABLE_MEDICAO_COLLUMS,1,TABLE_MEDICAO_COLLUMS.length       ),
+                Arrays.copyOfRange(TABLE_MEDICAO_DATATYPES,1, TABLE_MEDICAO_DATATYPES.length   )
+        );
+
+        String statements = generateINSERT(TABLE_MEDICAO_NAME, Arrays.copyOfRange(TABLE_MEDICAO_COLLUMS,0,TABLE_MEDICAO_COLLUMS.length));
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+
+/*
     public static void SPCriar_Medicao(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
         if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
             insertInDbTable(connection, TABLE_MEDICAO_NAME, values);
@@ -263,118 +367,191 @@ public class CulturaDB {
             deleteFromDbTable(connection, TABLE_MEDICAO_NAME, param, paramValue);
         }
     }
+*/
+    //</editor-fold>
 
     //---------------------------------- Sensor ----------------------------------
+    //<editor-fold desc="SPSensor">
 
+    public static void createSPInserir_Sensor(Connection connection) throws SQLException {
+        String procedureName = "Inserir_Sensor";
+        String args = generateARGUMENTS(
+                Arrays.copyOfRange(TABLE_SENSOR_COLLUMS,1,TABLE_SENSOR_COLLUMS.length       ),
+                Arrays.copyOfRange(TABLE_SENSOR_DATATYPES,1,TABLE_SENSOR_DATATYPES.length   )
+        );
+        String statements = generateINSERT(TABLE_SENSOR_NAME,
+                Arrays.copyOfRange(TABLE_SENSOR_COLLUMS,1,TABLE_SENSOR_COLLUMS.length)
+        );
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+
+
+/*
     public static void SPCriar_Sensor(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             insertInDbTable(connection, TABLE_SENSOR_NAME, values);
         }
     }
 
     public static void SPAlterar_Sensor(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             //selectElementFromDbTable(connection, TABLE_SENSOR_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_SENSOR_NAME,columns,param,paramValue);
+            result = getElementFromDbTable(connection, TABLE_SENSOR_NAME, columns, param, paramValue);
             updateFromDbTable(connection, TABLE_SENSOR_NAME, values, param, paramValue);
         }
     }
 
     public static void SPEliminar_Sensor(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             deleteFromDbTable(connection, TABLE_SENSOR_NAME, param, paramValue);
         }
     }
 
-    //---------------------------------- User ----------------------------------
+ */
+    //</editor-fold>
 
+    //<editor-fold desc="SPUser">
+    //---------------------------------- User ----------------------------------
+    public static void createSPInserir_User(Connection connection) throws SQLException {
+        String procedureName = "Inserir_User";
+        String args = generateARGUMENTS(
+                Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length       ),
+                Arrays.copyOfRange(TABLE_UTILIZADOR_DATATYPES,1,TABLE_UTILIZADOR_DATATYPES.length   )
+        );
+        String statements = generateINSERT(TABLE_UTILIZADOR_NAME,
+                Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length)
+        );
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    /*
     public static void SPCriar_User(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
         //if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-        insertInDbTable(connection,TABLE_UTILIZADOR_NAME,values);
+        insertInDbTable(connection, TABLE_UTILIZADOR_NAME, values);
         //}
     }
 
     public static void SPAlterar_User(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             //selectElementFromDbTable(connection,TABLE_UTILIZADOR_NAME,columns,param,paramValue);
-            result = getElementFromDbTable(connection,TABLE_UTILIZADOR_NAME,columns,param,paramValue);
-            updateFromDbTable(connection,TABLE_UTILIZADOR_NAME,values,param,paramValue);
+            result = getElementFromDbTable(connection, TABLE_UTILIZADOR_NAME, columns, param, paramValue);
+            updateFromDbTable(connection, TABLE_UTILIZADOR_NAME, values, param, paramValue);
         }
     }
 
-    public static void SPEliminar_User(Connection connection,int userID) throws SQLException {
+    public static void SPEliminar_User(Connection connection, int userID) throws SQLException {
         //if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
         deleteFromDbTable(connection, TABLE_UTILIZADOR_NAME, "IdUtilizador", String.valueOf(userID));
         //}
     }
+*/
+    //</editor-fold>
 
+    //<editor-fold desc="SPCultura">
     //---------------------------------- Cultura ----------------------------------
+    public static void createSPInserir_Cultura(Connection connection) throws SQLException {
+        String procedureName = "Inserir_Cultura";
+        String args = generateARGUMENTS(
+                Arrays.copyOfRange(TABLE_CULTURA_COLLUMS,1,TABLE_CULTURA_COLLUMS.length       ),
+                Arrays.copyOfRange(TABLE_CULTURA_DATATYPES,1,TABLE_CULTURA_DATATYPES.length   )
+        );
+        String statements = generateINSERT(TABLE_CULTURA_NAME,
+                Arrays.copyOfRange(TABLE_CULTURA_COLLUMS,1,TABLE_CULTURA_COLLUMS.length)
+        );
 
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+
+    /*
     public static void SPCriar_Cultura(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             insertInDbTable(connection, TABLE_CULTURA_NAME, values);
         }
     }
 
     public static void SPAlterar_Cultura(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             //selectElementFromDbTable(connection, TABLE_CULTURA_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_CULTURA_NAME,columns,param,paramValue);
+            result = getElementFromDbTable(connection, TABLE_CULTURA_NAME, columns, param, paramValue);
             updateFromDbTable(connection, TABLE_CULTURA_NAME, values, param, paramValue);
         }
     }
 
     public static void SPEliminar_Cultura(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             deleteFromDbTable(connection, TABLE_CULTURA_NAME, param, paramValue);
         }
     }
 
+ */
+    //</editor-fold>
+
+    //<editor-fold desc="SPParametroCultura">
     //---------------------------------- ParametroCultura ----------------------------------
     //TODO Verificar se o investigador está associado à cultura
-    public static void SPCriar_ParametroCultura(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_INVESTIGATOR)) {
+
+
+
+
+    /*public static void SPCriar_ParametroCultura(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
+        if (typeOfUser(connection, userID).equals(USER_INVESTIGATOR)) {
             insertInDbTable(connection, TABLE_PARAMETROCULTURA_NAME, values);
         }
     }
 
     public static void SPAlterar_ParametroCultura(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_INVESTIGATOR)) {
+        if (typeOfUser(connection, userID).equals(USER_INVESTIGATOR)) {
             //selectElementFromDbTable(connection, TABLE_PARAMETROCULTURA_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_PARAMETROCULTURA_NAME,columns,param,paramValue);
+            result = getElementFromDbTable(connection, TABLE_PARAMETROCULTURA_NAME, columns, param, paramValue);
             updateFromDbTable(connection, TABLE_PARAMETROCULTURA_NAME, values, param, paramValue);
         }
     }
 
     public static void SPEliminar_ParametroCultura(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_INVESTIGATOR)) {
+        if (typeOfUser(connection, userID).equals(USER_INVESTIGATOR)) {
             deleteFromDbTable(connection, TABLE_PARAMETROCULTURA_NAME, param, paramValue);
         }
     }
 
+     */
+    //</editor-fold>
+
+    //<editor-fold desc="SPAlerta">
     //---------------------------------- Alerta ----------------------------------
 
+
+/*
     public static void SPCriar_Alerta(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            insertInDbTable(connection,TABLE_ALERTA_NAME,values);
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
+            insertInDbTable(connection, TABLE_ALERTA_NAME, values);
         }
     }
 
 
     public static void SPAlterar_Alerta(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
             //selectElementFromDbTable(connection, TABLE_ALERTA_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_ALERTA_NAME,columns,param,paramValue);
+            result = getElementFromDbTable(connection, TABLE_ALERTA_NAME, columns, param, paramValue);
             updateFromDbTable(connection, TABLE_ALERTA_NAME, values, param, paramValue);
         }
     }
 
     public static void SPEliminar_Alerta(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            deleteFromDbTable(connection,TABLE_ALERTA_NAME,param,paramValue);
+        if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
+            deleteFromDbTable(connection, TABLE_ALERTA_NAME, param, paramValue);
         }
     }
 
+ */
+    //</editor-fold>
+    //</editor-fold>
 
 
 }
