@@ -2,9 +2,9 @@ package sql;
 
 public class SqlVariables {
     //local
-    public static final String PATH_DB_USER = "javabase";
-    public static final String USERNAME = "sammy";
-    public static final String PASSWORD = "password";
+    public static final String PATH_DB_USER = "culturamysql2";
+    public static final String USERNAME = "aluno@hotmail.com";
+    public static final String PASSWORD = "aluno";
 
     //cloud
     public static final String CLOUD_PATH_DB_USER = "sid2021";
@@ -12,7 +12,7 @@ public class SqlVariables {
     public static final String CLOUD_PASSWORD = "aluno";
 
     //<editor-fold desc="TableMedicao">
-    public static final String TABLE_MEDICAO_NAME       = "medicao";
+    public static final String TABLE_MEDICAO_NAME = "medicao";
 
     /**
      * <p>TABLE_MEDICAO_COLLUMS</p>
@@ -320,13 +320,13 @@ public class SqlVariables {
      * [3]Luz
      */
     public static final String[] TABLE_ZONA_COLLUMS = {"IdZona", "Temperatura", "Humidade", "Luz"};
-    public static final String[] TABLE_ZONA_COLLUMS_DATATYPES = {
+    public static final String[] TABLE_ZONA_DATATYPES = {
               "INTEGER"
             , "DECIMAL(5,2)"
             , "DECIMAL(5,2)"
             , "DECIMAL(5,2)"
     };
-    public static final String[] TABLE_ZONA_COLLUMS_PARAMS = {
+    public static final String[] TABLE_ZONA_PARAMS = {
               "NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE"
             , "NOT NULL"
             , "NOT NULL"
@@ -340,10 +340,10 @@ public class SqlVariables {
      * [3]  Luz           DECIMAL(5,2)  NOT NULL
      */
     public static final String[] TABLE_ZONA = {
-            TABLE_ZONA_COLLUMS[0] + " " + TABLE_ZONA_COLLUMS_DATATYPES[0] + " " + TABLE_ZONA_COLLUMS_PARAMS[0] ,
-            TABLE_ZONA_COLLUMS[1] + " " + TABLE_ZONA_COLLUMS_DATATYPES[1] + " " + TABLE_ZONA_COLLUMS_PARAMS[1] ,
-            TABLE_ZONA_COLLUMS[2] + " " + TABLE_ZONA_COLLUMS_DATATYPES[2] + " " + TABLE_ZONA_COLLUMS_PARAMS[2] ,
-            TABLE_ZONA_COLLUMS[3] + " " + TABLE_ZONA_COLLUMS_DATATYPES[3] + " " + TABLE_ZONA_COLLUMS_PARAMS[3]
+            TABLE_ZONA_COLLUMS[0] + " " + TABLE_ZONA_DATATYPES[0] + " " + TABLE_ZONA_PARAMS[0] ,
+            TABLE_ZONA_COLLUMS[1] + " " + TABLE_ZONA_DATATYPES[1] + " " + TABLE_ZONA_PARAMS[1] ,
+            TABLE_ZONA_COLLUMS[2] + " " + TABLE_ZONA_DATATYPES[2] + " " + TABLE_ZONA_PARAMS[2] ,
+            TABLE_ZONA_COLLUMS[3] + " " + TABLE_ZONA_DATATYPES[3] + " " + TABLE_ZONA_PARAMS[3]
     };
     //</editor-fold>
 

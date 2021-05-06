@@ -18,7 +18,6 @@ public class CulturaDB {
         SP temos de muda pa mysql(JOAO)
     */
 
-
     private static final String ZONA = "Zona";
     private static final String SENSOR = "Sensor";
     private static final String DATA = "Data";
@@ -263,7 +262,7 @@ public class CulturaDB {
 
         String args = generateARGUMENTS(
                 Arrays.copyOfRange(TABLE_ZONA_COLLUMS,1,TABLE_ZONA_COLLUMS.length       ),
-                Arrays.copyOfRange(TABLE_ZONA_COLLUMS_DATATYPES,1,TABLE_ZONA_COLLUMS_DATATYPES.length   )
+                Arrays.copyOfRange(TABLE_ZONA_DATATYPES,1,TABLE_ZONA_DATATYPES.length   )
         );
         String statements = generateINSERT(TABLE_ZONA_NAME, Arrays.copyOfRange(TABLE_ZONA_COLLUMS,1,TABLE_ZONA_COLLUMS.length));
 
@@ -281,10 +280,10 @@ public class CulturaDB {
 
         String procedureName = "Alterar_Zona";
         String args =
-                "IN sp_" + TABLE_ZONA_COLLUMS[0] + " " + TABLE_ZONA_COLLUMS_DATATYPES[0]
-                        + ", IN sp_" + TABLE_ZONA_COLLUMS[1] + " " + TABLE_ZONA_COLLUMS_DATATYPES[1]
-                        + ", IN sp_" + TABLE_ZONA_COLLUMS[2] + " " + TABLE_ZONA_COLLUMS_DATATYPES[2]
-                        + ", IN sp_" + TABLE_ZONA_COLLUMS[3] + " " + TABLE_ZONA_COLLUMS_DATATYPES[3];
+                "IN sp_" + TABLE_ZONA_COLLUMS[0] + " " + TABLE_ZONA_DATATYPES[0]
+                        + ", IN sp_" + TABLE_ZONA_COLLUMS[1] + " " + TABLE_ZONA_DATATYPES[1]
+                        + ", IN sp_" + TABLE_ZONA_COLLUMS[2] + " " + TABLE_ZONA_DATATYPES[2]
+                        + ", IN sp_" + TABLE_ZONA_COLLUMS[3] + " " + TABLE_ZONA_DATATYPES[3];
 
 
 
@@ -299,8 +298,8 @@ public class CulturaDB {
 
     public static void createSPEliminar_Zona(Connection connection) throws SQLException {
 
-        String procedureName = "Eleminar_Zona";
-        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_ZONA_COLLUMS_DATATYPES[1];
+        String procedureName = "Eliminar_Zona";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_ZONA_DATATYPES[0];
         String statements = "DELETE FROM " + TABLE_ZONA_NAME + " WHERE 'sp_Param' = sp_ParamValue";
 
         createStoredProcedure(connection, procedureName, statements, args);
@@ -346,7 +345,34 @@ public class CulturaDB {
 
     }
 
+    public static void createSPAlterar_Medicao(Connection connection) throws SQLException {
 
+        String procedureName = "Alterar_Medicao";
+        String args =
+                "IN sp_" + TABLE_MEDICAO_COLLUMS[0] + " " + TABLE_MEDICAO_DATATYPES[0]
+                        + ", IN sp_" + TABLE_MEDICAO_COLLUMS[1] + " " + TABLE_MEDICAO_DATATYPES[1]
+                        + ", IN sp_" + TABLE_MEDICAO_COLLUMS[2] + " " + TABLE_MEDICAO_DATATYPES[2]
+                        + ", IN sp_" + TABLE_MEDICAO_COLLUMS[3] + " " + TABLE_MEDICAO_DATATYPES[3];
+
+
+
+        String statements = "UPDATE " + TABLE_MEDICAO_NAME + " SET " + TABLE_MEDICAO_COLLUMS[1] + " = sp_" + TABLE_MEDICAO_COLLUMS[1] +
+                " ," + TABLE_MEDICAO_COLLUMS[2] + " = sp_" + TABLE_MEDICAO_COLLUMS[2] +
+                " ," + TABLE_MEDICAO_COLLUMS[3] + " = sp_" + TABLE_MEDICAO_COLLUMS[3] +
+                " WHERE " + TABLE_MEDICAO_COLLUMS[0] + " = sp_" + TABLE_MEDICAO_COLLUMS[0];
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    public static void createSPEliminar_Medicao(Connection connection) throws SQLException {
+
+        String procedureName = "Eliminar_Medicao";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_MEDICAO_DATATYPES[0];
+        String statements = "DELETE FROM " + TABLE_MEDICAO_NAME + " WHERE 'sp_Param' = sp_ParamValue";
+
+        createStoredProcedure(connection, procedureName, statements, args);
+    }
 /*
     public static void SPCriar_Medicao(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
         if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
@@ -387,6 +413,35 @@ public class CulturaDB {
 
     }
 
+    public static void createSPAlterar_Sensor(Connection connection) throws SQLException {
+
+        String procedureName = "Alterar_Sensor";
+        String args =
+                "IN sp_" + TABLE_SENSOR_COLLUMS[0] + " " + TABLE_SENSOR_DATATYPES[0]
+                        + ", IN sp_" + TABLE_SENSOR_COLLUMS[1] + " " + TABLE_SENSOR_DATATYPES[1]
+                        + ", IN sp_" + TABLE_SENSOR_COLLUMS[2] + " " + TABLE_SENSOR_DATATYPES[2]
+                        + ", IN sp_" + TABLE_SENSOR_COLLUMS[3] + " " + TABLE_SENSOR_DATATYPES[3]
+                        + ", IN sp_" + TABLE_SENSOR_COLLUMS[4] + " " + TABLE_SENSOR_DATATYPES[4];
+
+
+        String statements = "UPDATE " + TABLE_SENSOR_NAME + " SET " + TABLE_SENSOR_COLLUMS[1] + " = sp_" + TABLE_MEDICAO_COLLUMS[1] +
+                " ," + TABLE_SENSOR_COLLUMS[2] + " = sp_" + TABLE_SENSOR_COLLUMS[2] +
+                " ," + TABLE_SENSOR_COLLUMS[3] + " = sp_" + TABLE_SENSOR_COLLUMS[3] +
+                " ," + TABLE_SENSOR_COLLUMS[4] + " = sp_" + TABLE_SENSOR_COLLUMS[4] +
+                " WHERE " + TABLE_SENSOR_COLLUMS[0] + " = sp_" + TABLE_SENSOR_COLLUMS[0];
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    public static void createSPEliminar_Sensor(Connection connection) throws SQLException {
+
+        String procedureName = "Eliminar_Sensor";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_SENSOR_DATATYPES[0];
+        String statements = "DELETE FROM " + TABLE_SENSOR_NAME + " WHERE 'sp_Param' = sp_ParamValue";
+
+        createStoredProcedure(connection, procedureName, statements, args);
+    }
 
 
 /*
@@ -429,6 +484,37 @@ public class CulturaDB {
 
     }
 
+    public static void createSPAlterar_User(Connection connection) throws SQLException {
+
+        String procedureName = "Alterar_User";
+        String args =
+                "IN sp_" + TABLE_UTILIZADOR_COLLUMS[0] + " " + TABLE_UTILIZADOR_DATATYPES[0]
+                        + ", IN sp_" + TABLE_UTILIZADOR_COLLUMS[1] + " " + TABLE_UTILIZADOR_DATATYPES[1]
+                        + ", IN sp_" + TABLE_UTILIZADOR_COLLUMS[2] + " " + TABLE_UTILIZADOR_DATATYPES[2]
+                        + ", IN sp_" + TABLE_UTILIZADOR_COLLUMS[3] + " " + TABLE_UTILIZADOR_DATATYPES[3]
+                        + ", IN sp_" + TABLE_UTILIZADOR_COLLUMS[4] + " " + TABLE_UTILIZADOR_DATATYPES[4];
+
+
+
+        String statements = "UPDATE " + TABLE_UTILIZADOR_NAME + " SET " + TABLE_UTILIZADOR_COLLUMS[1] + " = sp_" + TABLE_UTILIZADOR_COLLUMS[1] +
+                " ," + TABLE_UTILIZADOR_COLLUMS[2] + " = sp_" + TABLE_UTILIZADOR_COLLUMS[2] +
+                " ," + TABLE_UTILIZADOR_COLLUMS[3] + " = sp_" + TABLE_UTILIZADOR_COLLUMS[3] +
+                " ," + TABLE_UTILIZADOR_COLLUMS[4] + " = sp_" + TABLE_UTILIZADOR_COLLUMS[4] +
+                " WHERE " + TABLE_UTILIZADOR_COLLUMS[0] + " = sp_" + TABLE_UTILIZADOR_COLLUMS[0];
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    public static void createSPEliminar_User(Connection connection) throws SQLException {
+
+        String procedureName = "Eliminar_User";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_UTILIZADOR_DATATYPES[0];
+        String statements = "DELETE FROM " + TABLE_UTILIZADOR_NAME + " WHERE 'sp_Param' = sp_ParamValue";
+
+        createStoredProcedure(connection, procedureName, statements, args);
+    }
+
     /*
     public static void SPCriar_User(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
         //if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
@@ -468,6 +554,36 @@ public class CulturaDB {
 
     }
 
+    public static void createSPAlterar_Cultura(Connection connection) throws SQLException {
+
+        String procedureName = "Alterar_Cultura";
+        String args =
+                "IN sp_" + TABLE_CULTURA_COLLUMS[0] + " " + TABLE_CULTURA_DATATYPES[0]
+                        + ", IN sp_" + TABLE_CULTURA_COLLUMS[1] + " " + TABLE_CULTURA_DATATYPES[1]
+                        + ", IN sp_" + TABLE_CULTURA_COLLUMS[2] + " " + TABLE_CULTURA_DATATYPES[2]
+                        + ", IN sp_" + TABLE_CULTURA_COLLUMS[3] + " " + TABLE_CULTURA_DATATYPES[3];
+
+
+
+        String statements = "UPDATE " + TABLE_CULTURA_NAME + " SET " + TABLE_CULTURA_COLLUMS[1] + " = sp_" + TABLE_CULTURA_COLLUMS[1] +
+                " ," + TABLE_CULTURA_COLLUMS[2] + " = sp_" + TABLE_CULTURA_COLLUMS[2] +
+                " ," + TABLE_CULTURA_COLLUMS[3] + " = sp_" + TABLE_CULTURA_COLLUMS[3] +
+                " WHERE " + TABLE_CULTURA_COLLUMS[0] + " = sp_" + TABLE_CULTURA_COLLUMS[0];
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    public static void createSPEliminar_Cultura(Connection connection) throws SQLException {
+
+        String procedureName = "Eliminar_Cultura";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_CULTURA_DATATYPES[0];
+        String statements = "DELETE FROM " + TABLE_CULTURA_NAME + " WHERE 'sp_Param' = sp_ParamValue";
+
+        createStoredProcedure(connection, procedureName, statements, args);
+    }
+
+
 
     /*
     public static void SPCriar_Cultura(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
@@ -495,6 +611,69 @@ public class CulturaDB {
 
     //<editor-fold desc="SPParametroCultura">
     //---------------------------------- ParametroCultura ----------------------------------
+    public static void createSPInserir_ParametroCultura(Connection connection) throws SQLException {
+
+        String procedureName = "Inserir_ParametroCultura";
+        String args = generateARGUMENTS(
+                Arrays.copyOfRange(TABLE_PARAMETROCULTURA_COLLUMS,1,TABLE_PARAMETROCULTURA_COLLUMS.length ),
+                Arrays.copyOfRange(TABLE_PARAMETROCULTURA_DATATYPES,1, TABLE_PARAMETROCULTURA_DATATYPES.length   )
+        );
+
+        String statements = generateINSERT(TABLE_PARAMETROCULTURA_NAME, Arrays.copyOfRange(TABLE_PARAMETROCULTURA_COLLUMS,0,TABLE_PARAMETROCULTURA_COLLUMS.length));
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+
+    public static void createSPAlterar_ParametroCultura(Connection connection) throws SQLException {
+
+        String procedureName = "Alterar_ParametroCultura";
+        String args =
+                "IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[0] + " " + TABLE_PARAMETROCULTURA_DATATYPES[0]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[1] + " " + TABLE_PARAMETROCULTURA_DATATYPES[1]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[2] + " " + TABLE_PARAMETROCULTURA_DATATYPES[2]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[3] + " " + TABLE_PARAMETROCULTURA_DATATYPES[3]
+
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[4] + " " + TABLE_PARAMETROCULTURA_DATATYPES[4]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[5] + " " + TABLE_PARAMETROCULTURA_DATATYPES[5]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[6] + " " + TABLE_PARAMETROCULTURA_DATATYPES[6]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[7] + " " + TABLE_PARAMETROCULTURA_DATATYPES[7]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[8] + " " + TABLE_PARAMETROCULTURA_DATATYPES[8]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[9] + " " + TABLE_PARAMETROCULTURA_DATATYPES[9]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[10] + " " + TABLE_PARAMETROCULTURA_DATATYPES[10]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[11] + " " + TABLE_PARAMETROCULTURA_DATATYPES[11]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[12] + " " + TABLE_PARAMETROCULTURA_DATATYPES[12]
+                        + ", IN sp_" + TABLE_PARAMETROCULTURA_COLLUMS[13] + " " + TABLE_PARAMETROCULTURA_DATATYPES[13];
+
+
+        String statements = "UPDATE " + TABLE_PARAMETROCULTURA_NAME + " SET " + TABLE_PARAMETROCULTURA_COLLUMS[1] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[1] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[2] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[2] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[3] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[3] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[4] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[4] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[5] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[5] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[6] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[6] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[7] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[7] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[8] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[8] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[9] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[9] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[10] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[10] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[11] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[11] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[12] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[12] +
+                " ," + TABLE_PARAMETROCULTURA_COLLUMS[13] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[13] +
+                " WHERE " + TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_PARAMETROCULTURA_COLLUMS[0];
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    public static void createSPEliminar_ParametroCultura(Connection connection) throws SQLException {
+
+        String procedureName = "Eliminar_ParametroCultura";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_PARAMETROCULTURA_DATATYPES[0];
+        String statements = "DELETE FROM " + TABLE_PARAMETROCULTURA_NAME + " WHERE 'sp_Param' = sp_ParamValue";
+
+        createStoredProcedure(connection, procedureName, statements, args);
+    }
     //TODO Verificar se o investigador está associado à cultura
 
 
@@ -527,6 +706,62 @@ public class CulturaDB {
     //---------------------------------- Alerta ----------------------------------
 
 
+    public static void createSPInserir_Alerta(Connection connection) throws SQLException {
+
+        String procedureName = "Inserir_Alerta";
+        String args = generateARGUMENTS(
+                Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,1,TABLE_ALERTA_COLLUMS.length ),
+                Arrays.copyOfRange(TABLE_ALERTA_DATATYPES,1, TABLE_ALERTA_DATATYPES.length   )
+        );
+
+        String statements = generateINSERT(TABLE_ALERTA_NAME, Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,0,TABLE_ALERTA_COLLUMS.length));
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+    public static void createSPAlterar_Alerta(Connection connection) throws SQLException {
+
+        String procedureName = "Alterar_Alerta";
+        String args =
+                "IN sp_" + TABLE_ALERTA_COLLUMS[0] + " " + TABLE_ALERTA_DATATYPES[0]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[1] + " " + TABLE_ALERTA_DATATYPES[1]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[2] + " " + TABLE_ALERTA_DATATYPES[2]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[3] + " " + TABLE_ALERTA_DATATYPES[3]
+
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[4] + " " + TABLE_ALERTA_DATATYPES[4]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[5] + " " + TABLE_ALERTA_DATATYPES[5]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[6] + " " + TABLE_ALERTA_DATATYPES[6]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[7] + " " + TABLE_ALERTA_DATATYPES[7]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[8] + " " + TABLE_ALERTA_DATATYPES[8]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[9] + " " + TABLE_ALERTA_DATATYPES[9]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10]
+                        + ", IN sp_" + TABLE_ALERTA_COLLUMS[11] + " " + TABLE_ALERTA_DATATYPES[11];
+
+        String statements = "UPDATE " + TABLE_ALERTA_NAME + " SET " + TABLE_ALERTA_COLLUMS[1] + " = sp_" + TABLE_ALERTA_COLLUMS[1] +
+                " ," + TABLE_ALERTA_COLLUMS[2] + " = sp_" + TABLE_ALERTA_COLLUMS[2] +
+                " ," + TABLE_ALERTA_COLLUMS[3] + " = sp_" + TABLE_ALERTA_COLLUMS[3] +
+                " ," + TABLE_ALERTA_COLLUMS[4] + " = sp_" + TABLE_ALERTA_COLLUMS[4] +
+                " ," + TABLE_ALERTA_COLLUMS[5] + " = sp_" + TABLE_ALERTA_COLLUMS[5] +
+                " ," + TABLE_ALERTA_COLLUMS[6] + " = sp_" + TABLE_ALERTA_COLLUMS[6] +
+                " ," + TABLE_ALERTA_COLLUMS[7] + " = sp_" + TABLE_ALERTA_COLLUMS[7] +
+                " ," + TABLE_ALERTA_COLLUMS[8] + " = sp_" + TABLE_ALERTA_COLLUMS[8] +
+                " ," + TABLE_ALERTA_COLLUMS[9] + " = sp_" + TABLE_ALERTA_COLLUMS[9] +
+                " ," + TABLE_ALERTA_COLLUMS[10] + " = sp_" + TABLE_ALERTA_COLLUMS[10] +
+                " ," + TABLE_ALERTA_COLLUMS[11] + " = sp_" + TABLE_ALERTA_COLLUMS[11] +
+                " WHERE " + TABLE_ALERTA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[0];
+
+        createStoredProcedure(connection, procedureName, statements, args);
+
+    }
+
+    public static void createSPEliminar_Alerta(Connection connection) throws SQLException {
+
+        String procedureName = "Eliminar_Alerta";
+        String args = "IN sp_Param VARCHAR(100)" + ", IN sp_ParamValue " + TABLE_ALERTA_DATATYPES[0];
+        String statements = "DELETE FROM " + TABLE_ALERTA_NAME + " WHERE 'sp_Param' = sp_ParamValue";
+
+        createStoredProcedure(connection, procedureName, statements, args);
+    }
 /*
     public static void SPCriar_Alerta(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
         if (typeOfUser(connection, userID).equals(USER_ADMIN)) {
