@@ -30,16 +30,23 @@ public class CulturaDB {
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
-        createDb(LOCAL_PATH_MYSQL,  USERNAME, PASSWORD,DB_NAME);
         Connection localConnection = connectDb(LOCAL_PATH_DB,  USERNAME, PASSWORD);
         Connection cloudConnection = connectDb(CLOUD_PATH_DB,  CLOUD_USERNAME, CLOUD_PASSWORD);
+
+        createDb(LOCAL_PATH_MYSQL,  USERNAME, PASSWORD,DB_NAME);
         dropAllTablesDbCultura(localConnection);
         createAllTablesDbCultura(localConnection,cloudConnection);
         createAllSP(localConnection);
         localConnection.close();
+
+
         /*
         String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-        insertMedicao(document);
+        insertMedicao(document,localConnection);
+        String document2 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z2, Sensor=T2, Data=2021-02-25 at 21:42:53 GMT, Medicao=53.552906794871795}}";
+        insertMedicao(document2,localConnection);
+        String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=L1, Data=2021-02-25 at 21:42:53 GMT, Medicao=-17.552906794871795}}";
+        insertMedicao(document3,localConnection);
          */
 
         /*
@@ -49,10 +56,7 @@ public class CulturaDB {
                 "END";
         executeSQL(connection,Sp);
         */
-/*
-        changeLocalOrCloud(true);
-        selectAllFromDbTable(connection,TABLE_SENSOR_NAME,new ArrayList<String>(Arrays.asList(TABLE_SENSOR_COLLUMS[1])));
-*/
+
         //  createSPCriar_Zona(connection);
 
     }
@@ -149,6 +153,8 @@ public class CulturaDB {
     public static void insertMedicao(String medicao, Connection connection) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
         String[] splitData = medicao.split(",");
+        String idSensor = "";
+        String medicaoValue = "";
         for (String data : splitData) {
             String[] datavalues = data.trim().split("=");
             switch (datavalues[0]) {
@@ -160,17 +166,22 @@ public class CulturaDB {
                     ArrayList<Pair> paramValues = new ArrayList<>();
                     paramValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[1], datavalues[1].charAt(0)));
                     paramValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[2], datavalues[1].charAt(1)));
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2],
-                            (String) SqlController.getElementsFromDbTable(connection, TABLE_SENSOR_NAME, TABLE_SENSOR_COLLUMS[0],
-                                    paramValues)));
+                    idSensor = (String) SqlController.getElementsFromDbTable(connection, TABLE_SENSOR_NAME, TABLE_SENSOR_COLLUMS[0],
+                            paramValues);
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2], idSensor));
                     break;
                 }
                 case DATA: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3], datavalues[1]));
+                    String dateTime = datavalues[1].replace("T", " ");
+                    dateTime = dateTime.replace("Z","");
+                    dateTime = dateTime.replace("at ","");
+                    dateTime = dateTime.replace(" GM ","");
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3], dateTime));
                     break;
                 }
                 case MEDICAO: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[4], datavalues[1].replace("}", "")));
+                    medicaoValue = datavalues[1].replace("}", "");
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[4], medicaoValue));
                     break;
                 }
                 default: {
@@ -179,7 +190,12 @@ public class CulturaDB {
             }
 
         }
-        SqlController.insertInDbTable(connection, TABLE_MEDICAO_NAME, values);
+        String[] columnsToGet = {TABLE_SENSOR_COLLUMS[3],TABLE_SENSOR_COLLUMS[4]};
+        ArrayList<String> limitesFromSensor= getElementFromDbTable(connection,TABLE_SENSOR_NAME,columnsToGet,TABLE_SENSOR_COLLUMS[0],idSensor);
+        if(Double.parseDouble(medicaoValue) > Double.parseDouble(limitesFromSensor.get(1)) || Double.parseDouble(medicaoValue) < Double.parseDouble(limitesFromSensor.get(0)))
+            System.out.println("Medicao invalida");
+        else
+            SqlController.insertInDbTable(connection, TABLE_MEDICAO_NAME, values);
 
     }
 
