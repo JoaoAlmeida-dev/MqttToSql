@@ -5,62 +5,244 @@ import util.Pair;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static sql.SqlController.*;
 import static sql.SqlVariables.*;
 
 public class CulturaDB {
 
-    private static final String ZONA = "Zona";
-    private static final String SENSOR = "Sensor";
-    private static final String DATA = "Data";
-    private static final String MEDICAO = "Medicao";
-    private static Connection connection;
-    static {
-        try {
-            connection = connectDb(PATH_DB_USER);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+    /*
+    TODO Melhorar privilegios de Roles
+         Melhorar Sp de inserir medicao(Mudar de funçao pa SP)
+         Verificar se o investigador está associado à cultura
+    */
+
+    /**
+     * For testing purposes only
+     */
+    public static void main(String[] args) throws SQLException {
+        Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
+        Connection cloudConnection = connectDb(CLOUD_PATH_DB, CLOUD_USERNAME, CLOUD_PASSWORD);
+
+        createDb(LOCAL_PATH_MYSQL, ROOTUSERNAME, ROOTPASSWORD, DB_NAME);
+
+        dropAllTablesDbCultura(localConnection);
+
+        createAllTablesDbCultura(localConnection,cloudConnection);
+
+        CulturaSP.createAllSP(localConnection);
+
+        createAllRoles(localConnection);
+
+        localConnection.close();
+        cloudConnection.close();
+
+        /*
+        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+        insertMedicao(document,localConnection);
+        String document2 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z2, Sensor=T2, Data=2021-02-25 at 21:42:53 GMT, Medicao=53.552906794871795}}";
+        insertMedicao(document2,localConnection);
+        String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=L1, Data=2021-02-25 at 21:42:53 GMT, Medicao=-17.552906794871795}}";
+        insertMedicao(document3,localConnection);
+         */
+
+    }
+
+    public static Connection getLocalConnection() throws SQLException {
+        return connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
+    }
+
+    public static Connection getCloudConnection() throws SQLException {
+        return connectDb(CLOUD_PATH_DB,  CLOUD_USERNAME, CLOUD_PASSWORD);
+    }
+
+    private static Connection changeLocalOrCloud(boolean isItCloud) throws SQLException {
+        if (isItCloud) {
+            return connectDb(CLOUD_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
+        } else {
+            return connectDb(DB_NAME,  CLOUD_USERNAME, CLOUD_PASSWORD);
+
         }
     }
 
-    public static void createAllTablesDbCultura() throws SQLException {
-        createTableDb(connection, TABLE_CULTURA_NAME, TABLE_CULTURA);
-        createTableDb(connection, TABLE_ALERTA_NAME, TABLE_ALERTA);
-        createTableDb(connection, TABLE_MEDICAO_NAME, TABLE_MEDICAO);
-        createTableDb(connection, TABLE_PARAMETROCULTURA_NAME, TABLE_PARAMETROCULTURA);
-        createTableDb(connection, TABLE_SENSOR_NAME, TABLE_SENSOR);
-        createTableDb(connection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
-        createTableDb(connection, TABLE_ZONA_NAME, TABLE_ZONA);
+
+    private static void insertZona(Connection localConnection,Connection cloudConnection) throws SQLException {
+        ArrayList<ArrayList<Pair>> zonaCloudValues = getAllFromDbTable(cloudConnection, TABLE_ZONA_NAME, new ArrayList<>(Arrays.asList(TABLE_ZONA_COLLUMS)));
+
+        ArrayList<Pair> zonaLocalValues = new ArrayList<>();
+        for (ArrayList<Pair> zonaValues : zonaCloudValues) {
+            for (Pair zonaValue : zonaValues) {
+                if (zonaValue.getA().toString().equals("IdZona"))
+                    zonaLocalValues.add(new Pair<>(zonaValue.getA(), Integer.parseInt(zonaValue.getB().toString())));
+                else
+                    zonaLocalValues.add(new Pair<>(zonaValue.getA(), Double.parseDouble(zonaValue.getB().toString())));
+            }
+            insertInDbTable(localConnection, TABLE_ZONA_NAME, zonaLocalValues);
+            zonaLocalValues = new ArrayList<>();
+        }
     }
 
-    public static void insertMedicao(String medicao) throws SQLException {
+    private static void insertSensores(Connection localConnection,Connection cloudConnection) throws SQLException {
+        ArrayList<ArrayList<Pair>> sensorCloudValues = getAllFromDbTable(cloudConnection, TABLE_SENSOR_NAME, new ArrayList<>(Arrays.asList(sensorCloudColumns)));
+
+        ArrayList<Pair> sensorLocalValues = new ArrayList<>();
+        for (ArrayList<Pair> sensorValues : sensorCloudValues) {
+            for (Pair sensorValue : sensorValues) {
+                switch (sensorValue.getA().toString()) {
+                    case "idsensor":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[2], Integer.parseInt(sensorValue.getB().toString())));
+                        break;
+                    case "tipo":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[1], sensorValue.getB()));
+                        break;
+                    case "limiteinferior":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[3], Double.parseDouble(sensorValue.getB().toString())));
+                        break;
+                    case "limitesuperior":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[4], Double.parseDouble(sensorValue.getB().toString())));
+                        break;
+                    case "idzona":
+                        sensorLocalValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[5], Integer.parseInt(sensorValue.getB().toString())));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            insertInDbTable(localConnection, TABLE_SENSOR_NAME, sensorLocalValues);
+            sensorLocalValues = new ArrayList<>();
+        }
+    }
+
+    public static void dropAllTablesDbCultura(Connection connection) throws SQLException {
+        dropTableDb(connection, TABLE_MEDICAO_NAME);
+        dropTableDb(connection, TABLE_ALERTA_NAME);
+        dropTableDb(connection, TABLE_SENSOR_NAME);
+        dropTableDb(connection, TABLE_ZONA_NAME);
+        dropTableDb(connection, TABLE_PARAMETROCULTURA_NAME);
+        dropTableDb(connection, TABLE_CULTURA_NAME);
+        dropTableDb(connection, TABLE_UTILIZADOR_NAME);
+    }
+
+    public static void createAllTablesDbCultura(Connection localConnection,Connection cloudConnection) throws SQLException {
+        createTableDb(localConnection, TABLE_UTILIZADOR_NAME, TABLE_UTILIZADOR);
+        createTableDb(localConnection, TABLE_CULTURA_NAME, TABLE_CULTURA);
+        createTableDb(localConnection, TABLE_PARAMETROCULTURA_NAME, TABLE_PARAMETROCULTURA);
+        createTableDb(localConnection, TABLE_ZONA_NAME, TABLE_ZONA);
+        createTableDb(localConnection, TABLE_SENSOR_NAME, TABLE_SENSOR);
+        createTableDb(localConnection, TABLE_ALERTA_NAME, TABLE_ALERTA);
+        createTableDb(localConnection, TABLE_MEDICAO_NAME, TABLE_MEDICAO);
+
+        //Add Sensores and Zonas
+        insertZona(localConnection,cloudConnection);
+        insertSensores(localConnection,cloudConnection);
+    }
+
+    private static void createInvestigadorRole (Connection connection) throws SQLException {
+        createRole(connection,INVESTIGADOR);
+        //Select
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_ZONA_NAME,false);
+        //Stored Procedures
+        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_INSERIR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_ALTERAR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_ELIMINAR_PARAMETRO_CULTURA_NAME,true);
+    }
+
+    private static void createTecnicoRole(Connection connection) throws SQLException {
+        createRole(connection,TECNICO);
+        //Select
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_ZONA_NAME,false);
+    }
+
+    private static void createAdminRole(Connection connection) throws SQLException {
+        createRole(connection,ADMIN);
+        //Select
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_ZONA_NAME,false);
+        //Stored Procedures
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_INSERIR_USER_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ALTERAR_USER_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ELIMINAR_USER_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_INSERIR_CULTURA_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ALTERAR_CULTURA_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ELIMINAR_CULTURA_NAME,true);
+    }
+
+    private static void createMqttReaderRole(Connection connection) throws SQLException {
+        createRole(connection,MQTTREADER);
+        grantPermissionRole(connection,MQTTREADER,"EXECUTE",SP_INSERIR_MEDICAO_NAME,true);
+    }
+
+    public static void createAllRoles(Connection connection) throws SQLException {
+        createInvestigadorRole(connection);
+        createTecnicoRole(connection);
+        createAdminRole(connection);
+        createMqttReaderRole(connection);
+    }
+    
+    public static void insertMedicao(String medicao, Connection connection) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
-        String[] splitData =medicao.split(",");
+        String[] splitData = medicao.split(",");
+        String idSensor = "";
+        String medicaoValue = "";
         for (String data : splitData) {
             String[] datavalues = data.trim().split("=");
             switch (datavalues[0]) {
                 case ZONA: {
-                    //SqlController.selectElementFromDbTable(connection,SqlVariables.TABLE_ZONA_NAME,);
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1],datavalues[1]));
-                    break;
-                }case SENSOR: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2],datavalues[1]));
-                    break;
-                }case DATA: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3],datavalues[1]));
-                    break;
-                }case MEDICAO: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[4],datavalues[1].replace("}","")));
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1], datavalues[1].charAt(1)));
                     break;
                 }
-                default:{
+                case SENSOR: {
+                    ArrayList<Pair> paramValues = new ArrayList<>();
+                    paramValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[1], datavalues[1].charAt(0)));
+                    paramValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[2], datavalues[1].charAt(1)));
+                    idSensor = (String) SqlController.getElementsFromDbTable(connection, TABLE_SENSOR_NAME, TABLE_SENSOR_COLLUMS[0],
+                            paramValues);
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2], idSensor));
+                    break;
+                }
+                case DATA: {
+                    String dateTime = datavalues[1].replace("T", " ");
+                    dateTime = dateTime.replace("Z","");
+                    dateTime = dateTime.replace("at ","");
+                    dateTime = dateTime.replace(" GM ","");
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3], dateTime));
+                    break;
+                }
+                case MEDICAO: {
+                    medicaoValue = datavalues[1].replace("}", "");
+                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[4], medicaoValue));
+                    break;
+                }
+                default: {
 
                 }
             }
 
         }
-            SqlController.insertInDbTable(connection,TABLE_MEDICAO_NAME,values);
+        String[] columnsToGet = {TABLE_SENSOR_COLLUMS[3],TABLE_SENSOR_COLLUMS[4]};
+        ArrayList<String> limitesFromSensor= getElementFromDbTable(connection,TABLE_SENSOR_NAME,columnsToGet,TABLE_SENSOR_COLLUMS[0],idSensor);
+        if(Double.parseDouble(medicaoValue) > Double.parseDouble(limitesFromSensor.get(1)) || Double.parseDouble(medicaoValue) < Double.parseDouble(limitesFromSensor.get(0)))
+            System.out.println("Medicao invalida");
+        else
+            SqlController.insertInDbTable(connection, TABLE_MEDICAO_NAME, values);
 
     }
 
@@ -70,317 +252,4 @@ public class CulturaDB {
         return result.get(0);
     }
 
-    //---------------------------------- SPs ----------------------------------
-
-    //---------------------------------- Zona ----------------------------------
-
-    public static void SPCriar_Zona(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)){
-            insertInDbTable(connection, TABLE_ZONA_NAME, values);
-        }
-    }
-
-    public static void SPAlterar_Zona(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            //selectElementFromDbTable(connection, TABLE_ZONA_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_ZONA_NAME,columns,param,paramValue);
-            updateFromDbTable(connection, TABLE_ZONA_NAME, values, param, paramValue);
-        }
-    }
-
-    public static void SPEliminar_Zona(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            deleteFromDbTable(connection, TABLE_ZONA_NAME, param, paramValue);
-        }
-    }
-
-    //---------------------------------- Medição ----------------------------------
-
-    public static void SPCriar_Medicao(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            insertInDbTable(connection, TABLE_MEDICAO_NAME, values);
-        }
-    }
-
-    public static void SPAlterar_Medicao(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            //selectElementFromDbTable(connection, TABLE_MEDICAO_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_MEDICAO_NAME,columns,param,paramValue);
-            updateFromDbTable(connection, TABLE_MEDICAO_NAME, values, param, paramValue);
-        }
-    }
-
-    public static void SPEliminar_Medicao(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            deleteFromDbTable(connection, TABLE_MEDICAO_NAME, param, paramValue);
-        }
-    }
-
-    //---------------------------------- Sensor ----------------------------------
-
-    public static void SPCriar_Sensor(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            insertInDbTable(connection, TABLE_SENSOR_NAME, values);
-        }
-    }
-
-    public static void SPAlterar_Sensor(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            //selectElementFromDbTable(connection, TABLE_SENSOR_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_SENSOR_NAME,columns,param,paramValue);
-            updateFromDbTable(connection, TABLE_SENSOR_NAME, values, param, paramValue);
-        }
-    }
-
-    public static void SPEliminar_Sensor(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            deleteFromDbTable(connection, TABLE_SENSOR_NAME, param, paramValue);
-        }
-    }
-
-    //---------------------------------- User ----------------------------------
-
-    public static void SPCriar_User(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        //if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-        insertInDbTable(connection,TABLE_UTILIZADOR_NAME,values);
-        //}
-    }
-
-    public static void SPAlterar_User(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            //selectElementFromDbTable(connection,TABLE_UTILIZADOR_NAME,columns,param,paramValue);
-            result = getElementFromDbTable(connection,TABLE_UTILIZADOR_NAME,columns,param,paramValue);
-            updateFromDbTable(connection,TABLE_UTILIZADOR_NAME,values,param,paramValue);
-        }
-    }
-
-    public static void SPEliminar_User(Connection connection,int userID) throws SQLException {
-        //if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-        deleteFromDbTable(connection, TABLE_UTILIZADOR_NAME, "IdUtilizador", String.valueOf(userID));
-        //}
-    }
-
-    //---------------------------------- Cultura ----------------------------------
-
-    public static void SPCriar_Cultura(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            insertInDbTable(connection, TABLE_CULTURA_NAME, values);
-        }
-    }
-
-    public static void SPAlterar_Cultura(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            //selectElementFromDbTable(connection, TABLE_CULTURA_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_CULTURA_NAME,columns,param,paramValue);
-            updateFromDbTable(connection, TABLE_CULTURA_NAME, values, param, paramValue);
-        }
-    }
-
-    public static void SPEliminar_Cultura(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            deleteFromDbTable(connection, TABLE_CULTURA_NAME, param, paramValue);
-        }
-    }
-
-    //---------------------------------- ParametroCultura ----------------------------------
-    //TODO Verificar se o investigador está associado à cultura
-    public static void SPCriar_ParametroCultura(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_INVESTIGATOR)) {
-            insertInDbTable(connection, TABLE_PARAMETROCULTURA_NAME, values);
-        }
-    }
-
-    public static void SPAlterar_ParametroCultura(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_INVESTIGATOR)) {
-            //selectElementFromDbTable(connection, TABLE_PARAMETROCULTURA_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_PARAMETROCULTURA_NAME,columns,param,paramValue);
-            updateFromDbTable(connection, TABLE_PARAMETROCULTURA_NAME, values, param, paramValue);
-        }
-    }
-
-    public static void SPEliminar_ParametroCultura(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_INVESTIGATOR)) {
-            deleteFromDbTable(connection, TABLE_PARAMETROCULTURA_NAME, param, paramValue);
-        }
-    }
-
-    //---------------------------------- Alerta ----------------------------------
-
-    public static void SPCriar_Alerta(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            insertInDbTable(connection,TABLE_ALERTA_NAME,values);
-        }
-    }
-
-
-    public static void SPAlterar_Alerta(Connection connection, String[] columns, ArrayList<Pair> values, ArrayList<String> result, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            //selectElementFromDbTable(connection, TABLE_ALERTA_NAME, columns, param, paramValue);
-            result = getElementFromDbTable(connection,TABLE_ALERTA_NAME,columns,param,paramValue);
-            updateFromDbTable(connection, TABLE_ALERTA_NAME, values, param, paramValue);
-        }
-    }
-
-    public static void SPEliminar_Alerta(Connection connection, String param, String paramValue, int userID) throws SQLException {
-        if(typeOfUser(connection,userID).equals(USER_ADMIN)) {
-            deleteFromDbTable(connection,TABLE_ALERTA_NAME,param,paramValue);
-        }
-    }
-
-
-
-    /**
-     * For testing purposes only
-     */
-    public static void main(String[] args) throws SQLException {
-
-        //Connection connection = connectDb(PATH_DB_USER);
-        ArrayList<Pair> values = new ArrayList<>();
-        values.add(new Pair<>("IdUtilizador", "INT"));
-        values.add(new Pair<>("email", "teste@hotmail.com"));
-        values.add(new Pair<>("password", "1234"));
-        // insertInDbTable(connection,"user",values);
-        ArrayList<String> columns = new ArrayList<>();
-
-        //columns.add("id");
-        //columns.add("nickname");
-        //columns.add("email");
-        //columns.add("password");
-
-        // Zona
-        /*values.add(new Pair<>("Temperatura","12"));
-        values.add(new Pair<>("Humidade","60"));
-        values.add(new Pair<>("Luz","67"));
-*/
-        // Medicao
-       /* values.add(new Pair<>("IdZona","12"));
-        values.add(new Pair<>("IdSensor","60"));
-        values.add(new Pair<>("Hora","current_time"));
-        values.add(new Pair<>("Leitura","67.5"));
-*/
-        // Utilizador
-        values.add(new Pair<>("NomeInvestigador","Joaquim"));
-        values.add(new Pair<>("EmailUtilizador","j@hotmail.com"));
-        values.add(new Pair<>("TipoUtilizador","Adm"));
-        values.add(new Pair<>("Password","aapl"));
-
-        // Sensor
-       /* values.add(new Pair<>("Tipo","T"));
-        values.add(new Pair<>("LimiteInferior","27.5"));
-        values.add(new Pair<>("LimiteSuperior","73.5"));
-        values.add(new Pair<>("IdZona","1"));
-*/
-        // Cultura
-        /*values.add(new Pair<>("NomeCultura","C1"));
-        values.add(new Pair<>("IdUtilizador","1"));
-        values.add(new Pair<>("Estado","0"));
-         */
-
-        // ParametroCultura
-       /* values.add(new Pair<>("IdCultura","1"));
-        values.add(new Pair<>("MinHumidade","27.5"));
-        values.add(new Pair<>("MaxHumidade","73.5"));
-        values.add(new Pair<>("MinTemperatura","27.5"));
-        values.add(new Pair<>("MaxTemperatura","73.5"));
-        values.add(new Pair<>("MinLuz","27.5"));
-        values.add(new Pair<>("MaxLuz","73.5"));
-        values.add(new Pair<>("DangerZoneMinHumidade","27.5"));
-        values.add(new Pair<>("DangerZoneMaxHumidade","73.5"));
-        values.add(new Pair<>("DangerZoneMinTemeperatura","27.5"));
-        values.add(new Pair<>("DangerZoneMaxTemperatura","73.5"));
-        values.add(new Pair<>("DangerZoneMinLuz","27.5"));
-        values.add(new Pair<>("DangerZoneMaxLuz","73.5"));
-*/
-        // Alerta
-       /* values.add(new Pair<>("IdZona","1"));
-        values.add(new Pair<>("IdSensor","1"));
-        values.add(new Pair<>("Hora","current_time"));
-        values.add(new Pair<>("Leitura","27.5"));
-        values.add(new Pair<>("TipoAlerta","T"));
-        values.add(new Pair<>("Cultura","C1"));
-        values.add(new Pair<>("Mensagem","Cultura Ok"));
-        values.add(new Pair<>("IdUtilizador","1"));
-        values.add(new Pair<>("HoraEscrita","current_time"));
-        values.add(new Pair<>("NivelAlerta","BOM"));
-        values.add(new Pair<>("IdParametroCultura","1"));
-*/
-
-        // Zona
-        /*columns.add("Temperatura");
-        columns.add("Humidade");
-        columns.add("Luz");
-*/
-        // Medicao
-        /*columns.add("IdZona");
-        columns.add("IdSensor");
-        columns.add("Hora");
-        columns.add("Leitura");
-      */
-        // Utilizador
-        /*columns.add("NomeInvestigador");
-        columns.add("EmailUtilizador");
-        columns.add("TipoUtilizador");
-        columns.add("Password");
-*/
-        // Sensor
-        /*columns.add("Tipo");
-        columns.add("LimiteInferior");
-        columns.add("LimiteSuperior");
-        columns.add("IdZona");
-*/
-        // Cultura
-        /*columns.add("NomeCultura");
-        columns.add("IdUtilizador");
-        columns.add("Estado");
-*/
-        // ParametroCultura
-       /* columns.add("IdCultura");
-        columns.add("MinHumidade");
-        columns.add("MaxHumidade");
-        columns.add("MinTemperatura");
-        columns.add("MaxTemperatura");
-        columns.add("MinLuz");
-        columns.add("MaxLuz");
-        columns.add("DangerZoneMinHumidade");
-        columns.add("DangerZoneMaxHumidade");
-        columns.add("DangerZoneMinTemeperatura");
-        columns.add("DangerZoneMaxTemperatura");
-        columns.add("DangerZoneMinLuz");
-        columns.add("DangerZoneMaxLuz");
-*/
-        // Alerta
-       /* columns.add("IdZona");
-        columns.add("IdSensor");
-        columns.add("Hora");
-        columns.add("Leitura");
-        columns.add("TipoAlerta");
-        columns.add("Cultura");
-        columns.add("Mensagem");
-        columns.add("IdUtilizador");
-        columns.add("HoraEscrita");
-        columns.add("NivelAlerta");
-        columns.add("IdParametroCultura");
-*/
-
-        //selectAllFromDbTable(connection,"user", columns);
-        //selectElementFromDbTable(connection,"user",columns,"nickname","teste");
-        //getElementFromDbTable(connection,"user",columns,"nickname","teste");
-
-        //createAllTablesDbCultura();
-        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-        insertMedicao(document);
-
-        //SPCriar_Zona(connection,values,1);
-        //SPAlterar_Zona(connection,columns,values,"IdZona","1");
-        //SPEliminar_Zona(connection,"IdZona","4");
-        //SPCriar_User(connection,values,1);
-        //SPEliminar_User(connection,1);
-
-        //System.out.println(typeOfUser(connection,1));
-        // System.out.println("values");
-        //System.out.println("columns");
-        //deleteFromDbTable(connection,"user","nickname","teste");
-        //updateFromDbTable(connection,"user",values,"email","teste");
-        //connection.close();
-    }
 }
