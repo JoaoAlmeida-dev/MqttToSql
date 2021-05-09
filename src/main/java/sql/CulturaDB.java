@@ -13,8 +13,7 @@ import static sql.SqlVariables.*;
 public class CulturaDB {
 
     /*
-    TODO Melhorar privilegios de Roles
-         Melhorar Sp de inserir medicao(Mudar de funçao pa SP)
+    TODO Melhorar Sp de inserir medicao(Mudar de funçao pa SP)
          Verificar se o investigador está associado à cultura
     */
 
@@ -45,7 +44,7 @@ public class CulturaDB {
         insertMedicao(document2,localConnection);
         String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=L1, Data=2021-02-25 at 21:42:53 GMT, Medicao=-17.552906794871795}}";
         insertMedicao(document3,localConnection);
-         */
+        */
 
     }
 
