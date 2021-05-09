@@ -29,11 +29,7 @@ public class MQTTReader implements MqttCallback{
 
     public static void main(String[] args) {
         try {
-            Connection connection = connectDb(LOCAL_PATH_DB,  USERNAME, PASSWORD);
-            /*
-                Error when loading connection like this.
-                Connection connection = CulturaDB.getLocalConnection();
-             */
+            Connection connection = CulturaDB.getLocalConnection();
             MQTTReader reader = new MQTTReader(BROKER, CLIENT_ID, PERSISTENCE,connection);
             reader.connect();
             reader.subscribe();

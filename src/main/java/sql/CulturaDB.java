@@ -62,7 +62,7 @@ public class CulturaDB {
     }
 
     public static Connection getLocalConnection() throws SQLException {
-        return connectDb(DB_NAME,  USERNAME, PASSWORD);
+        return connectDb(LOCAL_PATH_DB,  USERNAME, PASSWORD);
     }
 
     public static Connection getCloudConnection() throws SQLException {
