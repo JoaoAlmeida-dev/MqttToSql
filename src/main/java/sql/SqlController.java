@@ -263,15 +263,16 @@ public class SqlController{
 
 
     public static void createRole(Connection connection, String roleName) throws SQLException {
-        String sql = "DROP ROLE IF EXISTS CREATE ROLE " + roleName + ";";
-
-        executeSQL(connection,sql);
+        String sqlDrop = "DROP ROLE IF EXISTS " + roleName + ";";
+        executeSQL(connection,sqlDrop);
+        String sqlCreate = "CREATE ROLE " + roleName + ";";
+        executeSQL(connection,sqlCreate);
     }
 
     public static void grantPermissionRole(Connection connection, String roleName, String operation, String table, boolean isProcedure  ) throws SQLException {
         String sql = "GRANT " + operation;
         if (isProcedure) {
-            sql+=" ON PROCEDURE";
+            sql+=" ON PROCEDURE ";
         } else {
             sql+=" ON ";
         }

@@ -15,7 +15,7 @@ public class SqlVariables {
     public static final String MQTTPASSWORD = "dHbK5ddPuOLi8f(i";
 
     public static final String ROOTUSERNAME = "root";
-    public static final String ROOTPASSWORD = "";
+    public static final String ROOTPASSWORD = "root";
 
     //cloud
     public static final String CLOUD_DB_NAME = "sid2021";
@@ -533,11 +533,43 @@ public class SqlVariables {
             "CONSTRAINT FK2_IdZona FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES zona(" + TABLE_ALERTA_COLLUMS[1] + ")"     ,
             "CONSTRAINT FK_IdSensor FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES sensor(" + TABLE_ALERTA_COLLUMS[2] + ")"   ,
     };
-    //</editor-fold>
 
-    public static final String USER_ADMIN = "Adm";
-    public static final String USER_INVESTIGATOR = "Invest";
-    public static final String USER_TECHNIC = "Tec";
+    //Stored Procedure Constants
+    public static final String SP_INSERIR_ZONA_NAME = "Inserir_Zona";
+    public static final String SP_ALTERAR_ZONA_NAME = "Alterar_Zona";
+    public static final String SP_ELIMINAR_ZONA_NAME = "Eliminar_Zona";
+    public static final String SP_INSERIR_MEDICAO_NAME = "Inserir_Medicao";
+    public static final String SP_ALTERAR_MEDICAO_NAME = "Alterar_Medicao";
+    public static final String SP_ELIMINAR_MEDICAO_NAME = "Eliminar_Medicao";
+    public static final String SP_INSERIR_SENSOR_NAME = "Inserir_Sensor";
+    public static final String SP_ALTERAR_SENSOR_NAME = "Alterar_Sensor";
+    public static final String SP_ELIMINAR_SENSOR_NAME = "Eliminar_Sensor";
+    public static final String SP_INSERIR_USER_NAME = "Inserir_User";
+    public static final String SP_ALTERAR_USER_NAME = "Alterar_User";
+    public static final String SP_ELIMINAR_USER_NAME = "Eliminar_User";
+    public static final String SP_INSERIR_CULTURA_NAME = "Inserir_Cultura";
+    public static final String SP_ALTERAR_CULTURA_NAME = "Alterar_Cultura";
+    public static final String SP_ELIMINAR_CULTURA_NAME = "Eliminar_Cultura";
+    public static final String SP_INSERIR_PARAMETRO_CULTURA_NAME = "Inserir_ParametroCultura";
+    public static final String SP_ALTERAR_PARAMETRO_CULTURA_NAME = "Alterar_ParametroCultura";
+    public static final String SP_ELIMINAR_PARAMETRO_CULTURA_NAME = "Eliminar_ParametroCultura";
+    public static final String SP_INSERIR_ALERTA_NAME = "Inserir_Alerta";
+    public static final String SP_ALTERAR_ALERTA_NAME = "Alterar_Alerta";
+    public static final String SP_ELIMINAR_ALERTA_NAME = "Eliminar_Alerta";
 
+    //Columns for Medicao
+    static final String SENSOR = "Sensor";
+    static final String DATA = "Data";
+    static final String MEDICAO = "Medicao";
+    static final String ZONA = "Zona";
+
+    //Roles for Application
+    static final String INVESTIGADOR = "Investigador";
+    static final String TECNICO = "Tecnico";
+    static final String ADMIN = "Admin";
+    static final String MQTTREADER = "MqttReader";
+
+    //Columns for table Sensor in cloud
+    static final String[] sensorCloudColumns = {"idsensor", "tipo", "limiteinferior", "limitesuperior", "idzona"};
 
 }

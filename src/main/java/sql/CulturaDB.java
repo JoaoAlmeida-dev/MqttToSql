@@ -13,33 +13,27 @@ import static sql.SqlVariables.*;
 public class CulturaDB {
 
     /*
-    TODO verificar que medicao esta entre os valores do sensor
-        roles de users pa cena dos privilegios
-        SP temos de muda pa mysql(JOAO)
+    TODO Melhorar privilegios de Roles
+         Melhorar Sp de inserir medicao(Mudar de funçao pa SP)
+         Verificar se o investigador está associado à cultura
     */
-
-    private static final String ZONA = "Zona";
-    private static final String SENSOR = "Sensor";
-    private static final String DATA = "Data";
-    private static final String MEDICAO = "Medicao";
-    private static final String[] sensorCloudColumns = {"idsensor", "tipo", "limiteinferior", "limitesuperior", "idzona"};
-    //private static Connection connection;
-
 
     /**
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
         Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
-        Connection cloudConnection = connectDb(CLOUD_PATH_DB,  CLOUD_USERNAME, CLOUD_PASSWORD);
+        Connection cloudConnection = connectDb(CLOUD_PATH_DB, CLOUD_USERNAME, CLOUD_PASSWORD);
 
-        createDb(LOCAL_PATH_MYSQL, ROOTUSERNAME, ROOTPASSWORD,DB_NAME);
+        createDb(LOCAL_PATH_MYSQL, ROOTUSERNAME, ROOTPASSWORD, DB_NAME);
 
         dropAllTablesDbCultura(localConnection);
 
         createAllTablesDbCultura(localConnection,cloudConnection);
 
         CulturaSP.createAllSP(localConnection);
+
+        createAllRoles(localConnection);
 
         localConnection.close();
         cloudConnection.close();
@@ -56,7 +50,7 @@ public class CulturaDB {
     }
 
     public static Connection getLocalConnection() throws SQLException {
-        return connectDb(LOCAL_PATH_DB,  ROOTUSERNAME, ROOTPASSWORD);
+        return connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
     }
 
     public static Connection getCloudConnection() throws SQLException {
@@ -144,6 +138,65 @@ public class CulturaDB {
         insertSensores(localConnection,cloudConnection);
     }
 
+    private static void createInvestigadorRole (Connection connection) throws SQLException {
+        createRole(connection,INVESTIGADOR);
+        //Select
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_ZONA_NAME,false);
+        //Stored Procedures
+        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_INSERIR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_ALTERAR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_ELIMINAR_PARAMETRO_CULTURA_NAME,true);
+    }
+
+    private static void createTecnicoRole(Connection connection) throws SQLException {
+        createRole(connection,TECNICO);
+        //Select
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_ZONA_NAME,false);
+    }
+
+    private static void createAdminRole(Connection connection) throws SQLException {
+        createRole(connection,ADMIN);
+        //Select
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_ZONA_NAME,false);
+        //Stored Procedures
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_INSERIR_USER_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ALTERAR_USER_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ELIMINAR_USER_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_INSERIR_CULTURA_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ALTERAR_CULTURA_NAME,true);
+        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ELIMINAR_CULTURA_NAME,true);
+    }
+
+    private static void createMqttReaderRole(Connection connection) throws SQLException {
+        createRole(connection,MQTTREADER);
+        grantPermissionRole(connection,MQTTREADER,"EXECUTE",SP_INSERIR_MEDICAO_NAME,true);
+    }
+
+    public static void createAllRoles(Connection connection) throws SQLException {
+        createInvestigadorRole(connection);
+        createTecnicoRole(connection);
+        createAdminRole(connection);
+        createMqttReaderRole(connection);
+    }
+    
     public static void insertMedicao(String medicao, Connection connection) throws SQLException {
         ArrayList<Pair> values = new ArrayList<>();
         String[] splitData = medicao.split(",");
@@ -198,9 +251,5 @@ public class CulturaDB {
         ArrayList<String> result = getElementFromDbTable(connection, TABLE_UTILIZADOR_NAME, column, "IdUtilizador", Integer.toString(userID));
         return result.get(0);
     }
-
-
-    //TODO Verificar se o investigador está associado à cultura
-
 
 }
