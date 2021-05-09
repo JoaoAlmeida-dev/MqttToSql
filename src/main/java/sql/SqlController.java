@@ -27,7 +27,7 @@ public class SqlController{
         ) {
             if (conn != null) {
 
-                String sql = "CREATE DATABASE " + dbName;
+                String sql = "DROP DATABASE IF EXISTS " + dbName + ";CREATE DATABASE " + dbName;
                 stmt.executeUpdate(sql);
                 //DatabaseMetaData meta = conn.getMetaData();
                 //System.out.println("The driver name is " + meta.getDriverName());
@@ -251,7 +251,7 @@ public class SqlController{
         String sqlDrop = "DROP PROCEDURE IF EXISTS " +  procedureName;
 
         String sql =
-                "CREATE PROCEDURE " + procedureName + "(" +args +")" +
+                "CREATE DEFINER = `root`@`localhost` PROCEDURE " + procedureName + "(" +args +")" +
                 "BEGIN " + statements+"; END";
 
         executeSQL(connection,sqlDrop);
@@ -259,6 +259,25 @@ public class SqlController{
         //executeSQL(connection,"delimiter //");
         executeSQL(connection,sql);
         //executeSQL(connection,"delimiter ;");
+    }
+
+
+    public static void createRole(Connection connection, String roleName) throws SQLException {
+        String sql = "DROP ROLE IF EXISTS CREATE ROLE " + roleName + ";";
+
+        executeSQL(connection,sql);
+    }
+
+    public static void grantPermissionRole(Connection connection, String roleName, String operation, String table, boolean isProcedure  ) throws SQLException {
+        String sql = "GRANT " + operation;
+        if (isProcedure) {
+            sql+=" ON PROCEDURE";
+        } else {
+            sql+=" ON ";
+        }
+        sql+= table + " TO \'" + roleName + "\';" ;
+
+        executeSQL(connection,sql);
     }
 
     public static void executeSQL(Connection connection, String stattement) throws SQLException {

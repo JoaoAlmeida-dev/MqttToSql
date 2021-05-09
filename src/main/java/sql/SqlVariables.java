@@ -2,6 +2,7 @@ package sql;
 
 public class SqlVariables {
     //local
+    //TODO ter um programa ou uma funcao que cria a db toda com uns credenciais (root?) e depois usamos o role do mqtt apenas para migrar, a db só será criada uma vez por pc
     /**
      * Create a user in phpMyAdmin with these credentials in order to use this program on windows
      *
@@ -10,9 +11,11 @@ public class SqlVariables {
     public static final String LOCAL_PATH_MYSQL= "jdbc:mysql://localhost:3306/";
     public static final String DB_NAME = "culturamysql";
     public static final String LOCAL_PATH_DB= LOCAL_PATH_MYSQL+DB_NAME;
-    public static final String USERNAME = "mqttreader";
-    public static final String PASSWORD = "dHbK5ddPuOLi8f(i";
+    public static final String MQTTUSERNAME = "mqttreader";
+    public static final String MQTTPASSWORD = "dHbK5ddPuOLi8f(i";
 
+    public static final String ROOTUSERNAME = "root";
+    public static final String ROOTPASSWORD = "";
 
     //cloud
     public static final String CLOUD_DB_NAME = "sid2021";
@@ -183,22 +186,22 @@ public class SqlVariables {
 
 
     public static final String[] TABLE_PARAMETROCULTURA = {
-            TABLE_PARAMETROCULTURA_COLLUMS[0]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[0]  + " " + TABLE_PARAMETROCULTURA_PARAMS[0]   ,//IdParametroCultura
-            TABLE_PARAMETROCULTURA_COLLUMS[1]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[1]  + " " + TABLE_PARAMETROCULTURA_PARAMS[1]   ,//IdCultura
-            TABLE_PARAMETROCULTURA_COLLUMS[2]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[2]  + " " + TABLE_PARAMETROCULTURA_PARAMS[2]   ,//MinHumidade
-            TABLE_PARAMETROCULTURA_COLLUMS[3]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[3]  + " " + TABLE_PARAMETROCULTURA_PARAMS[3]   ,//MaxHumidade
-            TABLE_PARAMETROCULTURA_COLLUMS[4]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[4]  + " " + TABLE_PARAMETROCULTURA_PARAMS[4]   ,//MinTemperatura
-            TABLE_PARAMETROCULTURA_COLLUMS[5]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[5]  + " " + TABLE_PARAMETROCULTURA_PARAMS[5]   ,//MaxTemperatura
-            TABLE_PARAMETROCULTURA_COLLUMS[6]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[6]  + " " + TABLE_PARAMETROCULTURA_PARAMS[6]   ,//MinLuz
-            TABLE_PARAMETROCULTURA_COLLUMS[7]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[7]  + " " + TABLE_PARAMETROCULTURA_PARAMS[7]   ,//MaxLuz
-            TABLE_PARAMETROCULTURA_COLLUMS[8]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[8]  + " " + TABLE_PARAMETROCULTURA_PARAMS[8]   ,//DangerZoneMinHumidade
-            TABLE_PARAMETROCULTURA_COLLUMS[9]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[9]  + " " + TABLE_PARAMETROCULTURA_PARAMS[9]   ,//DangerZoneMaxHumidade
-            TABLE_PARAMETROCULTURA_COLLUMS[10] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[10] + " " + TABLE_PARAMETROCULTURA_PARAMS[10]  ,//DangerZoneMinTemperatura
-            TABLE_PARAMETROCULTURA_COLLUMS[11] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[11] + " " + TABLE_PARAMETROCULTURA_PARAMS[11]  ,//DangerZoneMaxTemperatura
-            TABLE_PARAMETROCULTURA_COLLUMS[12] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[12] + " " + TABLE_PARAMETROCULTURA_PARAMS[12]  ,//DangerZoneMinLuz
-            TABLE_PARAMETROCULTURA_COLLUMS[13] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[13] + " " + TABLE_PARAMETROCULTURA_PARAMS[13]  ,//DangerZoneMaxLuz
-            "CONSTRAINT FK_IdCultura FOREIGN KEY (" + TABLE_PARAMETROCULTURA_COLLUMS[1] + ") REFERENCES cultura(" + TABLE_PARAMETROCULTURA_COLLUMS[1] + ")" +  //IdCUltura
-                    ""};
+            TABLE_PARAMETROCULTURA_COLLUMS[0]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[0]  + " " + TABLE_PARAMETROCULTURA_PARAMS[0]                           ,//IdParametroCultura
+            TABLE_PARAMETROCULTURA_COLLUMS[1]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[1]  + " " + TABLE_PARAMETROCULTURA_PARAMS[1]                           ,//IdCultura
+            TABLE_PARAMETROCULTURA_COLLUMS[2]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[2]  + " " + TABLE_PARAMETROCULTURA_PARAMS[2]                           ,//MinHumidade
+            TABLE_PARAMETROCULTURA_COLLUMS[3]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[3]  + " " + TABLE_PARAMETROCULTURA_PARAMS[3]                           ,//MaxHumidade
+            TABLE_PARAMETROCULTURA_COLLUMS[4]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[4]  + " " + TABLE_PARAMETROCULTURA_PARAMS[4]                           ,//MinTemperatura
+            TABLE_PARAMETROCULTURA_COLLUMS[5]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[5]  + " " + TABLE_PARAMETROCULTURA_PARAMS[5]                           ,//MaxTemperatura
+            TABLE_PARAMETROCULTURA_COLLUMS[6]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[6]  + " " + TABLE_PARAMETROCULTURA_PARAMS[6]                           ,//MinLuz
+            TABLE_PARAMETROCULTURA_COLLUMS[7]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[7]  + " " + TABLE_PARAMETROCULTURA_PARAMS[7]                           ,//MaxLuz
+            TABLE_PARAMETROCULTURA_COLLUMS[8]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[8]  + " " + TABLE_PARAMETROCULTURA_PARAMS[8]                           ,//DangerZoneMinHumidade
+            TABLE_PARAMETROCULTURA_COLLUMS[9]  + " " +  TABLE_PARAMETROCULTURA_DATATYPES[9]  + " " + TABLE_PARAMETROCULTURA_PARAMS[9]                           ,//DangerZoneMaxHumidade
+            TABLE_PARAMETROCULTURA_COLLUMS[10] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[10] + " " + TABLE_PARAMETROCULTURA_PARAMS[10]                          ,//DangerZoneMinTemperatura
+            TABLE_PARAMETROCULTURA_COLLUMS[11] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[11] + " " + TABLE_PARAMETROCULTURA_PARAMS[11]                          ,//DangerZoneMaxTemperatura
+            TABLE_PARAMETROCULTURA_COLLUMS[12] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[12] + " " + TABLE_PARAMETROCULTURA_PARAMS[12]                          ,//DangerZoneMinLuz
+            TABLE_PARAMETROCULTURA_COLLUMS[13] + " " +  TABLE_PARAMETROCULTURA_DATATYPES[13] + " " + TABLE_PARAMETROCULTURA_PARAMS[13]                          ,//DangerZoneMaxLuz
+            "CONSTRAINT FK_IdCultura FOREIGN KEY (" + TABLE_PARAMETROCULTURA_COLLUMS[1] + ") REFERENCES cultura(" + TABLE_PARAMETROCULTURA_COLLUMS[1] + ")"     //IdCUltura
+            };
     //</editor-fold>
 
     //<editor-fold desc="TableSensor">
@@ -276,9 +279,10 @@ public class SqlVariables {
      *     <li>[1]NomeInvestigador  </li>
      *     <li>[2]EmailUtilizador   </li>
      *     <li>[3]TipoUtilizador    </li>
+     *     <li>[3]Password          </li>
      * </ul>
      */
-    public static final String[] TABLE_UTILIZADOR_COLLUMS = {"IdUtilizador", "NomeInvestigador", "EmailUtilizador", "TipoUtilizador"};
+    public static final String[] TABLE_UTILIZADOR_COLLUMS = {"IdUtilizador", "NomeInvestigador", "EmailUtilizador", "TipoUtilizador", "Password"};
     /**
      * <p>TABLE_UTILIZADOR_DATATYPES</p>
      * <ul>
@@ -286,6 +290,7 @@ public class SqlVariables {
      *     <li>[1]VARCHAR(100) -NomeInvestigador  </li>
      *     <li>[2]VARCHAR(100) -EmailUtilizador   </li>
      *     <li>[3]VARCHAR(100) -TipoUtilizador    </li>
+     *     <li>[4]VARCHAR(100) -Password    </li>
      * </ul>
      */
     public static final String[] TABLE_UTILIZADOR_DATATYPES = {
@@ -293,30 +298,31 @@ public class SqlVariables {
             , "VARCHAR(100)"    //NomeInvestigador
             , "VARCHAR(100)"    //EmailUtilizador
             , "VARCHAR(100)"    //TipoUtilizador
-            //, "TEXT"            //Password
+            , "VARCHAR(100)"    //Password
     };
     /**
      * <p>TABLE_UTILIZADOR_PARAMS</p>
      * <ul>
      *     <li>[0]NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE -IdUtilizador      </li>
-     *     <li>[1]NOT NULL -NomeInvestigador  </li>
-     *     <li>[2]NOT NULL -EmailUtilizador   </li>
-     *     <li>[3]NOT NULL -TipoUtilizador    </li>
+     *     <li>[1]NOT NULL -NomeInvestigador    </li>
+     *     <li>[2]NOT NULL -EmailUtilizador     </li>
+     *     <li>[3]NOT NULL -TipoUtilizador      </li>
+     *     <li>[4]NOT NULL -Password            </li>
      * </ul>
      */
     public static final String[] TABLE_UTILIZADOR_PARAMS = {
               "NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE"      //IdUtilizador
-            , "NOT NULL"        //NomeInvestigador
-            , "NOT NULL"        //EmailUtilizador
-            , "NOT NULL"        //TipoUtilizador
-            //, "NOT NULL"        //Password
+            , "NOT NULL"                                        //NomeInvestigador
+            , "NOT NULL"                                        //EmailUtilizador
+            , "NOT NULL"                                        //TipoUtilizador
+            , "NOT NULL"                                        //Password
     };
     public static final String[] TABLE_UTILIZADOR = {
              TABLE_UTILIZADOR_COLLUMS[0] + " " + TABLE_UTILIZADOR_DATATYPES[0] + " " + TABLE_UTILIZADOR_PARAMS[0]   //IdUtilizador
             ,TABLE_UTILIZADOR_COLLUMS[1] + " " + TABLE_UTILIZADOR_DATATYPES[1] + " " + TABLE_UTILIZADOR_PARAMS[1]   //NomeInvestigador
             ,TABLE_UTILIZADOR_COLLUMS[2] + " " + TABLE_UTILIZADOR_DATATYPES[2] + " " + TABLE_UTILIZADOR_PARAMS[2]   //EmailUtilizador
             ,TABLE_UTILIZADOR_COLLUMS[3] + " " + TABLE_UTILIZADOR_DATATYPES[3] + " " + TABLE_UTILIZADOR_PARAMS[3]   //TipoUtilizador
-        //  ,TABLE_UTILIZADOR_COLLUMS[4] + " " + TABLE_UTILIZADOR_DATATYPES[4] + " " + TABLE_UTILIZADOR_PARAMS[4]"  //Password
+            ,TABLE_UTILIZADOR_COLLUMS[4] + " " + TABLE_UTILIZADOR_DATATYPES[4] + " " + TABLE_UTILIZADOR_PARAMS[4]   //Password
     };
     //</editor-fold>
 
@@ -357,7 +363,6 @@ public class SqlVariables {
     //</editor-fold>
 
     //<editor-fold desc="TableCultura">
-
 
     public static final String TABLE_CULTURA_NAME = "cultura";
     /**
@@ -416,6 +421,7 @@ public class SqlVariables {
     //</editor-fold>
 
     //<editor-fold desc="TableAlerta">
+
     public static final String TABLE_ALERTA_NAME = "alerta";
     /**
      * <p>TABLE_ALERTA_COLLUMS</p>
@@ -445,8 +451,8 @@ public class SqlVariables {
             , "Mensagem"                //Mensagem
             , "IdUtilizador"            //IdUtilizador
             , "HoraEscrita"             //HoraEscrita
-            , "NivelAlerta"             //]NivelAlerta
-            , "IdParametroCultura"      //]IdParametroCultura
+            , "NivelAlerta"             //NivelAlerta
+            , "IdParametroCultura"      //IdParametroCultura
     };
     /**
      * <p>TABLE_ALERTA_DATATYPES</p>
@@ -472,7 +478,7 @@ public class SqlVariables {
             "VARCHAR(100)"          ,//Hora
             "VARCHAR(100)"          ,//Leitura
             "VARCHAR(100)"          ,//TipoAlerta
-            "VARCHAR(100)"          ,//Cultura
+            "INTEGER"               ,//Cultura
             "VARCHAR(100)"          ,//Mensagem
             "INTEGER"               ,//IdUtilizador
             "VARCHAR(100)"          ,//HoraEscrita
