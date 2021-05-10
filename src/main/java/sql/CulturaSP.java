@@ -1,6 +1,8 @@
 package sql;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -8,11 +10,12 @@ import static sql.SqlController.createStoredProcedure;
 import static sql.SqlVariables.*;
 
 public class CulturaSP {
-	/*TODO
-	   SP select Alerta
-	   inserir alerta automaticamente (MQTTREADER)
 
-	* */
+	/*TODO
+			   SP select Alerta
+			   inserir alerta automaticamente (MQTTREADER)
+
+			* */
 	//---------------------------------- SPs ----------------------------------
 	//<editor-fold desc="SP">
 	public static void createAllSP(Connection connection) throws SQLException {
@@ -43,6 +46,7 @@ public class CulturaSP {
 	    createSPInserir_Alerta                  (connection);
 	    createSPAlterar_Alerta                  (connection);
 	    createSPEliminar_Alerta                 (connection);
+		createSPSelect_Alerta                   (connection);
 	}
 
 	public static String generateARGUMENTS(String[] tableCollums, String[] tableDatatypes) {
@@ -434,7 +438,7 @@ public class CulturaSP {
 	            Arrays.copyOfRange(TABLE_PARAMETROCULTURA_DATATYPES,1, TABLE_PARAMETROCULTURA_DATATYPES.length   )
 	    );
 
-	    String statements = generateINSERT(TABLE_PARAMETROCULTURA_NAME, Arrays.copyOfRange(TABLE_PARAMETROCULTURA_COLLUMS,0,TABLE_PARAMETROCULTURA_COLLUMS.length));
+	    String statements = generateINSERT(TABLE_PARAMETROCULTURA_NAME, Arrays.copyOfRange(TABLE_PARAMETROCULTURA_COLLUMS,1,TABLE_PARAMETROCULTURA_COLLUMS.length));
 
 	    createStoredProcedure(connection, SP_INSERIR_PARAMETRO_CULTURA_NAME, statements, args);
 
@@ -505,7 +509,7 @@ public class CulturaSP {
 	            Arrays.copyOfRange(TABLE_ALERTA_DATATYPES,1, TABLE_ALERTA_DATATYPES.length   )
 	    );
 
-	    String statements = generateINSERT(TABLE_ALERTA_NAME, Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,0,TABLE_ALERTA_COLLUMS.length));
+	    String statements = generateINSERT(TABLE_ALERTA_NAME, Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,1,TABLE_ALERTA_COLLUMS.length));
 
 	    createStoredProcedure(connection, SP_INSERIR_ALERTA_NAME, statements, args);
 
@@ -540,6 +544,22 @@ public class CulturaSP {
 
 	    createStoredProcedure(connection, SP_ELIMINAR_ALERTA_NAME, statements, args);
 	}
+	public static void createSPSelect_Alerta(Connection connection) throws SQLException {
+
+		String args = "IN sp_"+TABLE_ALERTA_COLLUMS[8] + " " + TABLE_ALERTA_DATATYPES[8]  + "OUT result";
+	    String statements = "SELECT * FROM " + TABLE_ALERTA_NAME + " WHERE sp_" + TABLE_ALERTA_COLLUMS[8] + " = " + TABLE_ALERTA_NAME+"."+TABLE_ALERTA_COLLUMS[8];
+
+	    createStoredProcedure(connection, SP_SELECT_ALERTA_NAME, statements, args);
+	}
+
+	public static ResultSet callSPSelect_Alerta(Connection connection, int IdUtilizador) throws SQLException {
+		CallableStatement cst = connection.prepareCall("{call " +SP_SELECT_ALERTA_NAME +"(?)}");
+		cst.setInt(1,IdUtilizador);
+
+
+		return cst.executeQuery();
+	}
+
 
 /*
     public static void SPCriar_Alerta(Connection connection, ArrayList<Pair> values, int userID) throws SQLException {

@@ -528,10 +528,11 @@ public class SqlVariables {
             TABLE_ALERTA_COLLUMS[7]  + " " + TABLE_ALERTA_DATATYPES[7]  + " " + TABLE_ALERTA_PARAMS[7],     //Mensagem
             TABLE_ALERTA_COLLUMS[8]  + " " + TABLE_ALERTA_DATATYPES[8]  + " " + TABLE_ALERTA_PARAMS[8],     //IdUtilizador
             TABLE_ALERTA_COLLUMS[9]  + " " + TABLE_ALERTA_DATATYPES[9]  + " " + TABLE_ALERTA_PARAMS[9],     //HoraEscrita
-            TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],     //NivelAlerta
-            TABLE_ALERTA_COLLUMS[11] + " " + TABLE_ALERTA_DATATYPES[11] + " " + TABLE_ALERTA_PARAMS[11],      //IdParametroCultura
-            "CONSTRAINT FK2_IdZona FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES zona(" + TABLE_ALERTA_COLLUMS[1] + ")"     ,
-            "CONSTRAINT FK_IdSensor FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES sensor(" + TABLE_ALERTA_COLLUMS[2] + ")"   ,
+            TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],    //NivelAlerta
+            TABLE_ALERTA_COLLUMS[11] + " " + TABLE_ALERTA_DATATYPES[11] + " " + TABLE_ALERTA_PARAMS[11],    //IdParametroCultura
+            "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[1]+" FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[1] + " ) REFERENCES " + TABLE_ALERTA_NAME     +"(" + TABLE_ALERTA_COLLUMS[1] + ")",
+            "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[2] + " ) REFERENCES " + TABLE_ZONA_NAME       +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
+            "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[8]+" FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[8] + " ) REFERENCES " + TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[8] + ")",
     };
 
     //Stored Procedure Constants
@@ -556,6 +557,7 @@ public class SqlVariables {
     public static final String SP_INSERIR_ALERTA_NAME = "Inserir_Alerta";
     public static final String SP_ALTERAR_ALERTA_NAME = "Alterar_Alerta";
     public static final String SP_ELIMINAR_ALERTA_NAME = "Eliminar_Alerta";
+    public static final String SP_SELECT_ALERTA_NAME = "Selecionar_Alerta";
 
     //Columns for Medicao
     static final String SENSOR = "Sensor";

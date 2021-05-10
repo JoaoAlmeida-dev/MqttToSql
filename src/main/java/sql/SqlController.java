@@ -5,7 +5,6 @@ import util.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 
-
 public class SqlController{
 
 
@@ -50,22 +49,6 @@ public class SqlController{
            "password" TEXT NOT NULL
            );
            */
-
-        //CREATE TABLE visitor (
-        //        id int NOT NULL,
-        //        activity_id int NOT NULL,
-        //        PRIMARY KEY (id),
-        //        FOREIGN KEY (activity_id) REFERENCES activity(activity_id)
-        //);
-
-        //"SQL> CREATE TABLE cultura
-        //"(int IdCultura NOT NULL,
-        //"string NomeCultura NOT NULL,
-        //"int IdUtilizador NOT NULL,
-        //"enum Estado NOT NULL,
-        //"PRIMARY KEY (IdCultura),
-        //"FOREIGN KEY (IdUtilizador)
-        //");
 
         String columnsString = "";
         for(String column: columns){

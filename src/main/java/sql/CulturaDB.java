@@ -3,6 +3,7 @@ package sql;
 import util.Pair;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,11 +22,44 @@ public class CulturaDB {
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
+
+        Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
+
+        //prepareCulturaDB();
+
+        //CulturaSP.createSPSelect_Alerta(localConnection);
+        ResultSet rs = CulturaSP.callSPSelect_Alerta(localConnection,1);
+        while(rs.next()){
+            for(String collum : TABLE_ALERTA_COLLUMS){
+                System.out.println(collum +"="+ rs.getString(collum));
+
+            }
+            System.out.println();
+        }
+
+
+        //ArrayList<ArrayList<Pair>> result = getAllFromDbTable(localConnection,TABLE_ALERTA_NAME, new ArrayList<>(Arrays.asList(TABLE_ALERTA_COLLUMS)));
+        //System.out.println(result);
+
+
+        localConnection.close();
+
+        /*
+        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
+        insertMedicao(document,localConnection);
+        String document2 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z2, Sensor=T2, Data=2021-02-25 at 21:42:53 GMT, Medicao=53.552906794871795}}";
+        insertMedicao(document2,localConnection);
+        String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=L1, Data=2021-02-25 at 21:42:53 GMT, Medicao=-17.552906794871795}}";
+        insertMedicao(document3,localConnection);
+        */
+
+    }
+
+    public static void prepareCulturaDB() throws SQLException {
         createDb(LOCAL_PATH_MYSQL, ROOTUSERNAME, ROOTPASSWORD, DB_NAME);
 
         Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
         Connection cloudConnection = connectDb(CLOUD_PATH_DB, CLOUD_USERNAME, CLOUD_PASSWORD);
-
 
         dropAllTablesDbCultura(localConnection);
 
@@ -37,16 +71,6 @@ public class CulturaDB {
 
         localConnection.close();
         cloudConnection.close();
-
-        /*
-        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-        insertMedicao(document,localConnection);
-        String document2 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z2, Sensor=T2, Data=2021-02-25 at 21:42:53 GMT, Medicao=53.552906794871795}}";
-        insertMedicao(document2,localConnection);
-        String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=L1, Data=2021-02-25 at 21:42:53 GMT, Medicao=-17.552906794871795}}";
-        insertMedicao(document3,localConnection);
-        */
-
     }
 
     public static Connection getLocalConnection() throws SQLException {
