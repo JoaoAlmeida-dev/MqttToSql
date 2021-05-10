@@ -8,6 +8,11 @@ import static sql.SqlController.createStoredProcedure;
 import static sql.SqlVariables.*;
 
 public class CulturaSP {
+	/*TODO
+	   SP select Alerta
+	   inserir alerta automaticamente (MQTTREADER)
+
+	* */
 	//---------------------------------- SPs ----------------------------------
 	//<editor-fold desc="SP">
 	public static void createAllSP(Connection connection) throws SQLException {
@@ -43,7 +48,7 @@ public class CulturaSP {
 	public static String generateARGUMENTS(String[] tableCollums, String[] tableDatatypes) {
 	    String args ="";
 	    if(tableCollums.length == tableDatatypes.length){
-	        for(int i =0 ; i<tableCollums.length-1 && i<tableDatatypes.length-1 ;i++){
+	        for(int i =0 ; i<tableCollums.length && i<tableDatatypes.length ;i++){
 	            args += "IN sp_" + tableCollums[i] + " " + tableDatatypes[i] +",";
 	        }
 	        args = args.substring(0,args.length()-1);
@@ -157,9 +162,27 @@ public class CulturaSP {
 	            Arrays.copyOfRange(TABLE_MEDICAO_DATATYPES,1, TABLE_MEDICAO_DATATYPES.length   )
 	    );
 
-	    String statements = generateINSERT(TABLE_MEDICAO_NAME, Arrays.copyOfRange(TABLE_MEDICAO_COLLUMS,0,TABLE_MEDICAO_COLLUMS.length));
 
-	    createStoredProcedure(connection, procedureName, statements, args);
+	    String Variable_LimiteInferior_name = "medicao_" + TABLE_SENSOR_COLLUMS[3] ;
+	    String Variable_LimiteSuperior_name = "medicao_" + TABLE_SENSOR_COLLUMS[4] ;
+
+		String Variable_LimiteInferior = "DECLARE " + Variable_LimiteInferior_name + " " + TABLE_SENSOR_DATATYPES[3] +";";
+		String Variable_LimiteSuperior = "DECLARE " + Variable_LimiteSuperior_name + " " + TABLE_SENSOR_DATATYPES[4] +";";
+		String Set_LimiteInferior = "SELECT " + TABLE_SENSOR_COLLUMS[3] +" INTO " + Variable_LimiteInferior_name + " FROM " + TABLE_SENSOR_NAME + " WHERE " +TABLE_SENSOR_COLLUMS[0] + " = sp_" + TABLE_MEDICAO_COLLUMS[2] + "; ";
+		String Set_LimiteSuperior = "SELECT " + TABLE_SENSOR_COLLUMS[4] +" INTO " + Variable_LimiteSuperior_name + " FROM " + TABLE_SENSOR_NAME + " WHERE " +TABLE_SENSOR_COLLUMS[0] + " = sp_" + TABLE_MEDICAO_COLLUMS[2] + "; ";
+
+		String insert = generateINSERT(TABLE_MEDICAO_NAME, Arrays.copyOfRange(TABLE_MEDICAO_COLLUMS,1,TABLE_MEDICAO_COLLUMS.length));
+
+		String finalStatements =
+				"\n" + Variable_LimiteInferior
+				+"\n" + Variable_LimiteSuperior
+				+"\n" + Set_LimiteInferior
+				+"\n" + Set_LimiteSuperior;
+
+		finalStatements += "IF sp_"+TABLE_MEDICAO_COLLUMS[4] + " >= " + Variable_LimiteInferior_name + " AND sp_"+TABLE_MEDICAO_COLLUMS[4]+" < "+Variable_LimiteSuperior_name + " THEN\n" + insert + " ;END IF";
+
+
+	    createStoredProcedure(connection, procedureName, finalStatements, args);
 
 	}
 
@@ -206,7 +229,6 @@ public class CulturaSP {
     }
 */
 	//</editor-fold>
-
 	//---------------------------------- Sensor ----------------------------------
 	//<editor-fold desc="SPSensor">
 
@@ -278,20 +300,20 @@ public class CulturaSP {
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length)
 	    ) + ";\n";
 
-	    String create = "SET @query = CONCAT('CREATE USER \"', sp_"+TABLE_UTILIZADOR_COLLUMS[0]+
+	    String create = "SET @query = CONCAT('CREATE USER \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+
 				", '\"@\"', 'localhost', '\" IDENTIFIED BY \"', sp_"+TABLE_UTILIZADOR_COLLUMS[4]+", '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt;";
 
 	    String addRole = "SET @query = CONCAT('GRANT \"', sp_"+TABLE_UTILIZADOR_COLLUMS[3]+
-				", '\" TO \"', sp_"+TABLE_UTILIZADOR_COLLUMS[0]+", '\"@\"', 'localhost', '\";');\n" +
+				", '\" TO \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt;";
 
 	    String setDefaultRole = "SET @query = CONCAT('SET DEFAULT ROLE \"', sp_"+TABLE_UTILIZADOR_COLLUMS[3]+
-				", '\" FOR \"', sp_"+TABLE_UTILIZADOR_COLLUMS[0]+", '\"@\"', 'localhost', '\";');\n" +
+				", '\" FOR \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt";

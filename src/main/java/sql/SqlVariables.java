@@ -15,7 +15,7 @@ public class SqlVariables {
     public static final String MQTTPASSWORD = "dHbK5ddPuOLi8f(i";
 
     public static final String ROOTUSERNAME = "root";
-    public static final String ROOTPASSWORD = "root";
+    public static final String ROOTPASSWORD = "";
 
     //cloud
     public static final String CLOUD_DB_NAME = "sid2021";

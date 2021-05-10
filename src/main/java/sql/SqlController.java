@@ -26,8 +26,9 @@ public class SqlController{
 
         ) {
             if (conn != null) {
-
-                String sql = "DROP DATABASE IF EXISTS " + dbName + ";CREATE DATABASE " + dbName;
+                String drop ="DROP DATABASE IF EXISTS " + dbName + ";";
+                String sql = "CREATE DATABASE " + dbName + ";";
+                stmt.executeUpdate(drop);
                 stmt.executeUpdate(sql);
                 //DatabaseMetaData meta = conn.getMetaData();
                 //System.out.println("The driver name is " + meta.getDriverName());

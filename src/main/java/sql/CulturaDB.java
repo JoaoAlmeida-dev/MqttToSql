@@ -21,10 +21,11 @@ public class CulturaDB {
      * For testing purposes only
      */
     public static void main(String[] args) throws SQLException {
+        createDb(LOCAL_PATH_MYSQL, ROOTUSERNAME, ROOTPASSWORD, DB_NAME);
+
         Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
         Connection cloudConnection = connectDb(CLOUD_PATH_DB, CLOUD_USERNAME, CLOUD_PASSWORD);
 
-        createDb(LOCAL_PATH_MYSQL, ROOTUSERNAME, ROOTPASSWORD, DB_NAME);
 
         dropAllTablesDbCultura(localConnection);
 
