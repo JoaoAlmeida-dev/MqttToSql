@@ -546,7 +546,7 @@ public class CulturaSP {
 	}
 	public static void createSPSelect_Alerta(Connection connection) throws SQLException {
 
-		String args = "IN sp_"+TABLE_ALERTA_COLLUMS[8] + " " + TABLE_ALERTA_DATATYPES[8]  + "OUT result";
+		String args = "IN sp_"+TABLE_ALERTA_COLLUMS[8] + " " + TABLE_ALERTA_DATATYPES[8];
 	    String statements = "SELECT * FROM " + TABLE_ALERTA_NAME + " WHERE sp_" + TABLE_ALERTA_COLLUMS[8] + " = " + TABLE_ALERTA_NAME+"."+TABLE_ALERTA_COLLUMS[8];
 
 	    createStoredProcedure(connection, SP_SELECT_ALERTA_NAME, statements, args);

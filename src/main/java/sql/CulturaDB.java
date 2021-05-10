@@ -25,9 +25,8 @@ public class CulturaDB {
 
         Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
 
-        //prepareCulturaDB();
+        prepareCulturaDB();
 
-        //CulturaSP.createSPSelect_Alerta(localConnection);
         ResultSet rs = CulturaSP.callSPSelect_Alerta(localConnection,1);
         while(rs.next()){
             for(String collum : TABLE_ALERTA_COLLUMS){
@@ -36,11 +35,6 @@ public class CulturaDB {
             }
             System.out.println();
         }
-
-
-        //ArrayList<ArrayList<Pair>> result = getAllFromDbTable(localConnection,TABLE_ALERTA_NAME, new ArrayList<>(Arrays.asList(TABLE_ALERTA_COLLUMS)));
-        //System.out.println(result);
-
 
         localConnection.close();
 
