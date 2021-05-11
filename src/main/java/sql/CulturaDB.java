@@ -168,9 +168,7 @@ public class CulturaDB {
         grantPermissionRole(connection, Table_Utilizador.ROLE_INVESTIGADOR,"SELECT", Table_Utilizador.TABLE_UTILIZADOR_NAME,false);
         grantPermissionRole(connection, Table_Utilizador.ROLE_INVESTIGADOR,"SELECT", Table_Zona.TABLE_ZONA_NAME,false);
         //Stored Procedures
-        grantPermissionRole(connection, Table_Utilizador.ROLE_INVESTIGADOR,"EXECUTE", Table_ParametroCultura.SP_INSERIR_PARAMETRO_CULTURA_NAME,true);
         grantPermissionRole(connection, Table_Utilizador.ROLE_INVESTIGADOR,"EXECUTE", Table_ParametroCultura.SP_ALTERAR_PARAMETRO_CULTURA_NAME,true);
-        grantPermissionRole(connection, Table_Utilizador.ROLE_INVESTIGADOR,"EXECUTE", Table_ParametroCultura.SP_ELIMINAR_PARAMETRO_CULTURA_NAME,true);
     }
 
     private static void createTecnicoRole(Connection connection) throws SQLException {
@@ -205,6 +203,8 @@ public class CulturaDB {
         grantPermissionRole(connection, Table_Utilizador.ROLE_ADMIN,"EXECUTE", Table_Cultura.SP_INSERIR_CULTURA_NAME,true);
         grantPermissionRole(connection, Table_Utilizador.ROLE_ADMIN,"EXECUTE", Table_Cultura.SP_ALTERAR_CULTURA_NAME,true);
         grantPermissionRole(connection, Table_Utilizador.ROLE_ADMIN,"EXECUTE", Table_Cultura.SP_ELIMINAR_CULTURA_NAME,true);
+        grantPermissionRole(connection, Table_Utilizador.ROLE_ADMIN,"EXECUTE", Table_ParametroCultura.SP_INSERIR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection, Table_Utilizador.ROLE_ADMIN,"EXECUTE", Table_ParametroCultura.SP_ELIMINAR_PARAMETRO_CULTURA_NAME,true);
     }
 
     private static void createMqttReaderRole(Connection connection) throws SQLException {
