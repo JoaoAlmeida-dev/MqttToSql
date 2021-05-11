@@ -9,8 +9,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static mqtt.GeneralMqttVariables.*;
-import static sql.SqlController.connectDb;
-import static sql.SqlVariables.*;
 
 public class MQTTReader implements MqttCallback{
 
