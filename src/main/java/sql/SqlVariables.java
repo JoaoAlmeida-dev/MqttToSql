@@ -544,7 +544,10 @@ public class SqlVariables {
     public static final String SP_INSERIR_SENSOR_NAME               = "Inserir_Sensor";
     public static final String SP_ALTERAR_SENSOR_NAME               = "Alterar_Sensor";
     public static final String SP_ELIMINAR_SENSOR_NAME              = "Eliminar_Sensor";
-    public static final String SP_INSERIR_USER_NAME                 = "Inserir_User";
+    public static final String SP_INSERIR_USER_INVESTIGADOR_NAME    = "Inserir_User_Investigador";
+    public static final String SP_INSERIR_USER_TECNICO_NAME         = "Inserir_User_Tecnico";
+    public static final String SP_INSERIR_USER_ADMIN_NAME           = "Inserir_User_Admin";
+    public static final String SP_INSERIR_USER_MQTTREADER_NAME      = "Inserir_User_MqttReader";
     public static final String SP_ALTERAR_USER_NAME                 = "Alterar_User";
     public static final String SP_ELIMINAR_USER_NAME                = "Eliminar_User";
     public static final String SP_INSERIR_CULTURA_NAME              = "Inserir_Cultura";
