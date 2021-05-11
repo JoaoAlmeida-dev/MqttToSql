@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
 
-public class Table_Utilizador {
+public class TableUtilizador {
 	public static final String TABLE_UTILIZADOR_NAME = "utilizador";
 	/**
 	 * <p>TABLE_UTILIZADOR_COLLUMS</p>

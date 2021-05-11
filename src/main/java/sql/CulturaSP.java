@@ -15,37 +15,37 @@ public class CulturaSP {
 	//---------------------------------- SPs ----------------------------------
 	//<editor-fold desc="SP">
 	public static void createAllSP(Connection connection) throws SQLException {
-	    Table_Zona.createSPInserir_Zona                           (connection);
-	    Table_Zona.createSPAlterar_Zona                           (connection);
-	    Table_Zona.createSPEliminar_Zona                          (connection);
+	    TableZona.createSPInserir_Zona                           (connection);
+	    TableZona.createSPAlterar_Zona                           (connection);
+	    TableZona.createSPEliminar_Zona                          (connection);
 
-	    Table_Medicao.createSPInserir_Medicao                     (connection);
-	    Table_Medicao.createSPAlterar_Medicao                     (connection);
-	    Table_Medicao.createSPEliminar_Medicao                    (connection);
+	    TableMedicao.createSPInserir_Medicao                     (connection);
+	    TableMedicao.createSPAlterar_Medicao                     (connection);
+	    TableMedicao.createSPEliminar_Medicao                    (connection);
 
-	    Table_Sensor.createSPInserir_Sensor                       (connection);
-	    Table_Sensor.createSPAlterar_Sensor                       (connection);
-	    Table_Sensor.createSPEliminar_Sensor                      (connection);
+	    TableSensor.createSPInserir_Sensor                       (connection);
+	    TableSensor.createSPAlterar_Sensor                       (connection);
+	    TableSensor.createSPEliminar_Sensor                      (connection);
 
-	    Table_Utilizador.createSPInserir_User_Investigador        (connection);
-	    Table_Utilizador.createSPInserir_User_Tecnico             (connection);
-	    Table_Utilizador.createSPInserir_User_Admin       		  (connection);
-	    Table_Utilizador.createSPInserir_User_MqttReader          (connection);
-	    Table_Utilizador.createSPAlterar_User                     (connection);
-	    Table_Utilizador.createSPEliminar_User                    (connection);
+	    TableUtilizador.createSPInserir_User_Investigador        (connection);
+	    TableUtilizador.createSPInserir_User_Tecnico             (connection);
+	    TableUtilizador.createSPInserir_User_Admin       		  (connection);
+	    TableUtilizador.createSPInserir_User_MqttReader          (connection);
+	    TableUtilizador.createSPAlterar_User                     (connection);
+	    TableUtilizador.createSPEliminar_User                    (connection);
 
-	    Table_Cultura.createSPInserir_Cultura                     (connection);
-	    Table_Cultura.createSPAlterar_Cultura                     (connection);
-	    Table_Cultura.createSPEliminar_Cultura                    (connection);
+	    TableCultura.createSPInserir_Cultura                     (connection);
+	    TableCultura.createSPAlterar_Cultura                     (connection);
+	    TableCultura.createSPEliminar_Cultura                    (connection);
 
-	    Table_ParametroCultura.createSPInserir_ParametroCultura   (connection);
-	    Table_ParametroCultura.createSPAlterar_ParametroCultura   (connection);
-	    Table_ParametroCultura.createSPEliminar_ParametroCultura  (connection);
+	    TableParametroCultura.createSPInserir_ParametroCultura   (connection);
+	    TableParametroCultura.createSPAlterar_ParametroCultura   (connection);
+	    TableParametroCultura.createSPEliminar_ParametroCultura  (connection);
 
-	    Table_Alerta.createSPInserir_Alerta                       (connection);
-	    Table_Alerta.createSPAlterar_Alerta                       (connection);
-	    Table_Alerta.createSPEliminar_Alerta                      (connection);
-		Table_Alerta.createSPSelect_Alerta                        (connection);
+	    TableAlerta.createSPInserir_Alerta                       (connection);
+	    TableAlerta.createSPAlterar_Alerta                       (connection);
+	    TableAlerta.createSPEliminar_Alerta                      (connection);
+		TableAlerta.createSPSelect_Alerta                        (connection);
 	}
 
 	public static String generateARGUMENTS(String[] tableCollums, String[] tableDatatypes) {
@@ -94,7 +94,7 @@ public class CulturaSP {
 		insertString += ") VALUES ( ";
 		for (String value :
 				tableCollums) {
-			if(!value.equals(Table_Utilizador.TABLE_UTILIZADOR_COLLUMS[4]))
+			if(!value.equals(TableUtilizador.TABLE_UTILIZADOR_COLLUMS[4]))
 				insertString += " sp_" + value + ",";
 			else
 				insertString += " '" + role + "',";

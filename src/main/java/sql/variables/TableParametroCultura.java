@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
 
-public class Table_ParametroCultura {
+public class TableParametroCultura {
 
 	public static final String TABLE_PARAMETROCULTURA_NAME = "parametrocultura";
 	/**

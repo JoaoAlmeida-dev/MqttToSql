@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
 
-public class Table_Medicao {
+public class TableMedicao {
 
 	public static final String TABLE_MEDICAO_NAME = "medicao";
 	/**
@@ -73,13 +73,13 @@ public class Table_Medicao {
 	    );
 
 
-	    String Variable_LimiteInferior_name = "medicao_" + Table_Sensor.TABLE_SENSOR_COLLUMS[3] ;
-	    String Variable_LimiteSuperior_name = "medicao_" + Table_Sensor.TABLE_SENSOR_COLLUMS[4] ;
+	    String Variable_LimiteInferior_name = "medicao_" + TableSensor.TABLE_SENSOR_COLLUMS[3] ;
+	    String Variable_LimiteSuperior_name = "medicao_" + TableSensor.TABLE_SENSOR_COLLUMS[4] ;
 
-		String Variable_LimiteInferior = "DECLARE " + Variable_LimiteInferior_name + " " + Table_Sensor.TABLE_SENSOR_DATATYPES[3] +";";
-		String Variable_LimiteSuperior = "DECLARE " + Variable_LimiteSuperior_name + " " + Table_Sensor.TABLE_SENSOR_DATATYPES[4] +";";
-		String Set_LimiteInferior = "SELECT " + Table_Sensor.TABLE_SENSOR_COLLUMS[3] +" INTO " + Variable_LimiteInferior_name + " FROM " + Table_Sensor.TABLE_SENSOR_NAME + " WHERE " + Table_Sensor.TABLE_SENSOR_COLLUMS[0] + " = sp_" + TABLE_MEDICAO_COLLUMS[2] + "; ";
-		String Set_LimiteSuperior = "SELECT " + Table_Sensor.TABLE_SENSOR_COLLUMS[4] +" INTO " + Variable_LimiteSuperior_name + " FROM " + Table_Sensor.TABLE_SENSOR_NAME + " WHERE " + Table_Sensor.TABLE_SENSOR_COLLUMS[0] + " = sp_" + TABLE_MEDICAO_COLLUMS[2] + "; ";
+		String Variable_LimiteInferior = "DECLARE " + Variable_LimiteInferior_name + " " + TableSensor.TABLE_SENSOR_DATATYPES[3] +";";
+		String Variable_LimiteSuperior = "DECLARE " + Variable_LimiteSuperior_name + " " + TableSensor.TABLE_SENSOR_DATATYPES[4] +";";
+		String Set_LimiteInferior = "SELECT " + TableSensor.TABLE_SENSOR_COLLUMS[3] +" INTO " + Variable_LimiteInferior_name + " FROM " + TableSensor.TABLE_SENSOR_NAME + " WHERE " + TableSensor.TABLE_SENSOR_COLLUMS[0] + " = sp_" + TABLE_MEDICAO_COLLUMS[2] + "; ";
+		String Set_LimiteSuperior = "SELECT " + TableSensor.TABLE_SENSOR_COLLUMS[4] +" INTO " + Variable_LimiteSuperior_name + " FROM " + TableSensor.TABLE_SENSOR_NAME + " WHERE " + TableSensor.TABLE_SENSOR_COLLUMS[0] + " = sp_" + TABLE_MEDICAO_COLLUMS[2] + "; ";
 
 		String insert = CulturaSP.generateINSERT(TABLE_MEDICAO_NAME, Arrays.copyOfRange(TABLE_MEDICAO_COLLUMS,1, TABLE_MEDICAO_COLLUMS.length));
 

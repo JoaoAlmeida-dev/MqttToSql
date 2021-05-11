@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
 
-public class Table_Alerta {
+public class TableAlerta {
 
 	public static final String TABLE_ALERTA_NAME = "alerta";
 	/**
@@ -112,9 +112,9 @@ public class Table_Alerta {
 	        TABLE_ALERTA_COLLUMS[8]  + " " + TABLE_ALERTA_DATATYPES[8]  + " " + TABLE_ALERTA_PARAMS[8],     //HoraEscrita
 	        TABLE_ALERTA_COLLUMS[9]  + " " + TABLE_ALERTA_DATATYPES[9]  + " " + TABLE_ALERTA_PARAMS[9],     //NivelAlerta
 	        TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],    //IdParametroCultura
-	        "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[1]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES " + Table_Zona.TABLE_ZONA_NAME     +"(" + TABLE_ALERTA_COLLUMS[1] + ")",
-	        "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES " + Table_Sensor.TABLE_SENSOR_NAME       +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
-	        "CONSTRAINT FK2_" +TABLE_ALERTA_COLLUMS[7]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[7] + " ) REFERENCES " + Table_Utilizador.TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[7] + ")",
+	        "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[1]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES " + TableZona.TABLE_ZONA_NAME     +"(" + TABLE_ALERTA_COLLUMS[1] + ")",
+	        "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES " + TableSensor.TABLE_SENSOR_NAME       +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
+	        "CONSTRAINT FK2_" +TABLE_ALERTA_COLLUMS[7]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[7] + " ) REFERENCES " + TableUtilizador.TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[7] + ")",
 	};
 
 	public static final String SP_INSERIR_ALERTA_NAME               = "Inserir_Alerta";

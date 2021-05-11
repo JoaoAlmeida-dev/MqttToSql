@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
 
-public class Table_Cultura {
+public class TableCultura {
 	public static final String TABLE_CULTURA_NAME = "cultura";
 	/**
 	 * <p>TABLE_CULTURA_COLLUMS</p>

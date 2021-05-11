@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
 
-public class Table_Zona {
+public class TableZona {
 	public static final String TABLE_ZONA_NAME = "zona";
 	/**
 	 * [0]IdZona

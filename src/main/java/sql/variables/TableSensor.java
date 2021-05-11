@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
 
-public class Table_Sensor {
+public class TableSensor {
 
 
 	// Estamos com dúvidas na coluna NumeroTipo, ela existe para imitar a estrutura do sensor na cloud
@@ -95,7 +95,7 @@ public class Table_Sensor {
 
 		String args = CulturaSP.generateARGUMENTS(TABLE_SENSOR_COLLUMS, TABLE_SENSOR_DATATYPES);
 
-	    String statements = "UPDATE " + TABLE_SENSOR_NAME + " SET " + TABLE_SENSOR_COLLUMS[1] + " = sp_" + Table_Medicao.TABLE_MEDICAO_COLLUMS[1] +
+	    String statements = "UPDATE " + TABLE_SENSOR_NAME + " SET " + TABLE_SENSOR_COLLUMS[1] + " = sp_" + TableMedicao.TABLE_MEDICAO_COLLUMS[1] +
 	            " ," + TABLE_SENSOR_COLLUMS[2] + " = sp_" + TABLE_SENSOR_COLLUMS[2] +
 	            " ," + TABLE_SENSOR_COLLUMS[3] + " = sp_" + TABLE_SENSOR_COLLUMS[3] +
 	            " ," + TABLE_SENSOR_COLLUMS[4] + " = sp_" + TABLE_SENSOR_COLLUMS[4] +
