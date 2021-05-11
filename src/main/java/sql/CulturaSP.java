@@ -89,6 +89,27 @@ public class CulturaSP {
 	    return insertString;
 	}
 
+	public static String generateINSERTForUser(String tableMedicaoName, String[] tableCollums,String role) {
+		String insertString = "INSERT INTO " + tableMedicaoName + " (";
+		for (String value :
+				tableCollums) {
+			insertString += " " + value + ",";
+		}
+		insertString = insertString.substring(0,insertString.length() - 1);
+		insertString += ") VALUES ( ";
+		for (String value :
+				tableCollums) {
+			if(!value.equals(TABLE_UTILIZADOR_COLLUMS[4]))
+				insertString += " sp_" + value + ",";
+			else
+				insertString += " '" + role + "',";
+		}
+		insertString = insertString.substring(0,insertString.length() - 1);
+		insertString += ");\n";
+
+		return insertString;
+	}
+
 	//---------------------------------- Zona ----------------------------------
 	//<editor-fold desc="SPZona">
 	/**
@@ -304,8 +325,9 @@ public class CulturaSP {
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length-1),
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_DATATYPES,1,TABLE_UTILIZADOR_DATATYPES.length-1)
 	    );
-		String[] tableCollumns = {TABLE_UTILIZADOR_COLLUMS[1],TABLE_UTILIZADOR_COLLUMS[2],TABLE_UTILIZADOR_COLLUMS[3],role};
-	    String statements = generateINSERT(TABLE_UTILIZADOR_NAME, tableCollumns) + ";\n";
+		String statements = generateINSERTForUser(TABLE_UTILIZADOR_NAME,
+				Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length),role
+		);
 
 	    String create = "SET @query = CONCAT('CREATE USER \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+
 				", '\"@\"', 'localhost', '\" IDENTIFIED BY \"', sp_"+TABLE_UTILIZADOR_COLLUMS[3]+", '\";');\n" +
