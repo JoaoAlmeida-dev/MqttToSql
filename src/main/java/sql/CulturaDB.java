@@ -195,7 +195,10 @@ public class CulturaDB {
         grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_UTILIZADOR_NAME,false);
         grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_ZONA_NAME,false);
         //Stored Procedures
-        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_USER_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_USER_INVESTIGADOR_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_USER_TECNICO_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_USER_ADMIN_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_USER_MQTTREADER_NAME,true);
         grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_ALTERAR_USER_NAME,true);
         grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_ELIMINAR_USER_NAME,true);
         grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_CULTURA_NAME,true);

@@ -333,22 +333,22 @@ public class CulturaSP {
 	public static void createSPInserir_User_Investigador(Connection connection) throws SQLException {
 		String[] args_statements = createSPInserir_User_Base(ROLE_INVESTIGADOR);
 
-		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
+		createStoredProcedure(connection, SP_INSERIR_USER_INVESTIGADOR_NAME, args_statements[0], args_statements[1]);
 	}
 	public static void createSPInserir_User_Tecnico(Connection connection) throws SQLException {
 		String[] args_statements = createSPInserir_User_Base(ROLE_TECNICO);
 
-		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
+		createStoredProcedure(connection, SP_INSERIR_USER_TECNICO_NAME, args_statements[0], args_statements[1]);
 	}
 	public static void createSPInserir_User_Admin(Connection connection) throws SQLException {
 		String[] args_statements = createSPInserir_User_Base(ROLE_ADMIN);
 
-		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
+		createStoredProcedure(connection, SP_INSERIR_USER_ADMIN_NAME, args_statements[0], args_statements[1]);
 	}
 	public static void createSPInserir_User_MqttReader(Connection connection) throws SQLException {
 		String[] args_statements = createSPInserir_User_Base(ROLE_MQTTREADER);
 
-		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
+		createStoredProcedure(connection, SP_INSERIR_USER_MQTTREADER_NAME, args_statements[0], args_statements[1]);
 	}
 
 	public static void createSPAlterar_User(Connection connection) throws SQLException {
