@@ -31,7 +31,10 @@ public class CulturaSP {
 	    createSPAlterar_Sensor                  (connection);
 	    createSPEliminar_Sensor                 (connection);
 
-	    createSPInserir_User                    (connection);
+	    createSPInserir_User_Investigador       (connection);
+	    createSPInserir_User_Tecnico       		(connection);
+	    createSPInserir_User_Admin       		(connection);
+	    createSPInserir_User_MqttReader       	(connection);
 	    createSPAlterar_User                    (connection);
 	    createSPEliminar_User                   (connection);
 
@@ -160,7 +163,6 @@ public class CulturaSP {
 
 	public static void createSPInserir_Medicao(Connection connection) throws SQLException {
 
-	    String procedureName = SP_INSERIR_MEDICAO_NAME;
 	    String args = generateARGUMENTS(
 	            Arrays.copyOfRange(TABLE_MEDICAO_COLLUMS,1,TABLE_MEDICAO_COLLUMS.length       ),
 	            Arrays.copyOfRange(TABLE_MEDICAO_DATATYPES,1, TABLE_MEDICAO_DATATYPES.length   )
@@ -186,7 +188,7 @@ public class CulturaSP {
 		finalStatements += "IF sp_"+TABLE_MEDICAO_COLLUMS[4] + " >= " + Variable_LimiteInferior_name + " AND sp_"+TABLE_MEDICAO_COLLUMS[4]+" < "+Variable_LimiteSuperior_name + " THEN\n" + insert + " ;END IF";
 
 
-	    createStoredProcedure(connection, procedureName, finalStatements, args);
+	    createStoredProcedure(connection, SP_INSERIR_MEDICAO_NAME, finalStatements, args);
 
 	}
 
@@ -296,31 +298,28 @@ public class CulturaSP {
 	//---------------------------------- User ----------------------------------
 
 	//<editor-fold desc="SPUser">
-	//TODO criar um SP para inserir cada tipo de user, Investigador, Tecnico, Admin e MQTTREADER
-	public static void createSPInserir_User(Connection connection) throws SQLException {
-		//cuidado aqui com os argumentos do SP, se calhar aqui podes especificar as colunas mesmo e n fazer a range com esta funcao do generate
-		// ou ent fazes um novo array so com as cenas que queres la da static e metes nesta funcao
+	private static String[] createSPInserir_User_Base(String role) {
 		String args = generateARGUMENTS(
-	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length),
-	            Arrays.copyOfRange(TABLE_UTILIZADOR_DATATYPES,1,TABLE_UTILIZADOR_DATATYPES.length)
+	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length-1),
+	            Arrays.copyOfRange(TABLE_UTILIZADOR_DATATYPES,1,TABLE_UTILIZADOR_DATATYPES.length-1)
 	    );
 	    String statements = generateINSERT(TABLE_UTILIZADOR_NAME,
-	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length)
+	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length-1)
 	    ) + ";\n";
 
 	    String create = "SET @query = CONCAT('CREATE USER \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+
-				", '\"@\"', 'localhost', '\" IDENTIFIED BY \"', sp_"+TABLE_UTILIZADOR_COLLUMS[4]+", '\";');\n" +
+				", '\"@\"', 'localhost', '\" IDENTIFIED BY \"', sp_"+TABLE_UTILIZADOR_COLLUMS[3]+", '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt;";
 
-	    String addRole = "SET @query = CONCAT('GRANT \"', sp_"+TABLE_UTILIZADOR_COLLUMS[3]+
+	    String addRole = "SET @query = CONCAT('GRANT \"', "+role+
 				", '\" TO \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt;";
 
-	    String setDefaultRole = "SET @query = CONCAT('SET DEFAULT ROLE \"', sp_"+TABLE_UTILIZADOR_COLLUMS[3]+
+	    String setDefaultRole = "SET @query = CONCAT('SET DEFAULT ROLE \"', "+role+
 				", '\" FOR \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
@@ -328,8 +327,28 @@ public class CulturaSP {
 
 	    statements += create + "\n" + addRole + "\n" + setDefaultRole;
 
-	    createStoredProcedure(connection, SP_INSERIR_USER_NAME, statements, args);
+		return new String[]{statements,args};
+	}
 
+	public static void createSPInserir_User_Investigador(Connection connection) throws SQLException {
+		String[] args_statements = createSPInserir_User_Base(ROLE_INVESTIGADOR);
+
+		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
+	}
+	public static void createSPInserir_User_Tecnico(Connection connection) throws SQLException {
+		String[] args_statements = createSPInserir_User_Base(ROLE_TECNICO);
+
+		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
+	}
+	public static void createSPInserir_User_Admin(Connection connection) throws SQLException {
+		String[] args_statements = createSPInserir_User_Base(ROLE_ADMIN);
+
+		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
+	}
+	public static void createSPInserir_User_MqttReader(Connection connection) throws SQLException {
+		String[] args_statements = createSPInserir_User_Base(ROLE_MQTTREADER);
+
+		createStoredProcedure(connection, SP_INSERIR_USER_NAME, args_statements[0], args_statements[1]);
 	}
 
 	public static void createSPAlterar_User(Connection connection) throws SQLException {

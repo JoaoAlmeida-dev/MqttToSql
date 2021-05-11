@@ -23,9 +23,9 @@ public class CulturaDB {
      */
     public static void main(String[] args) throws SQLException {
 
-        Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
-
         prepareCulturaDB();
+
+        Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
 
         ResultSet rs = CulturaSP.callSPSelect_Alerta(localConnection,1);
         while(rs.next()){
@@ -157,55 +157,55 @@ public class CulturaDB {
     }
 
     private static void createInvestigadorRole (Connection connection) throws SQLException {
-        createRole(connection,INVESTIGADOR);
+        createRole(connection, ROLE_INVESTIGADOR);
         //Select
-        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_ALERTA_NAME,false);
-        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_CULTURA_NAME,false);
-        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_MEDICAO_NAME,false);
-        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
-        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_SENSOR_NAME,false);
-        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_UTILIZADOR_NAME,false);
-        grantPermissionRole(connection,INVESTIGADOR,"SELECT",TABLE_ZONA_NAME,false);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"SELECT",TABLE_ZONA_NAME,false);
         //Stored Procedures
-        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_INSERIR_PARAMETRO_CULTURA_NAME,true);
-        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_ALTERAR_PARAMETRO_CULTURA_NAME,true);
-        grantPermissionRole(connection,INVESTIGADOR,"EXECUTE",SP_ELIMINAR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"EXECUTE",SP_INSERIR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"EXECUTE",SP_ALTERAR_PARAMETRO_CULTURA_NAME,true);
+        grantPermissionRole(connection, ROLE_INVESTIGADOR,"EXECUTE",SP_ELIMINAR_PARAMETRO_CULTURA_NAME,true);
     }
 
     private static void createTecnicoRole(Connection connection) throws SQLException {
-        createRole(connection,TECNICO);
+        createRole(connection, ROLE_TECNICO);
         //Select
-        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_ALERTA_NAME,false);
-        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_CULTURA_NAME,false);
-        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_MEDICAO_NAME,false);
-        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
-        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_SENSOR_NAME,false);
-        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_UTILIZADOR_NAME,false);
-        grantPermissionRole(connection,TECNICO,"SELECT",TABLE_ZONA_NAME,false);
+        grantPermissionRole(connection, ROLE_TECNICO,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection, ROLE_TECNICO,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection, ROLE_TECNICO,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection, ROLE_TECNICO,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection, ROLE_TECNICO,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection, ROLE_TECNICO,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection, ROLE_TECNICO,"SELECT",TABLE_ZONA_NAME,false);
     }
 
     private static void createAdminRole(Connection connection) throws SQLException {
-        createRole(connection,ADMIN);
+        createRole(connection, ROLE_ADMIN);
         //Select
-        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_ALERTA_NAME,false);
-        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_CULTURA_NAME,false);
-        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_MEDICAO_NAME,false);
-        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
-        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_SENSOR_NAME,false);
-        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_UTILIZADOR_NAME,false);
-        grantPermissionRole(connection,ADMIN,"SELECT",TABLE_ZONA_NAME,false);
+        grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_ALERTA_NAME,false);
+        grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_CULTURA_NAME,false);
+        grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_MEDICAO_NAME,false);
+        grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_PARAMETROCULTURA_NAME,false);
+        grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_SENSOR_NAME,false);
+        grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_UTILIZADOR_NAME,false);
+        grantPermissionRole(connection, ROLE_ADMIN,"SELECT",TABLE_ZONA_NAME,false);
         //Stored Procedures
-        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_INSERIR_USER_NAME,true);
-        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ALTERAR_USER_NAME,true);
-        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ELIMINAR_USER_NAME,true);
-        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_INSERIR_CULTURA_NAME,true);
-        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ALTERAR_CULTURA_NAME,true);
-        grantPermissionRole(connection,ADMIN,"EXECUTE",SP_ELIMINAR_CULTURA_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_USER_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_ALTERAR_USER_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_ELIMINAR_USER_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_INSERIR_CULTURA_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_ALTERAR_CULTURA_NAME,true);
+        grantPermissionRole(connection, ROLE_ADMIN,"EXECUTE",SP_ELIMINAR_CULTURA_NAME,true);
     }
 
     private static void createMqttReaderRole(Connection connection) throws SQLException {
-        createRole(connection,MQTTREADER);
-        grantPermissionRole(connection,MQTTREADER,"EXECUTE",SP_INSERIR_MEDICAO_NAME,true);
+        createRole(connection, ROLE_MQTTREADER);
+        grantPermissionRole(connection, ROLE_MQTTREADER,"EXECUTE",SP_INSERIR_MEDICAO_NAME,true);
     }
 
     public static void createAllRoles(Connection connection) throws SQLException {

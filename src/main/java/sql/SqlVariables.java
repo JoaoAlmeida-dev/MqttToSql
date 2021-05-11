@@ -276,27 +276,27 @@ public class SqlVariables {
      *     <li>[0]IdUtilizador      </li>
      *     <li>[1]NomeInvestigador  </li>
      *     <li>[2]EmailUtilizador   </li>
-     *     <li>[3]TipoUtilizador    </li>
      *     <li>[3]Password          </li>
+     *     <li>[4]TipoUtilizador    </li>
      * </ul>
      */
-    public static final String[] TABLE_UTILIZADOR_COLLUMS = {"IdUtilizador", "NomeInvestigador", "EmailUtilizador", "TipoUtilizador", "Password"};
+    public static final String[] TABLE_UTILIZADOR_COLLUMS = {"IdUtilizador", "NomeInvestigador", "EmailUtilizador", "Password", "TipoUtilizador"};
     /**
      * <p>TABLE_UTILIZADOR_DATATYPES</p>
      * <ul>
      *     <li>[0]INTEGER -IdUtilizador      </li>
      *     <li>[1]VARCHAR(100) -NomeInvestigador  </li>
      *     <li>[2]VARCHAR(100) -EmailUtilizador   </li>
-     *     <li>[3]VARCHAR(100) -TipoUtilizador    </li>
-     *     <li>[4]VARCHAR(100) -Password    </li>
+     *     <li>[3]VARCHAR(100) -Password    </li>
+     *     <li>[4]VARCHAR(100) -TipoUtilizador    </li>
      * </ul>
      */
     public static final String[] TABLE_UTILIZADOR_DATATYPES = {
               "INTEGER"         //IdUtilizador
             , "VARCHAR(100)"    //NomeInvestigador
             , "VARCHAR(100)"    //EmailUtilizador
-            , "VARCHAR(100)"    //TipoUtilizador
             , "VARCHAR(100)"    //Password
+            , "VARCHAR(100)"    //TipoUtilizador
     };
     /**
      * <p>TABLE_UTILIZADOR_PARAMS</p>
@@ -304,23 +304,23 @@ public class SqlVariables {
      *     <li>[0]NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE -IdUtilizador      </li>
      *     <li>[1]NOT NULL -NomeInvestigador    </li>
      *     <li>[2]NOT NULL -EmailUtilizador     </li>
-     *     <li>[3]NOT NULL -TipoUtilizador      </li>
-     *     <li>[4]NOT NULL -Password            </li>
+     *     <li>[3]NOT NULL -Password            </li>
+     *     <li>[4]NOT NULL -TipoUtilizador      </li>
      * </ul>
      */
     public static final String[] TABLE_UTILIZADOR_PARAMS = {
               "NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE"      //IdUtilizador
             , "NOT NULL"                                        //NomeInvestigador
             , "NOT NULL"                                        //EmailUtilizador
-            , "NOT NULL"                                        //TipoUtilizador
             , "NOT NULL"                                        //Password
+            , "NOT NULL"                                        //TipoUtilizador
     };
     public static final String[] TABLE_UTILIZADOR = {
              TABLE_UTILIZADOR_COLLUMS[0] + " " + TABLE_UTILIZADOR_DATATYPES[0] + " " + TABLE_UTILIZADOR_PARAMS[0]   //IdUtilizador
             ,TABLE_UTILIZADOR_COLLUMS[1] + " " + TABLE_UTILIZADOR_DATATYPES[1] + " " + TABLE_UTILIZADOR_PARAMS[1]   //NomeInvestigador
             ,TABLE_UTILIZADOR_COLLUMS[2] + " " + TABLE_UTILIZADOR_DATATYPES[2] + " " + TABLE_UTILIZADOR_PARAMS[2]   //EmailUtilizador
-            ,TABLE_UTILIZADOR_COLLUMS[3] + " " + TABLE_UTILIZADOR_DATATYPES[3] + " " + TABLE_UTILIZADOR_PARAMS[3]   //TipoUtilizador
-            ,TABLE_UTILIZADOR_COLLUMS[4] + " " + TABLE_UTILIZADOR_DATATYPES[4] + " " + TABLE_UTILIZADOR_PARAMS[4]   //Password
+            ,TABLE_UTILIZADOR_COLLUMS[3] + " " + TABLE_UTILIZADOR_DATATYPES[3] + " " + TABLE_UTILIZADOR_PARAMS[3]   //Password
+            ,TABLE_UTILIZADOR_COLLUMS[4] + " " + TABLE_UTILIZADOR_DATATYPES[4] + " " + TABLE_UTILIZADOR_PARAMS[4]   //TipoUtilizador
     };
     //</editor-fold>
 
@@ -529,8 +529,8 @@ public class SqlVariables {
             TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],    //NivelAlerta
             TABLE_ALERTA_COLLUMS[11] + " " + TABLE_ALERTA_DATATYPES[11] + " " + TABLE_ALERTA_PARAMS[11],    //IdParametroCultura
             "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[1]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES " + TABLE_ZONA_NAME     +"(" + TABLE_ALERTA_COLLUMS[1] + ")",
-            "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES " + TABLE_SENSOR_NAME   +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
-            "CONSTRAINT FK4_"+TABLE_ALERTA_COLLUMS[8]+" FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[8] + " ) REFERENCES " + TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[8] + ")",
+            "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES " + TABLE_SENSOR_NAME       +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
+            "CONSTRAINT FK2_" +TABLE_ALERTA_COLLUMS[8]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[8] + " ) REFERENCES " + TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[8] + ")",
     };
     //</editor-fold>
 
@@ -569,10 +569,10 @@ public class SqlVariables {
     static final String MEDICAO         = "Medicao";
 
     //Roles for Application
-    static final String INVESTIGADOR    = "Investigador";
-    static final String TECNICO         = "Tecnico";
-    static final String ADMIN           = "Admin";
-    static final String MQTTREADER      = "MqttReader";
+    static final String ROLE_INVESTIGADOR = "Investigador";
+    static final String ROLE_TECNICO = "Tecnico";
+    static final String ROLE_ADMIN = "Admin";
+    static final String ROLE_MQTTREADER = "MqttReader";
 
     //Columns for table Sensor in cloud
     static final String[] sensorCloudColumns = {"idsensor", "tipo", "limiteinferior", "limitesuperior", "idzona"};
