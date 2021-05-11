@@ -27,6 +27,7 @@ public class CulturaDB {
 
         Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
 
+        /*
         ResultSet rs = CulturaSP.callSPSelect_Alerta(localConnection,1);
         while(rs.next()){
             for(String collum : TABLE_ALERTA_COLLUMS){
@@ -35,17 +36,18 @@ public class CulturaDB {
             }
             System.out.println();
         }
+         */
 
-        localConnection.close();
 
-        /*
         String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
         insertMedicao(document,localConnection);
         String document2 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z2, Sensor=T2, Data=2021-02-25 at 21:42:53 GMT, Medicao=53.552906794871795}}";
         insertMedicao(document2,localConnection);
         String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=L1, Data=2021-02-25 at 21:42:53 GMT, Medicao=-17.552906794871795}}";
         insertMedicao(document3,localConnection);
-        */
+
+        localConnection.close();
+
 
     }
 
@@ -219,15 +221,14 @@ public class CulturaDB {
     }
     
     public static void insertMedicao(String medicao, Connection connection) throws SQLException {
-        ArrayList<Pair> values = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
         String[] splitData = medicao.split(",");
         String idSensor = "";
-        String medicaoValue = "";
         for (String data : splitData) {
             String[] datavalues = data.trim().split("=");
             switch (datavalues[0]) {
                 case ZONA: {
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[1], datavalues[1].charAt(1)));
+                    values.add(String.valueOf(datavalues[1].charAt(1)));
                     break;
                 }
                 case SENSOR: {
@@ -236,7 +237,7 @@ public class CulturaDB {
                     paramValues.add(new Pair<>(TABLE_SENSOR_COLLUMS[2], datavalues[1].charAt(1)));
                     idSensor = (String) SqlController.getElementsFromDbTable(connection, TABLE_SENSOR_NAME, TABLE_SENSOR_COLLUMS[0],
                             paramValues);
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[2], idSensor));
+                    values.add((idSensor));
                     break;
                 }
                 case DATA: {
@@ -244,31 +245,22 @@ public class CulturaDB {
                     dateTime = dateTime.replace("Z","");
                     dateTime = dateTime.replace("at ","");
                     dateTime = dateTime.replace(" GM ","");
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[3], dateTime));
+                    values.add(dateTime);
                     break;
                 }
                 case MEDICAO: {
-                    medicaoValue = datavalues[1].replace("}", "");
-                    values.add(new Pair<>(TABLE_MEDICAO_COLLUMS[4], medicaoValue));
+                    values.add(datavalues[1].replace("}", ""));
                     break;
                 }
                 default: {
 
                 }
-
-
             }
-            /*TODO implementar o call do SP de inserir medição
-                   inserir alerta tbm quando necessário
-            */
+            /*TODO inserir alerta tbm quando necessário*/
         }
-        String[] columnsToGet = {TABLE_SENSOR_COLLUMS[3],TABLE_SENSOR_COLLUMS[4]};
-        ArrayList<String> limitesFromSensor= getElementFromDbTable(connection,TABLE_SENSOR_NAME,columnsToGet,TABLE_SENSOR_COLLUMS[0],idSensor);
-        if(Double.parseDouble(medicaoValue) > Double.parseDouble(limitesFromSensor.get(1)) || Double.parseDouble(medicaoValue) < Double.parseDouble(limitesFromSensor.get(0)))
-            System.out.println("Medicao invalida");
-        else
-            SqlController.insertInDbTable(connection, TABLE_MEDICAO_NAME, values);
-
+        String[] valuesToArray = new String[values.size()];
+        valuesToArray = values.toArray(valuesToArray);
+        callStoredProcedure(connection,SP_INSERIR_MEDICAO_NAME, valuesToArray);
     }
 
     public static String typeOfUser(Connection connection, int userID) throws SQLException {

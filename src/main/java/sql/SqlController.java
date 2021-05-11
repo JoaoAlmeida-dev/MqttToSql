@@ -78,6 +78,17 @@ public class SqlController{
 
     //---------------------------------- Comandos SQL ----------------------------------
 
+    public static void callStoredProcedure(Connection connection,String spName, String[]parameters) throws SQLException {
+        String call = "CALL " + spName + "(";
+        for (String parameter:parameters) {
+            call+= "'" + parameter + "'," ;
+        }
+        call = call.substring(0,call.length()-1);
+        call+=");";
+
+        System.out.println(call);
+        executeSQL(connection,call);
+    }
 
     public static void insertInDbTable(Connection connection, String tableName, ArrayList<Pair> values) throws SQLException {
         String columnsString ="";
