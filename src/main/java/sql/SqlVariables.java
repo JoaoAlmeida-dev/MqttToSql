@@ -13,7 +13,7 @@ public class SqlVariables {
     public static final String MQTTPASSWORD = "dHbK5ddPuOLi8f(i";
 
     public static final String ROOTUSERNAME = "root";
-    public static final String ROOTPASSWORD = "";
+    public static final String ROOTPASSWORD = "pedro124";
 
     //cloud
     public static final String CLOUD_DB_NAME = "sid2021";
@@ -41,11 +41,11 @@ public class SqlVariables {
      *     <li>[0]INTEGER      -IdMedicao     </li>
      *     <li>[1]INTEGER      -IdZona        </li>
      *     <li>[2]INTEGER      -IdSensor      </li>
-     *     <li>[3]DATETIME     -Hora          </li>
+     *     <li>[3]TIMESTAMP     -Hora          </li>
      *     <li>[4]NUMERIC (5,2) -Leitura       </li>
      * </ul>
      */
-    public static final String[] TABLE_MEDICAO_DATATYPES = {"INTEGER", "INTEGER", "INTEGER", "DATETIME" , "NUMERIC (5,2)"};
+    public static final String[] TABLE_MEDICAO_DATATYPES = {"INTEGER", "INTEGER", "INTEGER", "TIMESTAMP" , "NUMERIC (5,2)"};
     /**
      * <p>TABLE_MEDICAO_COLLUMS_PARAMS</p>
      * <ul>
@@ -116,35 +116,35 @@ public class SqlVariables {
      * <ul>
      *     <li>[0]  INTEGER - IdParametroCultura         </li>
      *     <li>[1]  INTEGER - IdCultura                  </li>
-     *     <li>[2]  NUMERIC - MinHumidade                </li>
-     *     <li>[3]  NUMERIC - MaxHumidade                </li>
-     *     <li>[4]  NUMERIC - MinTemperatura             </li>
-     *     <li>[5]  NUMERIC - MaxTemperatura             </li>
-     *     <li>[6]  NUMERIC - MinLuz                     </li>
-     *     <li>[7]  NUMERIC - MaxLuz                     </li>
-     *     <li>[8]  NUMERIC - DangerZoneMinHumidade      </li>
-     *     <li>[9]  NUMERIC - DangerZoneMaxHumidade      </li>
-     *     <li>[10] NUMERIC - DangerZoneMinTemperatura   </li>
-     *     <li>[11] NUMERIC - DangerZoneMaxTemperatura   </li>
-     *     <li>[12] NUMERIC - DangerZoneMinLuz           </li>
-     *     <li>[13] NUMERIC - DangerZoneMaxLuz           </li>
+     *     <li>[2]  DECIMAL(5,2) - MinHumidade                </li>
+     *     <li>[3]  DECIMAL(5,2) - MaxHumidade                </li>
+     *     <li>[4]  DECIMAL(5,2) - MinTemperatura             </li>
+     *     <li>[5]  DECIMAL(5,2) - MaxTemperatura             </li>
+     *     <li>[6]  DECIMAL(5,2) - MinLuz                     </li>
+     *     <li>[7]  DECIMAL(5,2) - MaxLuz                     </li>
+     *     <li>[8]  DECIMAL(5,2) - DangerZoneMinHumidade      </li>
+     *     <li>[9]  DECIMAL(5,2) - DangerZoneMaxHumidade      </li>
+     *     <li>[10] DECIMAL(5,2) - DangerZoneMinTemperatura   </li>
+     *     <li>[11] DECIMAL(5,2) - DangerZoneMaxTemperatura   </li>
+     *     <li>[12] DECIMAL(5,2) - DangerZoneMinLuz           </li>
+     *     <li>[13] DECIMAL(5,2) - DangerZoneMaxLuz           </li>
      * </ul>
      */
     public static final String[] TABLE_PARAMETROCULTURA_DATATYPES = {
              "INTEGER"          //IdParametroCultura
             ,"INTEGER"          //IdCultura
-            ,"NUMERIC"          //MinHumidade
-            ,"NUMERIC"          //MaxHumidade
-            ,"NUMERIC"          //MinTemperatura
-            ,"NUMERIC"          //MaxTemperatura
-            ,"NUMERIC"          //MinLuz
-            ,"NUMERIC"          //MaxLuz
-            ,"NUMERIC"          //DangerZoneMinHumidade
-            ,"NUMERIC"          //DangerZoneMaxHumidade
-            ,"NUMERIC"          //DangerZoneMinTemperatura
-            ,"NUMERIC"          //DangerZoneMaxTemperatura
-            ,"NUMERIC"          //DangerZoneMinLuz
-            ,"NUMERIC"          //DangerZoneMaxLuz
+            ,"DECIMAL(5,2)"     //MinHumidade
+            ,"DECIMAL(5,2)"     //MaxHumidade
+            ,"DECIMAL(5,2)"     //MinTemperatura
+            ,"DECIMAL(5,2)"     //MaxTemperatura
+            ,"DECIMAL(5,2)"     //MinLuz
+            ,"DECIMAL(5,2)"     //MaxLuz
+            ,"DECIMAL(5,2)"     //DangerZoneMinHumidade
+            ,"DECIMAL(5,2)"     //DangerZoneMaxHumidade
+            ,"DECIMAL(5,2)"     //DangerZoneMinTemperatura
+            ,"DECIMAL(5,2)"     //DangerZoneMaxTemperatura
+            ,"DECIMAL(5,2)"     //DangerZoneMinLuz
+            ,"DECIMAL(5,2)"     //DangerZoneMaxLuz
     };
     /**
      * <p>TABLE_SENSOR_PARAMS</p>
@@ -206,6 +206,7 @@ public class SqlVariables {
     public static final String TABLE_SENSOR_NAME = "sensor";
 
 
+    // Estamos com dúvidas na coluna NumeroTipo, ela existe para imitar a estrutura do sensor na cloud
     /**
      * <p>TABLE_SENSOR_COLLUMS</p>
      * <ul>
@@ -431,11 +432,10 @@ public class SqlVariables {
      *     <li>[4]Leitura               </li>
      *     <li>[5]TipoAlerta            </li>
      *     <li>[6]Cultura               </li>
-     *     <li>[7]Mensagem              </li>
-     *     <li>[8]IdUtilizador          </li>
-     *     <li>[9]HoraEscrita           </li>
-     *     <li>[10]NivelAlerta          </li>
-     *     <li>[11]IdParametroCultura   </li>
+     *     <li>[7]IdUtilizador          </li>
+     *     <li>[8]HoraEscrita           </li>
+     *     <li>[9]NivelAlerta          </li>
+     *     <li>[10]IdParametroCultura   </li>
      * </ul>
      */
     public static final String[] TABLE_ALERTA_COLLUMS = {
@@ -446,7 +446,6 @@ public class SqlVariables {
             , "Leitura"                 //Leitura
             , "TipoAlerta"              //TipoAlerta
             , "Cultura"                 //Cultura
-            , "Mensagem"                //Mensagem
             , "IdUtilizador"            //IdUtilizador
             , "HoraEscrita"             //HoraEscrita
             , "NivelAlerta"             //NivelAlerta
@@ -458,28 +457,26 @@ public class SqlVariables {
      *     <li>[0]  INTEGER         - IdAlerta              </li>
      *     <li>[1]  INTEGER         - IdZona                </li>
      *     <li>[2]  INTEGER         - IdSensor              </li>
-     *     <li>[3]  VARCHAR         - Hora                  </li>
-     *     <li>[4]  VARCHAR(100)    - Leitura               </li>
-     *     <li>[5]  VARCHAR(100)    - TipoAlerta            </li>
+     *     <li>[3]  TIMESTAMP       - Hora                  </li>
+     *     <li>[4]  DECIMAL(1,0)    - Leitura               </li>
+     *     <li>[5]  VARCHAR(1)      - TipoAlerta            </li>
      *     <li>[6]  VARCHAR(100)    - Cultura               </li>
-     *     <li>[7]  VARCHAR(100)    - Mensagem              </li>
-     *     <li>[8]  INTEGER         - IdUtilizador          </li>
-     *     <li>[9]  VARCHAR(100)    - HoraEscrita           </li>
-     *     <li>[10] VARCHAR(100)    - NivelAlerta           </li>
-     *     <li>[11] INTEGER         - IdParametroCultura    </li>
+     *     <li>[7]  INTEGER         - IdUtilizador          </li>
+     *     <li>[8]  TIMESTAMP       - HoraEscrita           </li>
+     *     <li>[9]  VARCHAR(100)    - NivelAlerta           </li>
+     *     <li>[10] INTEGER         - IdParametroCultura    </li>
      * </ul>
      */
     public static final String[] TABLE_ALERTA_DATATYPES = {
             "INTEGER"               ,//IdAlerta
             "INTEGER"               ,//IdZona
             "INTEGER"               ,//IdSensor
-            "VARCHAR(100)"          ,//Hora
-            "VARCHAR(100)"          ,//Leitura
-            "VARCHAR(100)"          ,//TipoAlerta
-            "INTEGER"               ,//Cultura
-            "VARCHAR(100)"          ,//Mensagem
+            "TIMESTAMP"             ,//Hora
+            "DECIMAL(1,0)"          ,//Leitura
+            "VARCHAR(1)"            ,//TipoAlerta
+            "VARCHAR(100)"          ,//Cultura
             "INTEGER"               ,//IdUtilizador
-            "VARCHAR(100)"          ,//HoraEscrita
+            "TIMESTAMP"             ,//HoraEscrita
             "VARCHAR(100)"          ,//NivelAlerta
             "INTEGER"               ,//IdParametroCultura
     };
@@ -493,11 +490,10 @@ public class SqlVariables {
      *     <li>[4]  NOT NULL                                        - Leitura               </li>
      *     <li>[5]  NOT NULL                                        - TipoAlerta            </li>
      *     <li>[6]  NOT NULL                                        - Cultura               </li>
-     *     <li>[7]  NOT NULL                                        - Mensagem              </li>
-     *     <li>[8]  NOT NULL                                        - IdUtilizador          </li>
-     *     <li>[9]  NOT NULL UNIQUE                                 - HoraEscrita           </li>
-     *     <li>[10] NOT NULL                                        - NivelAlerta           </li>
-     *     <li>[11] NOT NULL                                        - IdParametroCultura    </li>
+     *     <li>[7]  NOT NULL                                        - IdUtilizador          </li>
+     *     <li>[8]  NOT NULL UNIQUE                                 - HoraEscrita           </li>
+     *     <li>[9] NOT NULL                                         - NivelAlerta           </li>
+     *     <li>[10] NOT NULL                                        - IdParametroCultura    </li>
      * </ul>
      */
     public static final String[] TABLE_ALERTA_PARAMS = {
@@ -508,9 +504,8 @@ public class SqlVariables {
             "NOT NULL"                                      ,//Leitura
             "NOT NULL"                                      ,//TipoAlerta
             "NOT NULL"                                      ,//Cultura
-            "NOT NULL"                                      ,//Mensagem
             "NOT NULL"                                      ,//IdUtilizador
-            "NOT NULL UNIQUE"                               ,//HoraEscrita
+            "DEFAULT CURRENT_TIMESTAMP NOT NULL UNIQUE"     ,//HoraEscrita
             "NOT NULL"                                      ,//NivelAlerta
             "NOT NULL"                                      ,//IdParametroCultura
     };
@@ -523,14 +518,13 @@ public class SqlVariables {
             TABLE_ALERTA_COLLUMS[4]  + " " + TABLE_ALERTA_DATATYPES[4]  + " " + TABLE_ALERTA_PARAMS[4],     //Leitura
             TABLE_ALERTA_COLLUMS[5]  + " " + TABLE_ALERTA_DATATYPES[5]  + " " + TABLE_ALERTA_PARAMS[5],     //TipoAlerta
             TABLE_ALERTA_COLLUMS[6]  + " " + TABLE_ALERTA_DATATYPES[6]  + " " + TABLE_ALERTA_PARAMS[6],     //Cultura
-            TABLE_ALERTA_COLLUMS[7]  + " " + TABLE_ALERTA_DATATYPES[7]  + " " + TABLE_ALERTA_PARAMS[7],     //Mensagem
-            TABLE_ALERTA_COLLUMS[8]  + " " + TABLE_ALERTA_DATATYPES[8]  + " " + TABLE_ALERTA_PARAMS[8],     //IdUtilizador
-            TABLE_ALERTA_COLLUMS[9]  + " " + TABLE_ALERTA_DATATYPES[9]  + " " + TABLE_ALERTA_PARAMS[9],     //HoraEscrita
-            TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],    //NivelAlerta
-            TABLE_ALERTA_COLLUMS[11] + " " + TABLE_ALERTA_DATATYPES[11] + " " + TABLE_ALERTA_PARAMS[11],    //IdParametroCultura
+            TABLE_ALERTA_COLLUMS[7]  + " " + TABLE_ALERTA_DATATYPES[7]  + " " + TABLE_ALERTA_PARAMS[7],     //IdUtilizador
+            TABLE_ALERTA_COLLUMS[8]  + " " + TABLE_ALERTA_DATATYPES[8]  + " " + TABLE_ALERTA_PARAMS[8],     //HoraEscrita
+            TABLE_ALERTA_COLLUMS[9]  + " " + TABLE_ALERTA_DATATYPES[9]  + " " + TABLE_ALERTA_PARAMS[9],     //NivelAlerta
+            TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],    //IdParametroCultura
             "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[1]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES " + TABLE_ZONA_NAME     +"(" + TABLE_ALERTA_COLLUMS[1] + ")",
             "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES " + TABLE_SENSOR_NAME       +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
-            "CONSTRAINT FK2_" +TABLE_ALERTA_COLLUMS[8]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[8] + " ) REFERENCES " + TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[8] + ")",
+            "CONSTRAINT FK2_" +TABLE_ALERTA_COLLUMS[7]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[7] + " ) REFERENCES " + TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[7] + ")",
     };
     //</editor-fold>
 

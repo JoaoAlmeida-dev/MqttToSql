@@ -335,14 +335,14 @@ public class CulturaSP {
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt;";
 
-	    String addRole = "SET @query = CONCAT('GRANT \"', "+role+
-				", '\" TO \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
+	    String addRole = "SET @query = CONCAT('GRANT \"', '"+role+
+				"', '\" TO \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt;";
 
-	    String setDefaultRole = "SET @query = CONCAT('SET DEFAULT ROLE \"', "+role+
-				", '\" FOR \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
+	    String setDefaultRole = "SET @query = CONCAT('SET DEFAULT ROLE \"', '"+role+
+				"', '\" FOR \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+", '\"@\"', 'localhost', '\";');\n" +
 				"PREPARE stmt FROM @query;\n" +
 				"EXECUTE stmt;\n" +
 				"DEALLOCATE PREPARE stmt";
@@ -575,7 +575,6 @@ public class CulturaSP {
 	            " ," + TABLE_ALERTA_COLLUMS[8] + " = sp_" + TABLE_ALERTA_COLLUMS[8] +
 	            " ," + TABLE_ALERTA_COLLUMS[9] + " = sp_" + TABLE_ALERTA_COLLUMS[9] +
 	            " ," + TABLE_ALERTA_COLLUMS[10] + " = sp_" + TABLE_ALERTA_COLLUMS[10] +
-	            " ," + TABLE_ALERTA_COLLUMS[11] + " = sp_" + TABLE_ALERTA_COLLUMS[11] +
 	            " WHERE " + TABLE_ALERTA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[0];
 
 	    createStoredProcedure(connection, SP_ALTERAR_ALERTA_NAME, statements, args);
@@ -591,8 +590,8 @@ public class CulturaSP {
 	}
 	public static void createSPSelect_Alerta(Connection connection) throws SQLException {
 
-		String args = "IN sp_"+TABLE_ALERTA_COLLUMS[8] + " " + TABLE_ALERTA_DATATYPES[8];
-	    String statements = "SELECT * FROM " + TABLE_ALERTA_NAME + " WHERE sp_" + TABLE_ALERTA_COLLUMS[8] + " = " + TABLE_ALERTA_NAME+"."+TABLE_ALERTA_COLLUMS[8];
+		String args = "IN sp_"+TABLE_ALERTA_COLLUMS[7] + " " + TABLE_ALERTA_DATATYPES[7];
+	    String statements = "SELECT * FROM " + TABLE_ALERTA_NAME + " WHERE sp_" + TABLE_ALERTA_COLLUMS[7] + " = " + TABLE_ALERTA_NAME+"."+TABLE_ALERTA_COLLUMS[7];
 
 	    createStoredProcedure(connection, SP_SELECT_ALERTA_NAME, statements, args);
 	}
