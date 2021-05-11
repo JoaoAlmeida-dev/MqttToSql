@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static sql.SqlController.createStoredProcedure;
@@ -303,9 +304,8 @@ public class CulturaSP {
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length-1),
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_DATATYPES,1,TABLE_UTILIZADOR_DATATYPES.length-1)
 	    );
-	    String statements = generateINSERT(TABLE_UTILIZADOR_NAME,
-	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length-1)
-	    ) + ";\n";
+		String[] tableCollumns = {TABLE_UTILIZADOR_COLLUMS[1],TABLE_UTILIZADOR_COLLUMS[2],TABLE_UTILIZADOR_COLLUMS[3],role};
+	    String statements = generateINSERT(TABLE_UTILIZADOR_NAME, tableCollumns) + ";\n";
 
 	    String create = "SET @query = CONCAT('CREATE USER \"', sp_"+TABLE_UTILIZADOR_COLLUMS[2]+
 				", '\"@\"', 'localhost', '\" IDENTIFIED BY \"', sp_"+TABLE_UTILIZADOR_COLLUMS[3]+", '\";');\n" +
