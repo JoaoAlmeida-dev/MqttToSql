@@ -294,8 +294,12 @@ public class CulturaSP {
 	 */
 	//</editor-fold>
 	//---------------------------------- User ----------------------------------
+
 	//<editor-fold desc="SPUser">
+	//TODO criar um SP para inserir cada tipo de user, Investigador, Tecnico, Admin e MQTTREADER
 	public static void createSPInserir_User(Connection connection) throws SQLException {
+		//cuidado aqui com os argumentos do SP, se calhar aqui podes especificar as colunas mesmo e n fazer a range com esta funcao do generate
+		// ou ent fazes um novo array so com as cenas que queres la da static e metes nesta funcao
 		String args = generateARGUMENTS(
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1,TABLE_UTILIZADOR_COLLUMS.length),
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_DATATYPES,1,TABLE_UTILIZADOR_DATATYPES.length)

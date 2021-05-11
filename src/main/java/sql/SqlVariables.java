@@ -5,8 +5,6 @@ public class SqlVariables {
     //TODO ter um programa ou uma funcao que cria a db toda com uns credenciais (root?) e depois usamos o role do mqtt apenas para migrar, a db só será criada uma vez por pc
     /**
      * Create a user in phpMyAdmin with these credentials in order to use this program on windows
-     *
-     *
      */
     public static final String LOCAL_PATH_MYSQL= "jdbc:mysql://localhost:3306/";
     public static final String DB_NAME = "culturamysql";
@@ -534,42 +532,47 @@ public class SqlVariables {
             "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES " + TABLE_SENSOR_NAME   +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
             "CONSTRAINT FK4_"+TABLE_ALERTA_COLLUMS[8]+" FOREIGN KEY ( " + TABLE_ALERTA_COLLUMS[8] + " ) REFERENCES " + TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[8] + ")",
     };
+    //</editor-fold>
 
-    //Stored Procedure Constants
-    public static final String SP_INSERIR_ZONA_NAME = "Inserir_Zona";
-    public static final String SP_ALTERAR_ZONA_NAME = "Alterar_Zona";
-    public static final String SP_ELIMINAR_ZONA_NAME = "Eliminar_Zona";
-    public static final String SP_INSERIR_MEDICAO_NAME = "Inserir_Medicao";
-    public static final String SP_ALTERAR_MEDICAO_NAME = "Alterar_Medicao";
-    public static final String SP_ELIMINAR_MEDICAO_NAME = "Eliminar_Medicao";
-    public static final String SP_INSERIR_SENSOR_NAME = "Inserir_Sensor";
-    public static final String SP_ALTERAR_SENSOR_NAME = "Alterar_Sensor";
-    public static final String SP_ELIMINAR_SENSOR_NAME = "Eliminar_Sensor";
-    public static final String SP_INSERIR_USER_NAME = "Inserir_User";
-    public static final String SP_ALTERAR_USER_NAME = "Alterar_User";
-    public static final String SP_ELIMINAR_USER_NAME = "Eliminar_User";
-    public static final String SP_INSERIR_CULTURA_NAME = "Inserir_Cultura";
-    public static final String SP_ALTERAR_CULTURA_NAME = "Alterar_Cultura";
-    public static final String SP_ELIMINAR_CULTURA_NAME = "Eliminar_Cultura";
-    public static final String SP_INSERIR_PARAMETRO_CULTURA_NAME = "Inserir_ParametroCultura";
-    public static final String SP_ALTERAR_PARAMETRO_CULTURA_NAME = "Alterar_ParametroCultura";
-    public static final String SP_ELIMINAR_PARAMETRO_CULTURA_NAME = "Eliminar_ParametroCultura";
-    public static final String SP_INSERIR_ALERTA_NAME = "Inserir_Alerta";
-    public static final String SP_ALTERAR_ALERTA_NAME = "Alterar_Alerta";
-    public static final String SP_ELIMINAR_ALERTA_NAME = "Eliminar_Alerta";
-    public static final String SP_SELECT_ALERTA_NAME = "Selecionar_Alerta";
+    //<editor-fold desc="Stored Procedure Constants">
+    public static final String SP_INSERIR_ZONA_NAME                 = "Inserir_Zona";
+    public static final String SP_ALTERAR_ZONA_NAME                 = "Alterar_Zona";
+    public static final String SP_ELIMINAR_ZONA_NAME                = "Eliminar_Zona";
+    public static final String SP_INSERIR_MEDICAO_NAME              = "Inserir_Medicao";
+    public static final String SP_ALTERAR_MEDICAO_NAME              = "Alterar_Medicao";
+    public static final String SP_ELIMINAR_MEDICAO_NAME             = "Eliminar_Medicao";
+    public static final String SP_INSERIR_SENSOR_NAME               = "Inserir_Sensor";
+    public static final String SP_ALTERAR_SENSOR_NAME               = "Alterar_Sensor";
+    public static final String SP_ELIMINAR_SENSOR_NAME              = "Eliminar_Sensor";
+    public static final String SP_INSERIR_USER_NAME                 = "Inserir_User";
+    public static final String SP_ALTERAR_USER_NAME                 = "Alterar_User";
+    public static final String SP_ELIMINAR_USER_NAME                = "Eliminar_User";
+    public static final String SP_INSERIR_CULTURA_NAME              = "Inserir_Cultura";
+    public static final String SP_ALTERAR_CULTURA_NAME              = "Alterar_Cultura";
+    public static final String SP_ELIMINAR_CULTURA_NAME             = "Eliminar_Cultura";
+    public static final String SP_INSERIR_PARAMETRO_CULTURA_NAME    = "Inserir_ParametroCultura";
+    public static final String SP_ALTERAR_PARAMETRO_CULTURA_NAME    = "Alterar_ParametroCultura";
+    public static final String SP_ELIMINAR_PARAMETRO_CULTURA_NAME   = "Eliminar_ParametroCultura";
+    public static final String SP_INSERIR_ALERTA_NAME               = "Inserir_Alerta";
+    public static final String SP_ALTERAR_ALERTA_NAME               = "Alterar_Alerta";
+    public static final String SP_ELIMINAR_ALERTA_NAME              = "Eliminar_Alerta";
+    public static final String SP_SELECT_ALERTA_NAME                = "Selecionar_Alerta";
+    //</editor-fold>
 
-    //Columns for Medicao
-    static final String SENSOR = "Sensor";
-    static final String DATA = "Data";
-    static final String MEDICAO = "Medicao";
-    static final String ZONA = "Zona";
+    /** Columns for document reading on insert medição*/
+    static final String ZONA            = "Zona";
+    /** Columns for document reading on insert medição*/
+    static final String SENSOR          = "Sensor";
+    /** Columns for document reading on insert medição*/
+    static final String DATA            = "Data";
+    /** Columns for document reading on insert medição*/
+    static final String MEDICAO         = "Medicao";
 
     //Roles for Application
-    static final String INVESTIGADOR = "Investigador";
-    static final String TECNICO = "Tecnico";
-    static final String ADMIN = "Admin";
-    static final String MQTTREADER = "MqttReader";
+    static final String INVESTIGADOR    = "Investigador";
+    static final String TECNICO         = "Tecnico";
+    static final String ADMIN           = "Admin";
+    static final String MQTTREADER      = "MqttReader";
 
     //Columns for table Sensor in cloud
     static final String[] sensorCloudColumns = {"idsensor", "tipo", "limiteinferior", "limitesuperior", "idzona"};

@@ -252,8 +252,12 @@ public class CulturaDB {
                 default: {
 
                 }
-            }
 
+
+            }
+            /*TODO implementar o call do SP de inserir medição
+                   inserir alerta tbm quando necessário
+            */
         }
         String[] columnsToGet = {TABLE_SENSOR_COLLUMS[3],TABLE_SENSOR_COLLUMS[4]};
         ArrayList<String> limitesFromSensor= getElementFromDbTable(connection,TABLE_SENSOR_NAME,columnsToGet,TABLE_SENSOR_COLLUMS[0],idSensor);
