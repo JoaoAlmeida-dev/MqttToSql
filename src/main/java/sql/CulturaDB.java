@@ -3,6 +3,7 @@ package sql;
 import sql.variables.*;
 import util.Pair;
 
+import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,19 +54,21 @@ public class CulturaDB {
     public static void prepareCulturaDB() throws SQLException {
         createDb(LOCAL_PATH_MYSQL, ROOTUSERNAME, ROOTPASSWORD, DB_NAME);
 
-        Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
-        Connection cloudConnection = connectDb(CLOUD_PATH_DB, CLOUD_USERNAME, CLOUD_PASSWORD);
-
-        dropAllTablesDbCultura(localConnection);
-
-        createAllTablesDbCultura(localConnection,cloudConnection);
-
-        CulturaSP.createAllSP(localConnection);
-
-        createAllRoles(localConnection);
-
-        localConnection.close();
-        cloudConnection.close();
+        try(Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD)){
+            dropAllTablesDbCultura(localConnection);
+            try{
+                Connection cloudConnection = connectDb(CLOUD_PATH_DB, CLOUD_USERNAME, CLOUD_PASSWORD);
+                createAllTablesDbCultura(localConnection, cloudConnection);
+            }catch (Exception e){
+                System.out.println("Cannot connect to cloud, ignoring cloud DB");
+                createAllTablesDbCultura(localConnection);
+            }
+                CulturaSP.createAllSP(localConnection);
+                createAllRoles(localConnection);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println( " Problems-exiting");
+        }
     }
 
     public static Connection getLocalConnection() throws SQLException {
@@ -144,6 +147,13 @@ public class CulturaDB {
     }
 
     public static void createAllTablesDbCultura(Connection localConnection,Connection cloudConnection) throws SQLException {
+        createAllTablesDbCultura(localConnection);
+
+        //Add Sensores and Zonas
+        insertZona(localConnection,cloudConnection);
+        insertSensores(localConnection,cloudConnection);
+    }
+    public static void createAllTablesDbCultura(Connection localConnection) throws SQLException {
         createTableDb(localConnection, TableUtilizador.TABLE_UTILIZADOR_NAME, TableUtilizador.TABLE_UTILIZADOR);
         createTableDb(localConnection, TableCultura.TABLE_CULTURA_NAME, TableCultura.TABLE_CULTURA);
         createTableDb(localConnection, TableParametroCultura.TABLE_PARAMETROCULTURA_NAME, TableParametroCultura.TABLE_PARAMETROCULTURA);
@@ -152,9 +162,10 @@ public class CulturaDB {
         createTableDb(localConnection, TableAlerta.TABLE_ALERTA_NAME, TableAlerta.TABLE_ALERTA);
         createTableDb(localConnection, TableMedicao.TABLE_MEDICAO_NAME, TableMedicao.TABLE_MEDICAO);
 
-        //Add Sensores and Zonas
+        /*Add Sensores and Zonas
         insertZona(localConnection,cloudConnection);
         insertSensores(localConnection,cloudConnection);
+        */
     }
 
     private static void createInvestigadorRole (Connection connection) throws SQLException {

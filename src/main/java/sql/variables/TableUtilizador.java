@@ -74,7 +74,7 @@ public class TableUtilizador {
 	public static final String ROLE_ADMIN = "Admin";
 	public static final String ROLE_MQTTREADER = "MqttReader";
 
-	//<editor-fold desc="SPUser">
+
 	private static String[] createSPInserir_User_Base(String role) {
 		String args = CulturaSP.generateARGUMENTS(
 	            Arrays.copyOfRange(TABLE_UTILIZADOR_COLLUMS,1, TABLE_UTILIZADOR_COLLUMS.length-1),
