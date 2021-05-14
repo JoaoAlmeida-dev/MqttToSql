@@ -17,6 +17,7 @@ public class TableCultura {
 	 *     <li>[1]NomeCultura   </li>
 	 *     <li>[2]IdUtilizador  </li>
 	 *     <li>[3]Estado        </li>
+	 *     <li>[4]IdZona        </li>
 	 * </ul>
 	 */
 	public static final String[] TABLE_CULTURA_COLLUMS = {
@@ -24,6 +25,7 @@ public class TableCultura {
 	        , "NomeCultura"
 	        , "IdUtilizador"
 	        , "Estado"
+			, "IdZona"
 	};
 	/**
 	 * <p>TABLE_UTILIZADOR_DATATYPES</p>
@@ -32,6 +34,7 @@ public class TableCultura {
 	 *     <li>[1]VARCHAR(50)   - NomeCultura     </li>
 	 *     <li>[2]INTEGER       - IdUtilizador    </li>
 	 *     <li>[3]INTEGER       - Estado          </li>
+	 *     <li>[4]INTEGER       - IdZona          </li>
 	 * </ul>
 	 */
 	public static final String[] TABLE_CULTURA_DATATYPES = {
@@ -39,6 +42,7 @@ public class TableCultura {
 	        , "VARCHAR(50)"     //NomeCultura
 	        , "INTEGER"         //IdUtilizador
 	        , "INTEGER"         //Estado
+	        , "INTEGER"         //IdZona
 	};
 	/**
 	 * <p>TABLE_UTILIZADOR_PARAMS</p>
@@ -47,20 +51,24 @@ public class TableCultura {
 	 *     <li>[1]NOT NULL UNIQUE                               - NomeCultura   </li>
 	 *     <li>[2]NOT NULL                                      - IdUtilizador  </li>
 	 *     <li>[3]NOT NULL                                      - Estado        </li>
+	 *     <li>[4]NOT NULL                                      - IdZona        </li>
 	 * </ul>
 	 */
 	public static final String[] TABLE_CULTURA_PARAMS = {
-	          "NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE"  //IdUtilizador
-	        , "NOT NULL UNIQUE"                             //NomeInvestigador
-	        , "NOT NULL"                                    //EmailUtilizador
-	        , "NOT NULL"                                    //TipoUtilizador
+	          "NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE"  //IdCultura
+	        , "NOT NULL UNIQUE"                             //NomeCultura
+	        , "NOT NULL"                                    //IdUtilizador
+	        , "NOT NULL"                                    //Estado
+	        , "NOT NULL"                                    //IdZona
 	};
 	public static final String[] TABLE_CULTURA = {
 	        TABLE_CULTURA_COLLUMS[0] + " " + TABLE_CULTURA_DATATYPES[0] + " " + TABLE_CULTURA_PARAMS[0] ,
 	        TABLE_CULTURA_COLLUMS[1] + " " + TABLE_CULTURA_DATATYPES[1] + " " + TABLE_CULTURA_PARAMS[1] ,
 	        TABLE_CULTURA_COLLUMS[2] + " " + TABLE_CULTURA_DATATYPES[2] + " " + TABLE_CULTURA_PARAMS[2] ,
-	        TABLE_CULTURA_COLLUMS[3] + " " + TABLE_CULTURA_DATATYPES[3] + " " + TABLE_CULTURA_PARAMS[3],
-	        "CONSTRAINT FK_IdUtilizador FOREIGN KEY (" + TABLE_CULTURA_COLLUMS[2] + ") REFERENCES utilizador(" + TABLE_CULTURA_COLLUMS[2] + ")"
+	        TABLE_CULTURA_COLLUMS[3] + " " + TABLE_CULTURA_DATATYPES[3] + " " + TABLE_CULTURA_PARAMS[3]	,
+	        TABLE_CULTURA_COLLUMS[4] + " " + TABLE_CULTURA_DATATYPES[4] + " " + TABLE_CULTURA_PARAMS[4]	,
+	        "CONSTRAINT FK_" + TABLE_CULTURA_COLLUMS[2] + " FOREIGN KEY (" + TABLE_CULTURA_COLLUMS[2] + ") REFERENCES " + TableUtilizador.TABLE_UTILIZADOR_NAME + "(" + TABLE_CULTURA_COLLUMS[2] + ")",
+	        "CONSTRAINT FK4_" + TABLE_CULTURA_COLLUMS[4] + " FOREIGN KEY (" + TABLE_CULTURA_COLLUMS[4] + ") REFERENCES " + TableZona.TABLE_ZONA_NAME + "(" + TABLE_CULTURA_COLLUMS[4] + ")"
 	};
 	public static final String SP_INSERIR_CULTURA_NAME              = "Inserir_Cultura";
 	public static final String SP_ALTERAR_CULTURA_NAME              = "Alterar_Cultura";
@@ -86,6 +94,7 @@ public class TableCultura {
 	    String statements = "UPDATE " + TABLE_CULTURA_NAME + " SET " + TABLE_CULTURA_COLLUMS[1] + " = sp_" + TABLE_CULTURA_COLLUMS[1] +
 	            " ," + TABLE_CULTURA_COLLUMS[2] + " = sp_" + TABLE_CULTURA_COLLUMS[2] +
 	            " ," + TABLE_CULTURA_COLLUMS[3] + " = sp_" + TABLE_CULTURA_COLLUMS[3] +
+	            " ," + TABLE_CULTURA_COLLUMS[4] + " = sp_" + TABLE_CULTURA_COLLUMS[4] +
 	            " WHERE " + TABLE_CULTURA_COLLUMS[0] + " = sp_" + TABLE_CULTURA_COLLUMS[0];
 
 	    createStoredProcedure(connection, SP_ALTERAR_CULTURA_NAME, statements, args);

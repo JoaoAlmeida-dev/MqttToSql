@@ -3,9 +3,7 @@ package sql;
 import sql.variables.*;
 import util.Pair;
 
-import java.net.ConnectException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +14,7 @@ import static sql.variables.GeneralVariables.*;
 public class CulturaDB {
 
     /*
-    TODO Melhorar Sp de inserir medicao(Mudar de funçao pa SP)
-         Verificar se o investigador está associado à cultura
+    TODO Verificar se o investigador está associado à cultura
     */
 
     /**
@@ -25,10 +22,9 @@ public class CulturaDB {
      */
     public static void main(String[] args) throws SQLException {
 
-        prepareCulturaDB();
+      //  prepareCulturaDB();
 
-        Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
-
+        /*
         ResultSet rs = TableAlerta.callSPSelect_Alerta(localConnection,1);
         while(rs.next()){
             for(String collum : TableAlerta.TABLE_ALERTA_COLLUMS){
@@ -37,18 +33,24 @@ public class CulturaDB {
             }
             System.out.println();
         }
+         */
 
-        localConnection.close();
-
+        Connection localConnection = connectDb(LOCAL_PATH_DB, ROOTUSERNAME, ROOTPASSWORD);
         /*
-        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.552906794871795}}";
-        insertMedicao(document,localConnection);
-        String document2 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z2, Sensor=T2, Data=2021-02-25 at 21:42:53 GMT, Medicao=53.552906794871795}}";
+        String document2 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:54 GMT, Medicao=7.552906794871795}}";
         insertMedicao(document2,localConnection);
-        String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=L1, Data=2021-02-25 at 21:42:53 GMT, Medicao=-17.552906794871795}}";
-        insertMedicao(document3,localConnection);
-        */
 
+        String document3 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:55 GMT, Medicao=23.552906794871795}}";
+        insertMedicao(document3,localConnection);
+
+        String document ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=17.558906794871795}}";
+        insertMedicao(document,localConnection);
+
+        String document4 ="Document{{_id=603819de967bf6020c0922c8, Zona=Z1, Sensor=H1, Data=2021-02-25 at 21:42:53 GMT, Medicao=107.552906794871795}}";
+        insertMedicao(document4,localConnection);
+
+         */
+        localConnection.close();
     }
 
     public static void prepareCulturaDB() throws SQLException {
@@ -155,9 +157,9 @@ public class CulturaDB {
     }
     public static void createAllTablesDbCultura(Connection localConnection) throws SQLException {
         createTableDb(localConnection, TableUtilizador.TABLE_UTILIZADOR_NAME, TableUtilizador.TABLE_UTILIZADOR);
+        createTableDb(localConnection, TableZona.TABLE_ZONA_NAME, TableZona.TABLE_ZONA);
         createTableDb(localConnection, TableCultura.TABLE_CULTURA_NAME, TableCultura.TABLE_CULTURA);
         createTableDb(localConnection, TableParametroCultura.TABLE_PARAMETROCULTURA_NAME, TableParametroCultura.TABLE_PARAMETROCULTURA);
-        createTableDb(localConnection, TableZona.TABLE_ZONA_NAME, TableZona.TABLE_ZONA);
         createTableDb(localConnection, TableSensor.TABLE_SENSOR_NAME, TableSensor.TABLE_SENSOR);
         createTableDb(localConnection, TableAlerta.TABLE_ALERTA_NAME, TableAlerta.TABLE_ALERTA);
         createTableDb(localConnection, TableMedicao.TABLE_MEDICAO_NAME, TableMedicao.TABLE_MEDICAO);
@@ -266,11 +268,71 @@ public class CulturaDB {
 
                 }
             }
-            /*TODO inserir alerta tbm quando necessário*/
         }
         String[] valuesToArray = new String[values.size()];
         valuesToArray = values.toArray(valuesToArray);
         callStoredProcedure(connection, TableMedicao.SP_INSERIR_MEDICAO_NAME, valuesToArray);
+        checkForAlerta(connection, values);
+    }
+
+    private static boolean didItGoThrough(Connection connection, ArrayList<String> medicaoValues) throws SQLException {
+        ArrayList<Pair> medicaoPairs = new ArrayList<>();
+        for(int x=0;x!=medicaoValues.size();x++) {
+            if(TableMedicao.TABLE_MEDICAO_COLLUMS[x+1].equals("Leitura"))
+                medicaoPairs.add(new Pair(TableMedicao.TABLE_MEDICAO_COLLUMS[x+1],Math.round(Double.parseDouble(medicaoValues.get(x)) * 100.0)/100.0));
+            else
+                medicaoPairs.add(new Pair(TableMedicao.TABLE_MEDICAO_COLLUMS[x+1],medicaoValues.get(x)));
+        }
+        String id = (String) getElementsFromDbTable(connection,TableMedicao.TABLE_MEDICAO_NAME,TableMedicao.TABLE_MEDICAO_COLLUMS[0],medicaoPairs);
+
+        if (id.equals(""))
+            return false;
+        else
+           return true;
+    }
+
+    private static void checkForAlerta(Connection connection, ArrayList<String> values) throws SQLException {
+        if(!didItGoThrough(connection,values)) return;
+        ArrayList<String> culturasAffected =
+                getElementFromDbTable(connection,TableCultura.TABLE_CULTURA_NAME,new String[]{TableCultura.TABLE_CULTURA_COLLUMS[0]},TableCultura.TABLE_CULTURA_COLLUMS[4],values.get(0));
+
+        for(String cultura:culturasAffected) {
+            System.out.println("Cultura: " + cultura);
+            String idParametroCultura =
+                    (String) getElementFromDbTable(connection,TableParametroCultura.TABLE_PARAMETROCULTURA_NAME
+                            ,TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0]
+                            ,TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[1],cultura);
+            String sensorType =
+                    (String) getElementFromDbTable(connection,TableSensor.TABLE_SENSOR_NAME
+                            ,TableSensor.TABLE_SENSOR_COLLUMS[1]
+                            ,TableSensor.TABLE_SENSOR_COLLUMS[0],values.get(1));
+
+            ArrayList<String> culturaInfo = getElementFromDbTable(connection,TableCultura.TABLE_CULTURA_NAME
+                    ,new String[] {TableCultura.TABLE_CULTURA_COLLUMS[1],TableCultura.TABLE_CULTURA_COLLUMS[2]}
+                    ,TableCultura.TABLE_CULTURA_COLLUMS[0],cultura);
+
+            String culturaName = culturaInfo.get(0);
+
+            String idUtilizador = culturaInfo.get(1);
+
+            ArrayList<String> valuesForAlerta = new ArrayList<>();
+            valuesForAlerta.add(values.get(0));                     //IdZona
+            valuesForAlerta.add(values.get(1));                     //IdSensor
+            valuesForAlerta.add(values.get(2));                     //Hora
+            valuesForAlerta.add(values.get(3));                     //Leitura
+            valuesForAlerta.add(sensorType);                        //TipoAlerta
+            valuesForAlerta.add(culturaName);                       //Cultura
+            valuesForAlerta.add(idUtilizador);                      //IdUtilizador
+            valuesForAlerta.add(getCurrentTimeStamp().toString());  //HoraEscrita
+            valuesForAlerta.add(idParametroCultura);                //IdParametroCultura
+
+            String[] valuesToArray = new String[values.size()];
+            valuesToArray = valuesForAlerta.toArray(valuesToArray);
+            callStoredProcedure(connection,TableAlerta.SP_INSERIR_ALERTA_NAME,valuesToArray);
+            valuesForAlerta = new ArrayList<>();
+        }
+
+
     }
 
     public static String typeOfUser(Connection connection, int userID) throws SQLException {

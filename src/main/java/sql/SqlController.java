@@ -283,4 +283,15 @@ public class SqlController{
 
         System.out.println("Executed "+ stattement);
     }
+
+    public static String getCurrentUser(Connection connection) throws SQLException {
+       DatabaseMetaData metaData = connection.getMetaData();
+       return metaData.getUserName();
+    }
+
+    public static Timestamp getCurrentTimeStamp(){
+        java.util.Date today = new java.util.Date();
+        return new java.sql.Timestamp(today.getTime());
+    }
+
 }

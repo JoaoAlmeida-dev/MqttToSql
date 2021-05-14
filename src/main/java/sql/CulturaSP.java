@@ -7,11 +7,6 @@ import java.sql.SQLException;
 
 public class CulturaSP {
 
-	/*TODO
-			   SP select Alerta
-			   inserir alerta automaticamente (MQTTREADER)
-
-			* */
 	//---------------------------------- SPs ----------------------------------
 	//<editor-fold desc="SP">
 	public static void createAllSP(Connection connection) throws SQLException {
@@ -66,8 +61,8 @@ public class CulturaSP {
 
 	}
 
-	public static String generateINSERT(String tableMedicaoName, String[] tableCollums) {
-	    String insertString = "INSERT INTO " + tableMedicaoName + " (";
+	public static String generateINSERT(String tableName, String[] tableCollums) {
+	    String insertString = "INSERT INTO " + tableName + " (";
 	    for (String value :
 	            tableCollums) {
 	        insertString += " " + value + ",";
@@ -84,8 +79,8 @@ public class CulturaSP {
 	    return insertString;
 	}
 
-	public static String generateINSERTForUser(String tableMedicaoName, String[] tableCollums,String role) {
-		String insertString = "INSERT INTO " + tableMedicaoName + " (";
+	public static String generateINSERTForUser(String tableName, String[] tableCollums,String role) {
+		String insertString = "INSERT INTO " + tableName + " (";
 		for (String value :
 				tableCollums) {
 			insertString += " " + value + ",";
@@ -101,6 +96,27 @@ public class CulturaSP {
 		}
 		insertString = insertString.substring(0,insertString.length() - 1);
 		insertString += ");\n";
+
+		return insertString;
+	}
+
+	public static String generateINSERTForAlerta(String tableName, String[] tableCollums,String alertaType) {
+		String insertString = "INSERT INTO " + tableName + " (";
+		for (String value :
+				tableCollums) {
+			insertString += " " + value + ",";
+		}
+		insertString = insertString.substring(0,insertString.length() - 1);
+		insertString += ") VALUES ( ";
+		for (String value :
+				tableCollums) {
+			if(!value.equals(TableAlerta.TABLE_ALERTA_COLLUMS[10]))
+				insertString += " sp_" + value + ",";
+			else
+				insertString += " '" + alertaType + "',";
+		}
+		insertString = insertString.substring(0,insertString.length() - 1);
+		insertString += ")";
 
 		return insertString;
 	}

@@ -25,8 +25,8 @@ public class TableAlerta {
 	 *     <li>[6]Cultura               </li>
 	 *     <li>[7]IdUtilizador          </li>
 	 *     <li>[8]HoraEscrita           </li>
-	 *     <li>[9]NivelAlerta          </li>
-	 *     <li>[10]IdParametroCultura   </li>
+	 *     <li>[9]IdParametroCultura   </li>
+	 *     <li>[10]NivelAlerta          </li>
 	 * </ul>
 	 */
 	public static final String[] TABLE_ALERTA_COLLUMS = {
@@ -39,8 +39,8 @@ public class TableAlerta {
 	        , "Cultura"                 //Cultura
 	        , "IdUtilizador"            //IdUtilizador
 	        , "HoraEscrita"             //HoraEscrita
-	        , "NivelAlerta"             //NivelAlerta
-	        , "IdParametroCultura"      //IdParametroCultura
+			, "IdParametroCultura"      //IdParametroCultura
+			, "NivelAlerta"             //NivelAlerta
 	};
 	/**
 	 * <p>TABLE_ALERTA_DATATYPES</p>
@@ -54,8 +54,8 @@ public class TableAlerta {
 	 *     <li>[6]  VARCHAR(100)    - Cultura               </li>
 	 *     <li>[7]  INTEGER         - IdUtilizador          </li>
 	 *     <li>[8]  TIMESTAMP       - HoraEscrita           </li>
-	 *     <li>[9]  VARCHAR(100)    - NivelAlerta           </li>
-	 *     <li>[10] INTEGER         - IdParametroCultura    </li>
+	 *     <li>[9] INTEGER         - IdParametroCultura    </li>
+	 *     <li>[10]  VARCHAR(100)    - NivelAlerta           </li>
 	 * </ul>
 	 */
 	public static final String[] TABLE_ALERTA_DATATYPES = {
@@ -63,13 +63,13 @@ public class TableAlerta {
 	        "INTEGER"               ,//IdZona
 	        "INTEGER"               ,//IdSensor
 	        "TIMESTAMP"             ,//Hora
-	        "DECIMAL(1,0)"          ,//Leitura
+			"NUMERIC (5,2)"         ,//Leitura
 	        "VARCHAR(1)"            ,//TipoAlerta
 	        "VARCHAR(100)"          ,//Cultura
 	        "INTEGER"               ,//IdUtilizador
 	        "TIMESTAMP"             ,//HoraEscrita
-	        "VARCHAR(100)"          ,//NivelAlerta
-	        "INTEGER"               ,//IdParametroCultura
+			"INTEGER"               ,//IdParametroCultura
+			"VARCHAR(100)"          ,//NivelAlerta
 	};
 	/**
 	 * <p>TABLE_ALERTA_PARAMS</p>
@@ -83,8 +83,8 @@ public class TableAlerta {
 	 *     <li>[6]  NOT NULL                                        - Cultura               </li>
 	 *     <li>[7]  NOT NULL                                        - IdUtilizador          </li>
 	 *     <li>[8]  NOT NULL UNIQUE                                 - HoraEscrita           </li>
-	 *     <li>[9] NOT NULL                                         - NivelAlerta           </li>
-	 *     <li>[10] NOT NULL                                        - IdParametroCultura    </li>
+	 *     <li>[9] 	NOT NULL                                        	- IdParametroCultura    </li>
+	 *     <li>[10] NOT NULL                                      	- NivelAlerta           </li>
 	 * </ul>
 	 */
 	public static final String[] TABLE_ALERTA_PARAMS = {
@@ -96,9 +96,9 @@ public class TableAlerta {
 	        "NOT NULL"                                      ,//TipoAlerta
 	        "NOT NULL"                                      ,//Cultura
 	        "NOT NULL"                                      ,//IdUtilizador
-	        "DEFAULT CURRENT_TIMESTAMP NOT NULL UNIQUE"     ,//HoraEscrita
-	        "NOT NULL"                                      ,//NivelAlerta
-	        "NOT NULL"                                      ,//IdParametroCultura
+	        "DEFAULT CURRENT_TIMESTAMP NOT NULL"     		,//HoraEscrita
+			"NOT NULL"                                      ,//IdParametroCultura
+			"NOT NULL"                                      ,//NivelAlerta
 	};
 	public static final String[] TABLE_ALERTA = {
 	        TABLE_ALERTA_COLLUMS[0]  + " " + TABLE_ALERTA_DATATYPES[0]  + " " + TABLE_ALERTA_PARAMS[0],     //IdAlerta
@@ -110,11 +110,12 @@ public class TableAlerta {
 	        TABLE_ALERTA_COLLUMS[6]  + " " + TABLE_ALERTA_DATATYPES[6]  + " " + TABLE_ALERTA_PARAMS[6],     //Cultura
 	        TABLE_ALERTA_COLLUMS[7]  + " " + TABLE_ALERTA_DATATYPES[7]  + " " + TABLE_ALERTA_PARAMS[7],     //IdUtilizador
 	        TABLE_ALERTA_COLLUMS[8]  + " " + TABLE_ALERTA_DATATYPES[8]  + " " + TABLE_ALERTA_PARAMS[8],     //HoraEscrita
-	        TABLE_ALERTA_COLLUMS[9]  + " " + TABLE_ALERTA_DATATYPES[9]  + " " + TABLE_ALERTA_PARAMS[9],     //NivelAlerta
-	        TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],    //IdParametroCultura
+	        TABLE_ALERTA_COLLUMS[9]  + " " + TABLE_ALERTA_DATATYPES[9]  + " " + TABLE_ALERTA_PARAMS[9],     //IdParametroCultura
+	        TABLE_ALERTA_COLLUMS[10] + " " + TABLE_ALERTA_DATATYPES[10] + " " + TABLE_ALERTA_PARAMS[10],    //NivelAlerta
 	        "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[1]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[1] + ") REFERENCES " + TableZona.TABLE_ZONA_NAME     +"(" + TABLE_ALERTA_COLLUMS[1] + ")",
 	        "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[2]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[2] + ") REFERENCES " + TableSensor.TABLE_SENSOR_NAME       +"(" + TABLE_ALERTA_COLLUMS[2] + ")",
-	        "CONSTRAINT FK2_" +TABLE_ALERTA_COLLUMS[7]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[7] + " ) REFERENCES " + TableUtilizador.TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[7] + ")",
+	        "CONSTRAINT FK2_"+TABLE_ALERTA_COLLUMS[7]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[7] + " ) REFERENCES " + TableUtilizador.TABLE_UTILIZADOR_NAME +"(" + TABLE_ALERTA_COLLUMS[7] + ")",
+	        "CONSTRAINT FK_" +TABLE_ALERTA_COLLUMS[9]+" FOREIGN KEY (" + TABLE_ALERTA_COLLUMS[9] + " ) REFERENCES " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME +"(" + TABLE_ALERTA_COLLUMS[9] + ")",
 	};
 
 	public static final String SP_INSERIR_ALERTA_NAME               = "Inserir_Alerta";
@@ -125,13 +126,56 @@ public class TableAlerta {
 	public static void createSPInserir_Alerta(Connection connection) throws SQLException {
 
 		String args = CulturaSP.generateARGUMENTS(
-	            Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,1, TABLE_ALERTA_COLLUMS.length ),
-	            Arrays.copyOfRange(TABLE_ALERTA_DATATYPES,1, TABLE_ALERTA_DATATYPES.length   )
+	            Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,1, TABLE_ALERTA_COLLUMS.length-1 ),
+	            Arrays.copyOfRange(TABLE_ALERTA_DATATYPES,1, TABLE_ALERTA_DATATYPES.length-1   )
 	    );
 
-	    String statements = CulturaSP.generateINSERT(TABLE_ALERTA_NAME, Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,1, TABLE_ALERTA_COLLUMS.length));
+		String Variable_LimiteInferior_name = "alerta_Min";
+		String Variable_LimiteDangerZoneInferior_name = "alerta_Danger_Min";
+		String Variable_LimiteSuperior_name = "alerta_Max";
+		String Variable_LimiteDangerZoneSuperior_name = "alerta_Danger_Max";
 
-	    createStoredProcedure(connection, SP_INSERIR_ALERTA_NAME, statements, args);
+		String Variable_LimiteInferior = "DECLARE " + Variable_LimiteInferior_name + " " + TableParametroCultura.TABLE_PARAMETROCULTURA_DATATYPES[2] +";";
+		String Variable_LimiteDangerZoneInferior = "DECLARE " + Variable_LimiteDangerZoneInferior_name + " " + TableParametroCultura.TABLE_PARAMETROCULTURA_DATATYPES[8] +";";
+		String Variable_LimiteSuperior = "DECLARE " + Variable_LimiteSuperior_name + " " + TableParametroCultura.TABLE_PARAMETROCULTURA_DATATYPES[3] +";";
+		String Variable_LimiteDangerZoneSuperior = "DECLARE " + Variable_LimiteDangerZoneSuperior_name + " " + TableParametroCultura.TABLE_PARAMETROCULTURA_DATATYPES[9] +";";
+
+		String sensorType = "sp_" + TABLE_ALERTA_COLLUMS[5];
+
+		String statementsHumidade = "IF " + sensorType + " = 'H' THEN\n" + "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[2] + " INTO " + Variable_LimiteInferior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[3] + " INTO " + Variable_LimiteSuperior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[8] + " INTO " + Variable_LimiteDangerZoneInferior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[9] + " INTO " + Variable_LimiteDangerZoneSuperior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + "; END IF;";
+
+		String statementsTemperatura = "IF " + sensorType + " = 'T' THEN\n" + "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[4] + " INTO " + Variable_LimiteInferior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[5] + " INTO " + Variable_LimiteSuperior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[10] + " INTO " + Variable_LimiteDangerZoneInferior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[11] + " INTO " + Variable_LimiteDangerZoneSuperior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + "; END IF;";
+
+		String statementsLuz = "IF " + sensorType + " = 'L' THEN\n" + "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[6] + " INTO " + Variable_LimiteInferior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[7] + " INTO " + Variable_LimiteSuperior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[12] + " INTO " + Variable_LimiteDangerZoneInferior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + ";\n"
+				+ "SELECT " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[13] + " INTO " + Variable_LimiteDangerZoneSuperior_name + " FROM " + TableParametroCultura.TABLE_PARAMETROCULTURA_NAME + " WHERE " + TableParametroCultura.TABLE_PARAMETROCULTURA_COLLUMS[0] + " = sp_" + TABLE_ALERTA_COLLUMS[9] + "; END IF;";
+
+
+
+		String finalStatements =
+				"\n" + Variable_LimiteInferior
+				+"\n" + Variable_LimiteSuperior
+				+"\n" + Variable_LimiteDangerZoneInferior
+				+"\n" + Variable_LimiteDangerZoneSuperior
+				+"\n" + statementsHumidade
+				+"\n" + statementsTemperatura
+				+"\n" + statementsLuz;
+
+
+		String insertDanger = CulturaSP.generateINSERTForAlerta(TABLE_ALERTA_NAME, Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,1, TABLE_ALERTA_COLLUMS.length),"DangerZone");
+		String insertDeath = CulturaSP.generateINSERTForAlerta(TABLE_ALERTA_NAME, Arrays.copyOfRange(TABLE_ALERTA_COLLUMS,1, TABLE_ALERTA_COLLUMS.length),"DeathZone");
+
+		finalStatements += "\nIF (sp_" + TABLE_ALERTA_COLLUMS[4] + " < " + Variable_LimiteDangerZoneInferior_name + " AND sp_" + TABLE_ALERTA_COLLUMS[4] + " >= " + Variable_LimiteInferior_name  + ") OR (sp_" + TABLE_ALERTA_COLLUMS[4] + " > " + Variable_LimiteDangerZoneSuperior_name + " AND sp_" + TABLE_ALERTA_COLLUMS[4] + " <= " + Variable_LimiteSuperior_name + ") THEN\n" + insertDanger + " ;END IF;";
+		finalStatements += "\nIF sp_" + TABLE_ALERTA_COLLUMS[4] + " < " + Variable_LimiteInferior_name + " OR sp_" + TABLE_ALERTA_COLLUMS[4] + " > " + Variable_LimiteSuperior_name + " THEN\n" + insertDeath + " ;END IF";
+
+	    createStoredProcedure(connection, SP_INSERIR_ALERTA_NAME, finalStatements, args);
 
 	}
 

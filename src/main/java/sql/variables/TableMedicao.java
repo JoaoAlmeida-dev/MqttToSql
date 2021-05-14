@@ -89,7 +89,7 @@ public class TableMedicao {
 				+"\n" + Set_LimiteInferior
 				+"\n" + Set_LimiteSuperior;
 
-		finalStatements += "IF sp_"+ TABLE_MEDICAO_COLLUMS[4] + " >= " + Variable_LimiteInferior_name + " AND sp_"+ TABLE_MEDICAO_COLLUMS[4]+" < "+Variable_LimiteSuperior_name + " THEN\n" + insert + " ;END IF";
+		finalStatements += "IF sp_"+ TABLE_MEDICAO_COLLUMS[4] + " >= " + Variable_LimiteInferior_name + " AND sp_"+ TABLE_MEDICAO_COLLUMS[4]+ " <= " + Variable_LimiteSuperior_name + " THEN\n" + insert + " ;END IF";
 
 
 	    createStoredProcedure(connection, SP_INSERIR_MEDICAO_NAME, finalStatements, args);
