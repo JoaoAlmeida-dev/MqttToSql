@@ -6,15 +6,14 @@ import sql.CulturaDB;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import static mqtt.GeneralMqttVariables.*;
 
 public class MQTTReader implements MqttCallback{
 
-    MqttClient sampleClient;
-    MqttConnectOptions connOpts;
-    Connection connection;
+    private MqttClient sampleClient;
+    private MqttConnectOptions connOpts;
+    private Connection connection;
 
     public MQTTReader(String broker, String clientID, MqttClientPersistence persistence,Connection connection) throws MqttException {
         sampleClient = new MqttClient(broker, clientID, persistence);
@@ -25,13 +24,10 @@ public class MQTTReader implements MqttCallback{
         this.connection = connection;
     }
 
-    public static void main(String[] args) {
+    public void initialize() {
         try {
-            Connection connection = CulturaDB.getLocalConnection();
-            MQTTReader reader = new MQTTReader(BROKER, CLIENT_ID, PERSISTENCE,connection);
-            reader.connect();
-            reader.subscribe();
-
+            connect();
+            subscribe();
             //reader.unsubscribe();
             //reader.disconnect();
         } catch (MqttException me) {
@@ -41,20 +37,17 @@ public class MQTTReader implements MqttCallback{
             System.out.println("cause " + me.getCause());
             System.out.println("excep " + me);
             me.printStackTrace();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
-
     }
 
-    public void connect() throws MqttException {
+    private void connect() throws MqttException {
         System.out.println("Connecting to broker: " + BROKER);
         sampleClient.connect(connOpts);
         System.out.println("Connected");
     }
 
 
-    public void subscribe() throws MqttException {
+    private void subscribe() throws MqttException {
         System.out.println("Subscribing to broker: " + BROKER);
         sampleClient.setCallback(this);
         sampleClient.subscribe(TOPIC);
@@ -67,7 +60,7 @@ public class MQTTReader implements MqttCallback{
     }
 
 
-    public void disconnect() throws MqttException {
+    private void disconnect() throws MqttException {
         sampleClient.disconnect();
         System.out.println("Disconnected");
 
