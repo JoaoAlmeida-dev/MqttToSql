@@ -2,6 +2,7 @@ package mqtt;
 
 import org.eclipse.paho.client.mqttv3.*;
 import sql.CulturaDB;
+import util.Average;
 import util.Pair;
 
 import java.io.ByteArrayInputStream;
@@ -20,7 +21,7 @@ public class MQTTReader implements MqttCallback{
     private MqttConnectOptions connOpts;
     private Connection connection;
 
-    private ArrayList<Pair<Integer,LinkedList<Double>>> lastMedicoes;
+    private ArrayList<Pair<Double,Average>> lastMedicoes;
 
     public MQTTReader(String broker, String clientID, MqttClientPersistence persistence,Connection connection) throws MqttException {
         sampleClient = new MqttClient(broker, clientID, persistence);
@@ -95,60 +96,42 @@ public class MQTTReader implements MqttCallback{
         addCollection(collectionId);
 
         int indexOfCollection = indexOfCollection(collectionId);
-        //Adding value to list
-        if(lastMedicoes.size() == 100) { lastMedicoes.get(indexOfCollection).getB().removeFirst(); }
-        //TODO MUDAR LAST LEITURA
-        double lastMedicao = CulturaDB.getLastLeitura(this.connection);
+        //Calculate change percentage of each medicao and adding value to list
 
-        //TODO LAST MEDICAO NAO PODE SER 0
-        if(lastMedicao==0) { return;}
+        double newLeitura = Double.parseDouble(CulturaDB.getLastMedicao(this.connection).get(3));
 
-        if(lastMedicoes.get(indexOfCollection).getB().isEmpty()){ lastMedicoes.get(indexOfCollection).getB().add(lastMedicao); }
-        else if(lastMedicoes.get(indexOfCollection).getB().getLast() != lastMedicao && lastMedicao!=0) { lastMedicoes.get(indexOfCollection).getB().add(lastMedicao); }
+        if(lastMedicoes.get(indexOfCollection).getB().getSize() > 1){
+            lastMedicoes.get(indexOfCollection).getB().putValue((lastMedicoes.get(indexOfCollection).getA()-newLeitura) * 100 / newLeitura);
 
-        if(lastMedicoes.get(indexOfCollection).getB().size()<2) { return; }
+            if(lastMedicoes.get(indexOfCollection).getB().getSize() >= 10) {
+                double predictedValue = (lastMedicoes.get(indexOfCollection).getB().getAverage() * newLeitura) / 100;
 
-        //Calculate change percentage of each medicao
-        ArrayList<Double> medicoesPercentages = new ArrayList<>();
-        for(int i=0; i<lastMedicoes.get(indexOfCollection).getB().size()-1; i++) {
-            double percentageToAdd = (lastMedicoes.get(indexOfCollection).getB().get(i)-lastMedicoes.get(indexOfCollection).getB().get(i+1)) * 100
-                    / lastMedicoes.get(indexOfCollection).getB().get(i+1);
-            medicoesPercentages.add(percentageToAdd);
+                //Predicted Value is sent back to backend to be decided if an alerta is sent or not
+                ArrayList<String> medicaoForPredicted = CulturaDB.getLastMedicao(this.connection);
+                medicaoForPredicted.add(String.valueOf(predictedValue));
+                CulturaDB.checkForAlerta(this.connection,medicaoForPredicted,true);
+                System.out.println("Added Predicted: " + predictedValue);
+            }
+        } else if(lastMedicoes.get(indexOfCollection).getA() != null ){
+            lastMedicoes.get(indexOfCollection).getB().putValue((lastMedicoes.get(indexOfCollection).getA()-newLeitura) * 100 / newLeitura);
         }
-
-        double predictedValue = lastMedicoes.get(indexOfCollection).getB().getLast() + (lastMedicoes.get(indexOfCollection).getB().getLast() * calculateAverage(medicoesPercentages)/100);
-
-        //Predicted Value is sent back to backend to be decided if an alerta is sent or not
-        ArrayList<String> medicaoForPredicted = CulturaDB.getLastMedicao(this.connection);
-        if(!medicaoForPredicted.isEmpty()) {
-            medicaoForPredicted.add(String.valueOf(predictedValue));
-            CulturaDB.checkForAlerta(this.connection,medicaoForPredicted,true);
-        }
-
-        //System.out.println("Received:"+mqttMessage);
+        lastMedicoes.get(indexOfCollection).setA(newLeitura);
     }
 
     private void addCollection(int collection) {
-        for (Pair col : lastMedicoes) {
-            if((int)col.getA() == collection)
+        for (Pair<Double,Average> col : lastMedicoes) {
+            if(col.getB().getId() == collection)
                 return;
         }
-        lastMedicoes.add(new Pair<>(collection,new LinkedList<>()));
+        lastMedicoes.add(new Pair<>(null,new Average(collection)));
     }
 
     private int indexOfCollection (int collection) {
-        for (Pair col : lastMedicoes) {
-            if((int)col.getA() == collection)
+        for (Pair<Double,Average> col : lastMedicoes) {
+            if(col.getB().getId() == collection)
                 return lastMedicoes.indexOf(col);
         }
         return 0;
-    }
-
-    private double calculateAverage(List<Double> marks) {
-        return marks.stream()
-                .mapToDouble(d -> d)
-                .average()
-                .orElse(0.0);
     }
 
     @Override

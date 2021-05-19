@@ -14,8 +14,9 @@ import static sql.SqlController.getLatestEntryFromTable;
 import static sql.variables.GeneralVariables.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, MqttException {
         // MQTTREADER TESTING
+
 
         try {
             Connection connection = CulturaDB.getLocalConnection();
@@ -24,6 +25,11 @@ public class Main {
             reader.initialize();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            System.out.println("Trying again");
+            Connection connection = CulturaDB.getLocalConnection();
+            CulturaDB.prepareCulturaDB();
+            MQTTReader reader= new MQTTReader(BROKER, CLIENT_ID, PERSISTENCE,connection);
+            reader.initialize();
         } catch (MqttException e) {
             e.printStackTrace();
         }
