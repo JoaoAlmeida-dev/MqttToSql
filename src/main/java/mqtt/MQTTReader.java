@@ -97,7 +97,7 @@ public class MQTTReader implements MqttCallback{
         String receivedData = (String) objectInputStream.readObject();
         System.out.println("Received:"+ receivedData);
         CulturaDB.insertMedicao(receivedData, this.connection);
-        handlePredictedValue();
+        handlePredictedValue(CulturaDB.getSensorId(this.connection,receivedData));
     }
 
     private void addCollection(int collection) {
@@ -121,16 +121,15 @@ public class MQTTReader implements MqttCallback{
         System.out.println("deliveryComplete\n"+iMqttDeliveryToken);
     }
 
-    private void handlePredictedValue() throws SQLException {
-        if(CulturaDB.getLastMedicao(this.connection).isEmpty()) { return;}
+    private void handlePredictedValue(int sensorID) throws SQLException {
+        if(CulturaDB.getLastMedicaoWithId(this.connection,sensorID).isEmpty()) { return;}
 
-        int collectionId = Integer.parseInt(CulturaDB.getLastMedicao(this.connection).get(1));
-        addCollection(collectionId);
+        addCollection(sensorID);
 
-        int indexOfCollection = indexOfCollection(collectionId);
+        int indexOfCollection = indexOfCollection(sensorID);
         //Calculate change percentage of each medicao and adding value to list
 
-        double newLeitura = Double.parseDouble(CulturaDB.getLastMedicao(this.connection).get(3));
+        double newLeitura = Double.parseDouble(CulturaDB.getLastMedicaoWithId(this.connection,sensorID).get(3));
         if(newLeitura > 0 && newLeitura < 0.01) { newLeitura=0.01; }
         if(newLeitura < 0 && newLeitura > -0.01) { newLeitura=-0.01; }
         if(newLeitura == 0) { newLeitura = 0.01; }
@@ -141,7 +140,7 @@ public class MQTTReader implements MqttCallback{
                 double predictedValue = (newLeitura + ((lastMedicoes.get(indexOfCollection).getB().getAverage()/100) * newLeitura));
 
                 //Predicted Value is sent back to backend to be decided if an alerta is sent or not
-                ArrayList<String> medicaoForPredicted = CulturaDB.getLastMedicao(this.connection);
+                ArrayList<String> medicaoForPredicted = CulturaDB.getLastMedicaoWithId(this.connection,sensorID);
                 medicaoForPredicted.add(String.valueOf(predictedValue));
                 CulturaDB.checkForAlerta(this.connection,medicaoForPredicted,true);
                 System.out.println("Added Predicted: " + predictedValue);
