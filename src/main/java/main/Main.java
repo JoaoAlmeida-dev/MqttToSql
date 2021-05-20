@@ -1,38 +1,27 @@
 package main;
 
+import config.ConfigManager;
 import mqtt.MQTTReader;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import sql.CulturaDB;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import static mqtt.GeneralMqttVariables.*;
-import static sql.CulturaDB.insertMedicao;
-import static sql.SqlController.connectDb;
-import static sql.SqlController.getLatestEntryFromTable;
-import static sql.variables.GeneralVariables.*;
 
 public class Main {
-    public static void main(String[] args) throws SQLException, MqttException {
-        // MQTTREADER TESTING
-
-
+    public static void main(String[] args) {
         try {
-            Connection connection = CulturaDB.getLocalConnection();
-            CulturaDB.prepareCulturaDB();
-            MQTTReader reader= new MQTTReader(BROKER, CLIENT_ID, PERSISTENCE,connection);
-            reader.initialize();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.out.println("Trying again");
-            Connection connection = CulturaDB.getLocalConnection();
-            CulturaDB.prepareCulturaDB();
-            MQTTReader reader= new MQTTReader(BROKER, CLIENT_ID, PERSISTENCE,connection);
-            reader.initialize();
-        } catch (MqttException e) {
-            e.printStackTrace();
+            TerminalController terminalController = new TerminalController(ConfigManager.DEFAULTFILENAME);
+            terminalController.launch();
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not find config File\nExiting");
+        } catch (InterruptedException interruptedException) {
+            System.out.println("Terminal controller was interrupted\nExiting");
         }
+
 
 
 

@@ -1,5 +1,6 @@
 package mqtt;
 
+import config.ConfigData;
 import org.eclipse.paho.client.mqttv3.*;
 import sql.CulturaDB;
 import util.Average;
@@ -21,11 +22,12 @@ public class MQTTReader implements MqttCallback{
     private MqttClient sampleClient;
     private MqttConnectOptions connOpts;
     private Connection connection;
-
+    ConfigData data;
     private ArrayList<Pair<Double,Average>> lastMedicoes;
 
-    public MQTTReader(String broker, String clientID, MqttClientPersistence persistence,Connection connection) throws MqttException {
-        sampleClient = new MqttClient(broker, clientID, persistence);
+    public MQTTReader(ConfigData data, String clientID, MqttClientPersistence persistence,Connection connection) throws MqttException {
+        this.data = data;
+        sampleClient = new MqttClient(this.data.getMqttbroker(), clientID, persistence);
         connOpts = new MqttConnectOptions();
         connOpts.setAutomaticReconnect(true);
         connOpts.setCleanSession(true);
@@ -51,22 +53,22 @@ public class MQTTReader implements MqttCallback{
     }
 
     private void connect() throws MqttException {
-        System.out.println("Connecting to broker: " + BROKER);
+        System.out.println("Connecting to broker: " + data.getMqttbroker());
         sampleClient.connect(connOpts);
         System.out.println("Connected");
     }
 
 
     private void subscribe() throws MqttException {
-        System.out.println("Subscribing to broker: " + BROKER);
+        System.out.println("Subscribing to broker: " + data.getMqttbroker());
         sampleClient.setCallback(this);
-        sampleClient.subscribe(TOPIC);
+        sampleClient.subscribe(data.getMqtttopic());
 
         System.out.println("Subscribed");
     }
 
     private void unsubscribe() throws MqttException {
-        sampleClient.unsubscribe(TOPIC);
+        sampleClient.unsubscribe(data.getMqtttopic());
     }
 
 
@@ -74,6 +76,11 @@ public class MQTTReader implements MqttCallback{
         sampleClient.disconnect();
         System.out.println("Disconnected");
 
+    }
+
+    public void stop() throws MqttException {
+        unsubscribe();
+        disconnect();
     }
 
     @Override
