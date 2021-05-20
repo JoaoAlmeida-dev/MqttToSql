@@ -8,6 +8,7 @@ import util.Pair;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -89,33 +90,7 @@ public class MQTTReader implements MqttCallback{
         String receivedData = (String) objectInputStream.readObject();
         System.out.println("Received:"+ receivedData);
         CulturaDB.insertMedicao(receivedData, this.connection);
-
-        if(CulturaDB.getLastMedicao(this.connection).isEmpty()) { return;}
-
-        int collectionId = Integer.parseInt(CulturaDB.getLastMedicao(this.connection).get(1));
-        addCollection(collectionId);
-
-        int indexOfCollection = indexOfCollection(collectionId);
-        //Calculate change percentage of each medicao and adding value to list
-
-        double newLeitura = Double.parseDouble(CulturaDB.getLastMedicao(this.connection).get(3));
-
-        if(lastMedicoes.get(indexOfCollection).getB().getSize() > 1){
-            lastMedicoes.get(indexOfCollection).getB().putValue((lastMedicoes.get(indexOfCollection).getA()-newLeitura) * 100 / newLeitura);
-
-            if(lastMedicoes.get(indexOfCollection).getB().getSize() >= 10) {
-                double predictedValue = (lastMedicoes.get(indexOfCollection).getB().getAverage() * newLeitura) / 100;
-
-                //Predicted Value is sent back to backend to be decided if an alerta is sent or not
-                ArrayList<String> medicaoForPredicted = CulturaDB.getLastMedicao(this.connection);
-                medicaoForPredicted.add(String.valueOf(predictedValue));
-                CulturaDB.checkForAlerta(this.connection,medicaoForPredicted,true);
-                System.out.println("Added Predicted: " + predictedValue);
-            }
-        } else if(lastMedicoes.get(indexOfCollection).getA() != null ){
-            lastMedicoes.get(indexOfCollection).getB().putValue((lastMedicoes.get(indexOfCollection).getA()-newLeitura) * 100 / newLeitura);
-        }
-        lastMedicoes.get(indexOfCollection).setA(newLeitura);
+        handlePredictedValue();
     }
 
     private void addCollection(int collection) {
@@ -137,5 +112,36 @@ public class MQTTReader implements MqttCallback{
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
         System.out.println("deliveryComplete\n"+iMqttDeliveryToken);
+    }
+
+    private void handlePredictedValue() throws SQLException {
+        if(CulturaDB.getLastMedicao(this.connection).isEmpty()) { return;}
+
+        int collectionId = Integer.parseInt(CulturaDB.getLastMedicao(this.connection).get(1));
+        addCollection(collectionId);
+
+        int indexOfCollection = indexOfCollection(collectionId);
+        //Calculate change percentage of each medicao and adding value to list
+
+        double newLeitura = Double.parseDouble(CulturaDB.getLastMedicao(this.connection).get(3));
+        if(newLeitura > 0 && newLeitura < 0.01) { newLeitura=0.01; }
+        if(newLeitura < 0 && newLeitura > -0.01) { newLeitura=-0.01; }
+        if(newLeitura == 0) { newLeitura = 0.01; }
+
+        if(lastMedicoes.get(indexOfCollection).getB().getSize() > 1){
+            lastMedicoes.get(indexOfCollection).getB().putValue((newLeitura - lastMedicoes.get(indexOfCollection).getA()) * 100 / newLeitura);
+            if(lastMedicoes.get(indexOfCollection).getB().getSize() >= 10) {
+                double predictedValue = (newLeitura + ((lastMedicoes.get(indexOfCollection).getB().getAverage()/100) * newLeitura));
+
+                //Predicted Value is sent back to backend to be decided if an alerta is sent or not
+                ArrayList<String> medicaoForPredicted = CulturaDB.getLastMedicao(this.connection);
+                medicaoForPredicted.add(String.valueOf(predictedValue));
+                CulturaDB.checkForAlerta(this.connection,medicaoForPredicted,true);
+                System.out.println("Added Predicted: " + predictedValue);
+            }
+        } else if(lastMedicoes.get(indexOfCollection).getA() != null ){
+            lastMedicoes.get(indexOfCollection).getB().putValue((lastMedicoes.get(indexOfCollection).getA()-newLeitura) * 100 / newLeitura);
+        }
+        lastMedicoes.get(indexOfCollection).setA(newLeitura);
     }
 }
