@@ -11,11 +11,6 @@ import java.io.ObjectInputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import static mqtt.GeneralMqttVariables.*;
 
 public class MQTTReader implements MqttCallback{
 
@@ -23,7 +18,9 @@ public class MQTTReader implements MqttCallback{
     private MqttConnectOptions connOpts;
     private Connection connection;
     ConfigData data;
+
     private ArrayList<Pair<Double,Average>> lastMedicoes;
+    private ArrayList<Pair<Integer,ArrayList<String>>> lastMedicao;
 
     public MQTTReader(ConfigData data, String clientID, MqttClientPersistence persistence,Connection connection) throws MqttException {
         this.data = data;
@@ -34,6 +31,7 @@ public class MQTTReader implements MqttCallback{
         connOpts.setConnectionTimeout(10);
         this.connection = connection;
         lastMedicoes = new ArrayList<>();
+        lastMedicao = new ArrayList<>();
     }
 
     public void initialize() {
@@ -96,11 +94,13 @@ public class MQTTReader implements MqttCallback{
         ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
         String receivedData = (String) objectInputStream.readObject();
         System.out.println("Received:"+ receivedData);
-        CulturaDB.insertMedicao(receivedData, this.connection);
-        handlePredictedValue(CulturaDB.getSensorId(this.connection,receivedData));
+        ArrayList<String> medicaoValues = CulturaDB.insertMedicao(receivedData, this.connection);
+        int sensorId = CulturaDB.getSensorId(this.connection,receivedData);
+        addCollection(sensorId,medicaoValues);
+        handlePredictedValue(sensorId);
     }
 
-    private void addCollection(int collection) {
+    private void addCollectionForAverage(int collection) {
         for (Pair<Double,Average> col : lastMedicoes) {
             if(col.getB().getId() == collection)
                 return;
@@ -108,12 +108,34 @@ public class MQTTReader implements MqttCallback{
         lastMedicoes.add(new Pair<>(null,new Average(collection)));
     }
 
-    private int indexOfCollection (int collection) {
+    private int indexOfCollectionForAverage(int collection) {
         for (Pair<Double,Average> col : lastMedicoes) {
             if(col.getB().getId() == collection)
                 return lastMedicoes.indexOf(col);
         }
         return 0;
+    }
+
+    private void addCollection(int collection,ArrayList<String> medicao) {
+        for (Pair<Integer, ArrayList<String>> col : lastMedicao) {
+            if(col.getA() == collection)
+                lastMedicao.set(indexOfCollection(collection),new Pair<>(collection,medicao));
+        }
+        lastMedicao.add(new Pair<>(collection,medicao));
+    }
+
+    private int indexOfCollection (int collection) {
+        for (Pair<Integer, ArrayList<String>> col : lastMedicao) {
+            if(col.getA() == collection)
+                return lastMedicao.indexOf(col);
+        }
+        return 0;
+    }
+
+    public ArrayList<String> getLastMedicaoWithId(Connection connection, int id) throws SQLException {
+        if(CulturaDB.didItGoThrough(connection,lastMedicao.get(indexOfCollection(id)).getB()))
+            return lastMedicao.get(indexOfCollectionForAverage(id)).getB();
+        return new ArrayList<>();
     }
 
     @Override
@@ -122,17 +144,16 @@ public class MQTTReader implements MqttCallback{
     }
 
     private void handlePredictedValue(int sensorID) throws SQLException {
-        if(CulturaDB.getLastMedicaoWithId(this.connection,sensorID).isEmpty()) { return;}
+        if(getLastMedicaoWithId(this.connection,sensorID).isEmpty()) { return;}
 
-        addCollection(sensorID);
+        addCollectionForAverage(sensorID);
 
-        int indexOfCollection = indexOfCollection(sensorID);
+        int indexOfCollection = indexOfCollectionForAverage(sensorID);
         //Calculate change percentage of each medicao and adding value to list
 
-        double newLeitura = Double.parseDouble(CulturaDB.getLastMedicaoWithId(this.connection,sensorID).get(3));
-        if(newLeitura > 0 && newLeitura < 0.01) { newLeitura=0.01; }
+        double newLeitura = Double.parseDouble(getLastMedicaoWithId(this.connection,sensorID).get(3));
+        if((newLeitura > 0 && newLeitura < 0.01) || (newLeitura == 0)) { newLeitura=0.01; }
         if(newLeitura < 0 && newLeitura > -0.01) { newLeitura=-0.01; }
-        if(newLeitura == 0) { newLeitura = 0.01; }
 
         if(lastMedicoes.get(indexOfCollection).getB().getSize() > 1){
             lastMedicoes.get(indexOfCollection).getB().putValue((newLeitura - lastMedicoes.get(indexOfCollection).getA()) * 100 / newLeitura);
@@ -140,7 +161,7 @@ public class MQTTReader implements MqttCallback{
                 double predictedValue = (newLeitura + ((lastMedicoes.get(indexOfCollection).getB().getAverage()/100) * newLeitura));
 
                 //Predicted Value is sent back to backend to be decided if an alerta is sent or not
-                ArrayList<String> medicaoForPredicted = CulturaDB.getLastMedicaoWithId(this.connection,sensorID);
+                ArrayList<String> medicaoForPredicted = getLastMedicaoWithId(this.connection,sensorID);
                 medicaoForPredicted.add(String.valueOf(predictedValue));
                 CulturaDB.checkForAlerta(this.connection,medicaoForPredicted,true);
                 System.out.println("Added Predicted: " + predictedValue);
