@@ -164,7 +164,7 @@ public class TerminalController {
 				System.out.println("A inciar leitura e sincronização.");
 				isImport = true;
 				//String clone_mode = data.getClone_mode();
-				Connection connection = CulturaDB.getLocalConnection();
+				Connection connection = CulturaDB.getLocalClonerConnection();
 				reader = new MQTTReader(data, GeneralMqttVariables.CLIENT_ID, GeneralMqttVariables.PERSISTENCE, connection);
 				reader.initialize();
 				//mongodbCloudCollector.start();

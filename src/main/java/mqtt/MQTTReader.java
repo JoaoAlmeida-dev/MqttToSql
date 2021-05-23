@@ -164,7 +164,7 @@ public class MQTTReader implements MqttCallback{
                 ArrayList<String> medicaoForPredicted = getLastMedicaoWithId(this.connection,sensorID);
                 medicaoForPredicted.add(String.valueOf(predictedValue));
                 CulturaDB.checkForAlerta(this.connection,medicaoForPredicted,true);
-                System.out.println("Added Predicted: " + predictedValue);
+                System.out.println("Added Predicted: " + predictedValue + "; percentage applied: " + (lastMedicoes.get(indexOfCollection).getB().getAverage()/100) );
             }
         } else if(lastMedicoes.get(indexOfCollection).getA() != null ){
             lastMedicoes.get(indexOfCollection).getB().putValue((lastMedicoes.get(indexOfCollection).getA()-newLeitura) * 100 / newLeitura);
