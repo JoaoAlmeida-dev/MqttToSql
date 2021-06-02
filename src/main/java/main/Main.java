@@ -1,6 +1,7 @@
 package main;
 
 import config.ConfigManager;
+import main.TerminalController;
 import mqtt.MQTTReader;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import sql.CulturaDB;
