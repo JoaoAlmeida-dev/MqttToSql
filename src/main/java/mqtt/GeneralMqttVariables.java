@@ -5,7 +5,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.util.UUID;
 
 public class GeneralMqttVariables {
-    public static final String TOPIC = "SidTest-JoaoAlmeida";
+    public static final String TOPIC = "Culturas-PISID-G12";
     public static final String CONTENT = "Message from MqttPublishSample";
     public static final int QOS = 2;
 
